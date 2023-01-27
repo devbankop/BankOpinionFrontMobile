@@ -1,0 +1,9 @@
+<application
+   android:label="testapp"
+   android:icon="@mipmap/ic_launcher">
+
+   <meta-data android:name="com.google.android.geo.API_KEY"  
+             android:value="AIzaSyATDrJ5JGDI5lYdILFfSPO2qI311W6mPw0"/>
+  
+ <activity  
+     android:name=".MainActivity"/>
