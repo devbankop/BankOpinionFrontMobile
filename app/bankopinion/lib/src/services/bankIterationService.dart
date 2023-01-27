@@ -24,8 +24,5 @@ import 'package:http/http.dart' as http;
 //     setState(() {
 //       banks = jsonDecode(response.body);
 //     });
-//   }
-  
-  
+//   } 
 // }
-  

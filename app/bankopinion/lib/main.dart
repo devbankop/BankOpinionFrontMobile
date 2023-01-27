@@ -1,5 +1,8 @@
-import 'package:bankopinion/src/pages/home.dart';
+import 'package:bankopinion/src/pages/homeView.dart';
+import 'package:bankopinion/src/pages/startView.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
 
 void main() {
   runApp(const MyApp());
@@ -25,7 +28,7 @@ class MyApp extends StatelessWidget {
         // is not restarted.
         primarySwatch: Colors.blue,
       ),
-      home: const PageHomePage( ),
+      home: const StartView( ),
     );
   }
 }
@@ -111,6 +114,44 @@ class _MyHomePageState extends State<MyHomePage> {
         tooltip: 'Increment',
         child: const Icon(Icons.add),
       ), // This trailing comma makes auto-formatting nicer for build methods.
+    );
+  }
+}
+
+class WelcomeScreen extends StatefulWidget {
+  @override
+  _WelcomeScreenState createState() => _WelcomeScreenState();
+}
+
+class _WelcomeScreenState extends State<WelcomeScreen> {
+  bool _hasSeenWelcomeScreen = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _checkIfSeenWelcomeScreen();
+  }
+
+  _checkIfSeenWelcomeScreen() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    bool? hasSeenWelcomeScreen = prefs.getBool('seen_welcome_screen');
+    if (hasSeenWelcomeScreen != null && hasSeenWelcomeScreen) {
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(
+          builder: (context) => PageHomePage(),
+        ),
+      );
+    } else {
+      prefs.setBool('seen_welcome_screen', true);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Center(
+        child: Text('Welcome Screen'),
+      ),
     );
   }
 }
