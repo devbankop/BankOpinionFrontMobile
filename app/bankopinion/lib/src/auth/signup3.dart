@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'package:bankopinion/src/pages/homeView.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 // ignore: depend_on_referenced_packages
 import 'package:intl/intl.dart';
@@ -98,35 +99,12 @@ class _SignUpView3State extends State<SignUpView3> {
         key: _scaffoldKey,
         resizeToAvoidBottomInset: true,
         backgroundColor: const Color.fromARGB(255, 255, 255, 255),
-        body: SingleChildScrollView(
+        body: Center(
+          child: SingleChildScrollView(
             child: Column(children: [
-          Padding(
-              padding: const EdgeInsets.all(15),
-              child: Row(
-                children: [
-                  SizedBox(
-                      width: 70.0,
-                      height: 70.0,
-                      child: Padding(
-                        padding: const EdgeInsets.only(top: 20),
-                        child: ElevatedButton(
-                            onPressed: () {
-                              Navigator.pop(context);
-                            },
-                            style: ElevatedButton.styleFrom(
-                              shape: const CircleBorder(),
-                              padding: const EdgeInsets.all(5),
-                              backgroundColor:
-                                  const Color.fromARGB(255, 255, 255, 255),
-                            ),
-                            child: const Icon(
-                              Icons.arrow_back,
-                              color: Color.fromARGB(255, 153, 116, 223),
-                            )),
-                      )),
-                ],
-              )),
-          Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+          
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center, children: [
             Column(
               // ignore: prefer_const_literals_to_create_immutables
               children: [
@@ -182,7 +160,10 @@ class _SignUpView3State extends State<SignUpView3> {
                             color: Color.fromARGB(255, 0, 0, 0),
                             fontWeight: FontWeight.bold)),
                   ])),
-          Padding(
+          Container(
+            width: kIsWeb ? 400 : null,
+            child: 
+            Padding(
             padding: const EdgeInsets.only(left: 40, right: 40),
             child: Column(children: [
               Row(
@@ -270,7 +251,7 @@ class _SignUpView3State extends State<SignUpView3> {
                         const PopupMenuItem<String>(
                           value: 'Item1',
                           child: Text(
-                              'Saldrá como predetermindado para proteger tu identidad, sin embargo, posteriormente podrás elegir en tu perfil si prefieres que se muestre tu nombre real o el nombre de usuario en la preferencias de tu perfil.'),
+                              'Saldrá como predetermindado para proteger tu identidad, sin embargo, posteriormente podrás elegir en tu perfil si prefieres que se muestre tu nombre real o el nombre de usuario en las preferencias de tu perfil.'),
                         ),
                       ],
                     ),
@@ -430,6 +411,8 @@ class _SignUpView3State extends State<SignUpView3> {
               )
             ]),
           )
-        ])));
+          )
+        ]))
+        ));
   }
 }

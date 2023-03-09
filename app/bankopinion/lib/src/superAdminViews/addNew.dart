@@ -1,10 +1,12 @@
 import 'dart:async';
 import 'dart:convert';
+import 'package:intl/intl.dart';
 import 'dart:io';
 import 'package:bankopinion/src/auth/signup1.dart';
 import 'package:bankopinion/src/pages/homeView.dart';
 import 'package:bankopinion/src/pages/news.dart';
 import 'package:bankopinion/src/pages/profile.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
@@ -27,7 +29,10 @@ class _addNewState extends State<addNew> {
   TextEditingController _desccontroller = TextEditingController();
 
   
-NewsView newsView = NewsView();
+  NewsView newsView = NewsView();
+  DateTime _date = DateTime.now();
+  TextEditingController _dateController = TextEditingController(text: '');
+
 
 
 
@@ -41,6 +46,45 @@ NewsView newsView = NewsView();
   void initState() {
     super.initState();
     _getRole();
+
+  }
+
+   Future<void> _selectDate() async {
+    final DateTime? picked =
+        // ignore: use_build_context_synchronously
+        (Theme.of(context).platform == TargetPlatform.iOS)
+            ? await showCupertinoModalPopup<DateTime>(
+                context: context,
+                builder: (BuildContext context) {
+                  return CupertinoDatePicker(
+                    onDateTimeChanged: (DateTime value) {
+                      _dateController.text = value.toString();
+
+                        setState(() {
+                          
+                        publishDate = value.toString();
+
+                        });
+
+                    },
+                    initialDateTime: _date,
+                    mode: CupertinoDatePickerMode.date,
+                  );
+                },
+              )
+            : await showDatePicker(
+                context: context,
+                initialDate: _date,
+                firstDate: DateTime(1900),
+                lastDate: DateTime.now(),
+              );
+    if (picked != null && picked != _date) {
+      setState(() {
+        _date = picked;
+        _dateController.text = DateFormat('dd/MM/yyyy').format(_date);
+        publishDate = _dateController.text;
+      });
+    }
   }
 
   Future<void> _getRole() async {
@@ -69,16 +113,18 @@ NewsView newsView = NewsView();
   }
 
   Future<void> sendNew() async {
+        print(publishDate);
+
     var body = jsonEncode({
       "title": title,
       "url": url,
       "image": image,
       "publishDate": publishDate,
-            "publishTime": publishTime,
-
+      "publishTime": publishTime,
       "description": description,
       "source": source
     });
+    print(publishDate);
 
     var responseNews = Uri.parse(
         'https://bankopinion-backend-development-3vucy.ondigitalocean.app/news/');
@@ -287,24 +333,28 @@ NewsView newsView = NewsView();
                                 fontWeight: FontWeight.bold)),
                   ],
                 ),
-                Column(
-                  children: [
-                    TextField(
-                      controller: _datecontroller,
-                      onChanged: (String value) {
+                Row(
+                children: [
+                  Expanded(
+                      child: GestureDetector(
+                    onTap: _selectDate,
+                    child: AbsorbPointer(
+                      child: TextField(
+                        onChanged: (String value) {
                         setState(() {                 
                             publishDate = value;                      
                         });
                       },
-                     
-                      decoration: InputDecoration(
-                        hintText: 'Escribir con formato yy-mm-dd',
+                        decoration: const InputDecoration(
+                          hintText: "Ejemplo: 01/01/2000",
+                        ),
+                        controller: _dateController,
+                        readOnly: true,
                       ),
-                      maxLines: 1,
-                      minLines: 1,
                     ),
-                  ],
-                ),
+                  ))
+                ],
+              ),
 
 //PUBLISHTIME
                 Row(
@@ -443,7 +493,7 @@ NewsView newsView = NewsView();
                    child: ElevatedButton(
                   onPressed: (() {
                     
-                    
+                    print(publishDate);
                       if(title != null && title != '' && url != null && url != '' && publishDate != null && publishDate != '' && publishTime != null && publishTime != '' && source != null && source != '')
                       {
                                                      newsView.createState().initState();

@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'package:bankopinion/src/auth/signup1.dart';
 import 'package:bankopinion/src/pages/homeView.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
@@ -42,7 +43,8 @@ class _LoginViewState extends State<LoginView> {
         key: _scaffoldKey,
         resizeToAvoidBottomInset: true,
         backgroundColor: const Color.fromARGB(255, 255, 255, 255),
-        body: SingleChildScrollView(
+        body: Center(
+          child: SingleChildScrollView(
             child: Column(children: [
           Padding(
               padding: EdgeInsets.only(top: 15, left: 15, bottom: 5),
@@ -95,7 +97,12 @@ class _LoginViewState extends State<LoginView> {
               )),
           Padding(
             padding: const EdgeInsets.all(20),
-            child: Column(
+            child: 
+            Container(
+              
+              width: kIsWeb ? 400 : null,
+              child: 
+            Column(
               children: [
                 Row(
                   // ignore: prefer_const_literals_to_create_immutables
@@ -241,42 +248,44 @@ class _LoginViewState extends State<LoginView> {
                         ],
                       ),
                     ),
-                    Padding(
-                      padding: const EdgeInsets.only(top: 10),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          ElevatedButton(
-                            onPressed: (() {}),
-                            style: ElevatedButton.styleFrom(
-                              shape: const StadiumBorder(
-                                side: BorderSide(
-                                  color: Color.fromARGB(46, 35, 0, 100),
-                                  width: .5,
-                                ),
-                              ),
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 55, vertical: 14),
-                              backgroundColor:
-                                  const Color.fromARGB(255, 255, 255, 255),
-                            ),
-                            child: Row(
-                              children: const [
-                                Icon(
-                                  Icons.login,
-                                  color: Colors.black,
-                                ),
-                                Text(
-                                  " Iniciar sesión con Google",
-                                  style: TextStyle(
-                                      fontSize: 16, color: Colors.black),
-                                )
-                              ],
-                            ),
-                          )
-                        ],
-                      ),
-                    )
+
+              //Inicio con Google
+                    // Padding(
+                    //   padding: const EdgeInsets.only(top: 10),
+                    //   child: Row(
+                    //     mainAxisAlignment: MainAxisAlignment.center,
+                    //     children: [
+                    //       ElevatedButton(
+                    //         onPressed: (() {}),
+                    //         style: ElevatedButton.styleFrom(
+                    //           shape: const StadiumBorder(
+                    //             side: BorderSide(
+                    //               color: Color.fromARGB(46, 35, 0, 100),
+                    //               width: .5,
+                    //             ),
+                    //           ),
+                    //           padding: const EdgeInsets.symmetric(
+                    //               horizontal: 55, vertical: 14),
+                    //           backgroundColor:
+                    //               const Color.fromARGB(255, 255, 255, 255),
+                    //         ),
+                    //         child: Row(
+                    //           children: const [
+                    //             Icon(
+                    //               Icons.login,
+                    //               color: Colors.black,
+                    //             ),
+                    //             Text(
+                    //               " Iniciar sesión con Google",
+                    //               style: TextStyle(
+                    //                   fontSize: 16, color: Colors.black),
+                    //             )
+                    //           ],
+                    //         ),
+                    //       )
+                    //     ],
+                    //   ),
+                    // )
                   ],
                 ),
                 Padding(
@@ -317,8 +326,10 @@ class _LoginViewState extends State<LoginView> {
                         child: const Text("Registrarse",
                             style: TextStyle(fontSize: 16))))
               ],
-            ),
+            ),)
           ),
-        ])));
+        ]))
+        )
+        );
   }
 }

@@ -1,6 +1,6 @@
 import 'dart:async';
 import 'package:bankopinion/src/auth/signup3.dart';
-import 'package:bankopinion/src/pages/homeView.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 class SignUpView2 extends StatefulWidget {
@@ -45,34 +45,10 @@ class _SignUpView2State extends State<SignUpView2> {
         key: _scaffoldKey,
         resizeToAvoidBottomInset: true,
         backgroundColor: const Color.fromARGB(255, 255, 255, 255),
-        body: SingleChildScrollView(
+        body: Center(child: 
+        SingleChildScrollView(
             child: Column(children: [
-          Padding(
-              padding: EdgeInsets.all(15),
-              child: Row(
-                children: [
-                  SizedBox(
-                      width: 70.0,
-                      height: 70.0,
-                      child: Padding(
-                        padding: const EdgeInsets.only(top: 20),
-                        child: ElevatedButton(
-                            onPressed: () {
-                              Navigator.pop(context);
-                            },
-                            style: ElevatedButton.styleFrom(
-                              shape: const CircleBorder(),
-                              padding: const EdgeInsets.all(5),
-                              backgroundColor:
-                                  Color.fromARGB(255, 255, 255, 255),
-                            ),
-                            child: const Icon(
-                              Icons.arrow_back,
-                              color: Color.fromARGB(255, 153, 116, 223),
-                            )),
-                      )),
-                ],
-              )),
+          
           Row(mainAxisAlignment: MainAxisAlignment.center, children: [
             Column(
               // ignore: prefer_const_literals_to_create_immutables
@@ -126,7 +102,9 @@ class _SignUpView2State extends State<SignUpView2> {
                             color: Color.fromARGB(255, 0, 0, 0),
                             fontWeight: FontWeight.bold)),
                   ])),
-          Padding(
+          Container(
+            width: kIsWeb ? 400 : null,
+            child: Padding(
             padding: EdgeInsets.only(left: 20, right: 20),
             child: Column(
               children: [
@@ -479,6 +457,9 @@ class _SignUpView2State extends State<SignUpView2> {
               ],
             ),
           )
-        ])));
+          )
+        ])))
+        
+        );
   }
 }

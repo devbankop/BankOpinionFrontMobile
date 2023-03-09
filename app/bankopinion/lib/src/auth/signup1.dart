@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'package:bankopinion/src/auth/signup2.dart';
-import 'package:bankopinion/src/auth/signup3.dart';
-import 'package:bankopinion/src/pages/homeView.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:email_validator/email_validator.dart';
 
@@ -47,34 +46,10 @@ class _SignUpView1State extends State<SignUpView1> {
         key: _scaffoldKey,
         resizeToAvoidBottomInset: true,
         backgroundColor: const Color.fromARGB(255, 255, 255, 255),
-        body: SingleChildScrollView(
+        body: Center(
+          child: SingleChildScrollView(
             child: Column(children: [
-              Padding(
-              padding: EdgeInsets.only(top: 15, left: 15),
-              child: Row(
-                children: [
-                  SizedBox(
-                      width: 70.0,
-                      height: 70.0,
-                      child: Padding(
-                        padding: const EdgeInsets.only(top: 20),
-                        child: ElevatedButton(
-                            onPressed: () {
-                              Navigator.pop(context);
-                            },
-                            style: ElevatedButton.styleFrom(
-                              shape: const CircleBorder(),
-                              padding: const EdgeInsets.all(5),
-                              backgroundColor:
-                                  Color.fromARGB(255, 255, 255, 255),
-                            ),
-                            child: const Icon(
-                              Icons.arrow_back,
-                              color: Color.fromARGB(255, 153, 116, 223),
-                            )),
-                      )),
-                ],
-              )),
+              
           Padding(
               padding: const EdgeInsets.only(),
               child: Container(
@@ -92,7 +67,7 @@ class _SignUpView1State extends State<SignUpView1> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 // ignore: prefer_const_literals_to_create_immutables
                 children: [
-                  const Text("REGÍSTRATE PARA PODER HACER UN USO COMPLETO",
+                  const Text("REGÍSTRATE PARA NO PERDERTE NADA",
                       softWrap: true,
                       textAlign: TextAlign.center,
                       style: TextStyle(
@@ -105,7 +80,11 @@ class _SignUpView1State extends State<SignUpView1> {
             padding: const EdgeInsets.all(20),
             child: Column(
               children: [
-                Row(
+                Container(
+                  width: kIsWeb ? 400 : null,
+                    child: Column(
+                      children: [
+                        Row(
                   // ignore: prefer_const_literals_to_create_immutables
                   children: [
                     const Padding(
@@ -131,7 +110,7 @@ class _SignUpView1State extends State<SignUpView1> {
                        setState(() {
                                       isValid = EmailValidator.validate(email);
 
-});
+                      });
                      },
                       decoration: InputDecoration(
                         hintText: 'ejemplo@correo.com',
@@ -140,6 +119,9 @@ class _SignUpView1State extends State<SignUpView1> {
                       minLines: 1,
                     ),
                   ],
+                ),
+                      ],
+                    )
                 ),
                 !emailValid
                     ? Row(
@@ -208,64 +190,68 @@ class _SignUpView1State extends State<SignUpView1> {
                     ),
                   ],
                 ),
-                Padding(
-                    padding: EdgeInsets.only(top: 40),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      // ignore: prefer_const_literals_to_create_immutables
-                      children: [
-                        Container(
-                          color: Color.fromARGB(255, 161, 161, 161),
-                          height: 1,
-                          width: 130,
-                        ),
-                        Text("  O  "),
-                        Container(
-                          color: Color.fromARGB(255, 161, 161, 161),
-                          height: 1,
-                          width: 130,
-                        )
-                      ],
-                    )),
-                Padding(
-                  padding: const EdgeInsets.only(top: 40),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      ElevatedButton(
-                        onPressed: (() {}),
-                        style: ElevatedButton.styleFrom(
-                          shape: const StadiumBorder(
-                            side: BorderSide(
-                              color: Color.fromARGB(46, 35, 0, 100),
-                              width: .5,
-                            ),
-                          ),
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 55, vertical: 14),
-                          backgroundColor:
-                              const Color.fromARGB(255, 255, 255, 255),
-                        ),
-                        child: Row(
-                          children: const [
-                            Icon(
-                              Icons.login,
-                              color: Colors.black,
-                            ),
-                            Text(
-                              " Iniciar sesión con Google",
-                              style:
-                                  TextStyle(fontSize: 16, color: Colors.black),
-                            )
-                          ],
-                        ),
-                      )
-                    ],
-                  ),
-                )
+                // Padding(
+                //     padding: EdgeInsets.only(top: 40),
+                //     child: Row(
+                //       mainAxisAlignment: MainAxisAlignment.center,
+                //       // ignore: prefer_const_literals_to_create_immutables
+                //       children: [
+                //         Container(
+                //           color: Color.fromARGB(255, 161, 161, 161),
+                //           height: 1,
+                //           width: 130,
+                //         ),
+                //         Text("  O  "),
+                //         Container(
+                //           color: Color.fromARGB(255, 161, 161, 161),
+                //           height: 1,
+                //           width: 130,
+                //         )
+                //       ],
+                //     )),
+
+        //INICIO CON GOOGLE
+                // Padding(
+                //   padding: const EdgeInsets.only(top: 40),
+                //   child: Row(
+                //     mainAxisAlignment: MainAxisAlignment.center,
+                //     children: [
+                //       ElevatedButton(
+                //         onPressed: (() {}),
+                //         style: ElevatedButton.styleFrom(
+                //           shape: const StadiumBorder(
+                //             side: BorderSide(
+                //               color: Color.fromARGB(46, 35, 0, 100),
+                //               width: .5,
+                //             ),
+                //           ),
+                //           padding: const EdgeInsets.symmetric(
+                //               horizontal: 55, vertical: 14),
+                //           backgroundColor:
+                //               const Color.fromARGB(255, 255, 255, 255),
+                //         ),
+                //         child: Row(
+                //           children: const [
+                //             Icon(
+                //               Icons.login,
+                //               color: Colors.black,
+                //             ),
+                //             Text(
+                //               " Iniciar sesión con Google",
+                //               style:
+                //                   TextStyle(fontSize: 16, color: Colors.black),
+                //             )
+                //           ],
+                //         ),
+                //       )
+                //     ],
+                //   ),
+                // )
               ],
             ),
           ),
-        ])));
+        ]))
+        )
+        );
   }
 }

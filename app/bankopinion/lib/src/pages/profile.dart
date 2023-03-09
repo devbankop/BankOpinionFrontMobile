@@ -32,6 +32,7 @@ var email;
   void initState() {
     super.initState();
     getUserProfile();
+    print(name);
     fetchData();
   }
 
@@ -50,7 +51,7 @@ var email;
 Future<void> getUserProfile() async {
     final prefs = await SharedPreferences.getInstance();
     setState(() {
-      jwt = prefs.getString("jwt");
+      jwt = prefs.getString('jwt');
       userId = prefs.getString('user_id').toString();
       name = prefs.getString('name').toString();
       surname = prefs.getString('surname').toString();
@@ -144,7 +145,7 @@ Future<void> getUserProfile() async {
                     child: Row(
                         // ignore: prefer_const_literals_to_create_immutables
                         children: [
-                           Text(name,
+                           Text(name.toString(),
                               style: TextStyle(
                                 fontSize: 16,
                                 color: Color.fromARGB(255, 81, 81, 81),
@@ -176,7 +177,7 @@ Future<void> getUserProfile() async {
                         // ignore: prefer_const_literals_to_create_immutables
                         children: [
                           //Icon(Icons.lock),
-                           Text(surname,
+                           Text(surname.toString(),
                               style: TextStyle(
                                 fontSize: 16,
                                 color: Color.fromARGB(255, 81, 81, 81),
@@ -206,7 +207,7 @@ Future<void> getUserProfile() async {
                         // ignore: prefer_const_literals_to_create_immutables
                         children: [
                           //Icon(Icons.lock),
-                           Text(nickname,
+                           Text(nickname.toString(),
                               style: TextStyle(
                                 fontSize: 16,
                                 color: Color.fromARGB(255, 81, 81, 81),
@@ -236,7 +237,7 @@ Future<void> getUserProfile() async {
                         // ignore: prefer_const_literals_to_create_immutables
                         children: [
                           //Icon(Icons.lock),
-                           Text(email,
+                           Text(email.toString(),
                               style: TextStyle(
                                 fontSize: 16,
                                 color: Color.fromARGB(255, 81, 81, 81),
