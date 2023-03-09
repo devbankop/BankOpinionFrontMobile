@@ -17,7 +17,7 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 # https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
 # In Windows, build-name is used as the major, minor, and patch parts
 # of the product and file versions while build-number is used as the build suffix.
-version: 1.0.0+1
+version: 2.0.0+1
 
 environment:
   sdk: '>=2.18.2 <3.0.0'
@@ -56,18 +56,25 @@ dependencies:
   flutter_inappwebview: ^5.7.2+3
   url_launcher: ^6.1.8
   pull_to_refresh: ^2.0.0
+  dio: ^5.0.0
+  #google_maps_flutter_web: ^0.4.0+5
+  side_navigation: ^1.0.4
+  collapsible_sidebar: ^2.0.3+2
+  cached_network_image: ^3.2.3
+  permission_handler: ^10.2.0
+  #flutter_google_places_web: ^1.0.1
 
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-
-  # The "flutter_lints" package below contains a set of recommended lints to
-  # encourage good coding practices. The lint set provided by the package is
-  # activated in the `analysis_options.yaml` file located at the root of your
-  # package. See that file for information about deactivating specific lint
-  # rules and activating additional ones.
   flutter_lints: ^2.0.0
+  flutter_launcher_icons: "^0.11.0"
+
+flutter_icons:
+  android: true
+  ios: true
+  image_path: "assets/icons/icon_launcher.png"
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
@@ -82,9 +89,11 @@ flutter:
 
   # To add assets to your application, add an assets section, like this:
   assets:
+    - assets/icons/icon_launcher.png
+    - assets/images/icon_launcher.png
     - assets/images/bankMarker.png
     - assets/images/streetView.jpeg
-    - assets/images/imageStartView.jpeg
+    - assets/images/imageStartView.png
     - assets/images/loginImage.webp
   
 
