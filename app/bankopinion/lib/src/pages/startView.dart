@@ -3,6 +3,7 @@ import 'package:bankopinion/src/auth/loginView.dart';
 import 'package:bankopinion/src/auth/signup1.dart';
 
 import 'package:bankopinion/src/pages/news.dart';
+import 'package:flutter/foundation.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:permission_handler/permission_handler.dart';
 
@@ -138,7 +139,7 @@ print('Latitud: ${position.latitude}, Longitud: ${position.longitude}');
             const Padding(
               padding: EdgeInsets.only(left: 25, right: 25, top: 10),
               child: Text(
-                  "Haz que tu opinion cuente y mantente al día sobre el mundo financiero",
+                  "Haz que tu opinión cuente y mantente al día sobre el mundo financiero",
                   softWrap: true,
                   textAlign: TextAlign.center,
                   style: TextStyle(fontSize: 18.5)),
@@ -179,7 +180,7 @@ print('Latitud: ${position.latitude}, Longitud: ${position.longitude}');
           children: [
             // ignore: prefer_const_constructors
             Padding(
-                padding: const EdgeInsets.only(top: 60),
+                padding: const EdgeInsets.only(top: kIsWeb ? 20 : 60),
                 child:
                     // ignore: prefer_const_constructors
                     InkWell(
@@ -199,14 +200,14 @@ print('Latitud: ${position.latitude}, Longitud: ${position.longitude}');
                                 color: Color.fromARGB(255, 153, 116, 223),
                                 decoration: TextDecoration.underline)))),
             Padding(
-                padding: const EdgeInsets.only(top: 60),
+                padding: const EdgeInsets.only(top: kIsWeb ? 20 : 60),
                 child:
             Text("    ó    ",
             style: const TextStyle(
             color: Color.fromARGB(255, 153, 116, 223)))),
 
             Padding(
-                padding: const EdgeInsets.only(top: 60),
+                padding: const EdgeInsets.only(top: kIsWeb ? 20 : 60),
                 child:
                     // ignore: prefer_const_constructors
                     InkWell(
