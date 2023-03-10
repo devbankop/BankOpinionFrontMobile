@@ -42610,8 +42610,8 @@ for(p=t.m,o=0;o<J.bz(b.r);++o){n=J.w(J.c1(b.r,o),a0)==null?B.o:A.U(29,154,116,22
 m=new A.bK(15,15)
 l=new A.d2(A.U(255,154,116,223),0.6,B.aU,B.at)
 if(J.w(J.c1(b.r,o),a0)==null)k=125
-else{a7.O(p).toString
-k=300}j=J.w(J.c1(b.r,o),a0)
+else k=a7.O(p).f.a.b>620?320:300
+j=J.w(J.c1(b.r,o),a0)
 i=b.r
 h=J.cb(i)
 if(j!=null){j=A.aDA(new A.avG(),B.jT,220,J.bc(J.w(h.aT(i,o),a0)),a,1/0)
