@@ -245,7 +245,7 @@ class _StateHomePage extends State<PageHomePage> {
                       decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(10)),
                       width: 900,
-                      height: 400,
+                      height: kIsWeb ? 300 : 400,
                       child: GoogleMap(
                         //Map widget from google_maps_flutter packages
                         zoomGesturesEnabled: true, //enable Zoom in, out on map

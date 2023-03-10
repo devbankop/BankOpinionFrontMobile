@@ -66,7 +66,7 @@ class _BottomBarState extends State<BottomBar> {
       child: BottomNavigationBar(
         backgroundColor: userRole == 'superAdmin' ? Color.fromARGB(255, 223, 116, 116) :const Color.fromARGB(255, 153, 116, 223),
         selectedItemColor: Colors.white,
-        
+        unselectedItemColor: Colors.white,    
         showSelectedLabels: true,
         showUnselectedLabels: true,
         currentIndex: _currentIndex,
