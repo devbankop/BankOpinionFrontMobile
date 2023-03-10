@@ -266,7 +266,7 @@ try {
                                         news.elementAt(index)['image'] == null
                                             ? 125
                                             : MediaQuery.of(context).size.height > 620
-                                            ? 350
+                                            ? 300
                                             : 300,
                                     
                                     child: SizedBox(
