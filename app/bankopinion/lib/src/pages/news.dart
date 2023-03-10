@@ -252,7 +252,7 @@ try {
                             },
                             child: Padding(
                                 padding: EdgeInsets.only(top: 15, bottom: 15, left: 15, right: 15),
-                                child: Expanded(
+                                
                                   child: Container(
                                   width: 10,
 
@@ -447,7 +447,7 @@ try {
                                                         ))
                                                         )
                                                         )
-                                                        )
+                                                        
                           ],
                         ))
                   
