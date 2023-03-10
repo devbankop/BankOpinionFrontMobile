@@ -252,7 +252,8 @@ try {
                             },
                             child: Padding(
                                 padding: EdgeInsets.only(top: 15, bottom: 15, left: 15, right: 15),
-                                child: Container(
+                                child: Expanded(
+                                  child: Container(
                                   width: 10,
 
                                     decoration: BoxDecoration(
@@ -334,7 +335,10 @@ try {
                                                                                   fontSize: 12,
                                                                                 )),
                                                                             Text("    ·    "),
-                                                                            Text(news.elementAt(index)["source"],
+                                                                            Text(news.elementAt(index)["source"].toString().length > 20
+                                                                            ? news.elementAt(index)["source"].toString().substring(0, 18) +
+                                                                                "..."
+                                                                            : news.elementAt(index)["source"].toString(),
                                                                                 style: TextStyle(
                                                                                   color: Color.fromARGB(255, 90, 90, 90),
                                                                                   fontSize: 12,
@@ -438,7 +442,9 @@ try {
                                                                     
                                                                   ])),
                                                                   
-                                                        ]))))
+                                                        ]))
+                                                        )
+                                                        ))
                                                         )
                                                         )
                                                         )
