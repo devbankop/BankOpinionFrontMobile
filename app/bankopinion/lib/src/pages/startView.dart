@@ -103,7 +103,8 @@ print('Latitud: ${position.latitude}, Longitud: ${position.longitude}');
       key: _scaffoldKey,
       resizeToAvoidBottomInset: true,
       backgroundColor: Color.fromARGB(255, 255, 255, 255),
-      body: Column(children: [
+      body: Center(
+        child: Column(children: [
 
         Padding(padding: EdgeInsets.only(top: 50),
         child: Text("BankOpinion",
@@ -228,7 +229,8 @@ print('Latitud: ${position.latitude}, Longitud: ${position.longitude}');
                                 decoration: TextDecoration.underline))))
           ],
         )
-      ]),
+      ])
+      )
     );
   }
 }
