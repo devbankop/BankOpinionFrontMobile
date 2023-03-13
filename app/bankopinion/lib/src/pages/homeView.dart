@@ -365,12 +365,12 @@ class _StateHomePage extends State<PageHomePage> {
 
 //LISTA DE UBICACIONES RESPECTO A MARCADORES DEL CHUNK
 
-                  Expanded(
+                  Container(
                       child: Wrap(
                     children: [
                       for (int index = 0; index < banks.length; index++)
                         SizedBox(
-                          width: 480,
+                          width: 500,
                             child: InkWell(
                                 onTap: () {
                                   LatLng newlatlong = LatLng(
