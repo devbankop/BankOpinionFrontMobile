@@ -366,7 +366,7 @@ class _StateHomePage extends State<PageHomePage> {
 //LISTA DE UBICACIONES RESPECTO A MARCADORES DEL CHUNK
 
                   Expanded(
-                      child: Column(
+                      child: Wrap(
                     children: [
                       for (int index = 0; index < banks.length; index++)
                         SizedBox(
