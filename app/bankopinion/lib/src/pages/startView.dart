@@ -29,10 +29,10 @@ class _StartViewState extends State<StartView> {
     super.initState();
     _getJWT();
     _getRole();
-  //    SharedPreferences.getInstance().then((value) {
-  //   prefs = value;
-  // }
-  // );
+     SharedPreferences.getInstance().then((value) {
+    prefs = value;
+  }
+  );
     // var refresh = AuthService();
     // refresh.refreshToken();
      

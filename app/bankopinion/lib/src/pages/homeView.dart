@@ -6,7 +6,7 @@ import 'package:bankopinion/src/authServices/refreshToken.dart';
 import 'package:bankopinion/src/pages/allReviewsView.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:google_maps_flutter_web/google_maps_flutter_web.dart' as web;
+// import 'package:google_maps_flutter_web/google_maps_flutter_web.dart' as web;
 // import 'package:flutter_google_places_web/flutter_google_places_web.dart';
 
 // ignore: depend_on_referenced_packages
@@ -238,14 +238,19 @@ class _StateHomePage extends State<PageHomePage> {
       backgroundColor: Color.fromARGB(255, 255, 255, 255),
       bottomNavigationBar: BottomBar(),
       body: kIsWeb
-          ? Center(
-              child: Column(
+          ?   Center(
+              child: 
+              SingleChildScrollView(
+                          child:
+              Container(child: 
+              
+               Column(
                 children: [
                   Container(
                       decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(10)),
                       width: 900,
-                      height: kIsWeb ? 300 : 400,
+                      height: kIsWeb ? 600 : 400,
                       child: GoogleMap(
                         //Map widget from google_maps_flutter packages
                         zoomGesturesEnabled: true, //enable Zoom in, out on map
@@ -360,8 +365,7 @@ class _StateHomePage extends State<PageHomePage> {
 //LISTA DE UBICACIONES RESPECTO A MARCADORES DEL CHUNK
 
                   Expanded(
-                      child: SingleChildScrollView(
-                          child: Wrap(
+                      child: Wrap(
                     children: [
                       for (int index = 0; index < banks.length; index++)
                         SizedBox(
@@ -693,10 +697,10 @@ class _StateHomePage extends State<PageHomePage> {
                                       ],
                                     ))))
                     ],
-                  )))
+                  ))
                 ],
               ),
-            )
+            )))
           : Column(
               children: [
                 Container(

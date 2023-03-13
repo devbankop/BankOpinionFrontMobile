@@ -28,36 +28,62 @@ class PrefsViewState extends State<PrefsView> {
       _isLocationEnabled = _prefs.getBool('isLocationEnabled') ?? false;
     });
   }
-
-  void _toggleLocation(bool? value) async {
-    if (value != null) {
-      if (value == true) {
-        _showAlertDialog();
-        await _prefs.setBool('isLocationEnabled', true);
-
-      } else {
-        _deleteLocationPermissions();
-      }
+void _toggleLocation(bool? value) async {
+  if (value != null) {
+    if (value == true) {
+      
+      _showAlertDialog();
+      
+    } else {
+       
+      PermissionStatus.denied;
+      _deleteLocationPermissions();
       setState(() {
-        _isLocationEnabled = value;
+        _isLocationEnabled = false;
       });
     }
   }
+}
+  void _deleteLocationPermissions() async {
 
-  void _getCurrentLocation() async {
+  await Permission.locationWhenInUse.serviceStatus.isDisabled;
+  await _prefs.setBool('isLocationEnabled', false);
+  setState(() {
+    _isLocationEnabled = false;
+  });
+}
+
+  Future<void> _getCurrentLocation() async {
+// Solicita el permiso de ubicación
+    var status = await Permission.location.request();
+
+    if (await Permission.locationWhenInUse.serviceStatus.isEnabled) {
+      status = PermissionStatus.granted;
+      _prefs.setBool('isLocationEnabled', true);
+    } else if (await Permission.locationWhenInUse.isPermanentlyDenied) {
+      status = PermissionStatus.permanentlyDenied;
+      _prefs.setBool('isLocationEnabled', false);
+    }
+
+    if (status != PermissionStatus.granted) {
+      print('Permiso de ubicación denegado');
+      _prefs.setBool('isLocationEnabled', false);
+      return;
+    }
+
+// Obtiene la posición actual del usuario
+    var position = await Geolocator.getCurrentPosition();
+    print('Latitud: ${position.latitude}, Longitud: ${position.longitude}');
+  }
+
+  void getCurrentLocation() async {
     // Obtiene la posición actual del usuario
     var position = await Geolocator.getCurrentPosition();
     print('Latitud: ${position.latitude}, Longitud: ${position.longitude}');
   }
 
-  void _deleteLocationPermissions() async {
-    // Borra los permisos de ubicación
-    await Permission.location.request().isDenied;
-    _prefs.setBool('isLocationEnabled', false);
-    setState(() {
-      _isLocationEnabled = false;
-    });
-  }
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -200,6 +226,10 @@ class PrefsViewState extends State<PrefsView> {
                   groupValue: _isLocationEnabled,
                   onChanged: (value) {
                     setState(() {
+                       SnackBar(
+    content: Text('Permisos de localización desactivados'),
+    duration: Duration(seconds: 2), // Tiempo que permanece visible
+  );
                       _prefs.setBool('isLocationEnabled', false);
                     });
                                         _toggleLocation(value);
@@ -223,7 +253,7 @@ class PrefsViewState extends State<PrefsView> {
     builder: (BuildContext context) {
       return AlertDialog(
         title: const Text('Consentimiento'),
-        content: const Text('Permitir que la aplicación acceda a la ubicación del dispositivo.'),
+        content: const Text('Permitir que la aplicación acceda a la ubicación aproximada del dispositivo.'),
         actions: <Widget>[
           TextButton(
             child: const Text('Cancelar'),
@@ -238,11 +268,20 @@ class PrefsViewState extends State<PrefsView> {
           TextButton(
             child: const Text('Permitir'),
             onPressed:() async {
+
+              ScaffoldMessenger.of(context).showSnackBar(
+  SnackBar(
+    content: Text('Permisos de localización activados'),
+    duration: Duration(seconds: 2), // Tiempo que permanece visible
+  ),
+);
+                    await Permission.locationWhenInUse.serviceStatus.isEnabled;
+
               _prefs.setBool('isLocationEnabled', true);
               //               _toggleLocation(true);
 
               Navigator.of(context).pop();
-              // _handleLocationPermission();
+               _handleLocationPermission();
             }, 
           ),
         ],
