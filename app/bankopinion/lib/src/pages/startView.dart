@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:bankopinion/src/auth/loginView.dart';
 import 'package:bankopinion/src/auth/signup1.dart';
+import 'package:bankopinion/src/pages/homeView.dart';
 
 import 'package:bankopinion/src/pages/news.dart';
 import 'package:flutter/foundation.dart';
@@ -159,7 +160,7 @@ print('Latitud: ${position.latitude}, Longitud: ${position.longitude}');
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => NewsView()));
+                            builder: (context) => PageHomePage()));
                     
                   }),
                   style: ElevatedButton.styleFrom(

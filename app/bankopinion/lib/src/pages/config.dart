@@ -186,7 +186,7 @@ Future<void> _deleteJWT() async {
                                         Padding(
                                             padding: EdgeInsets.symmetric(
                                                 horizontal: 10),
-                                            child: Text("Información personal",
+                                            child: Text("Información  personal",
                                                 style: TextStyle(
                                                     fontSize: 20,
                                                     color: Color.fromARGB(255, 132, 132, 132))))
@@ -265,7 +265,7 @@ jwt != null && jwt != ''
                                   child: Text("Preferencias",
                                   style: TextStyle(
                                     fontSize: 20,
-                                    color: Color.fromARGB(168, 122, 122, 122)
+                                    color: Color.fromARGB(255, 132, 132, 132)
                                     )))
                                 ],
                               )),
