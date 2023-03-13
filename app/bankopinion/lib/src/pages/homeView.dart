@@ -366,15 +366,10 @@ class _StateHomePage extends State<PageHomePage> {
 //LISTA DE UBICACIONES RESPECTO A MARCADORES DEL CHUNK
 
                   Expanded(
-                      child: Wrap(
+                      child: Column(
                     children: [
-                      ListView.builder(
-  itemCount: banks.length, // número de elementos que se mostrarán en el ListView
-  itemBuilder: (context, index) {
-    // itemBuilder es la función que construye cada elemento en el ListView
-    return 
+                      for (int index = 0; index < banks.length; index++)
                         SizedBox(
-                          width: 500,
                             child: InkWell(
                                 onTap: () {
                                   LatLng newlatlong = LatLng(
@@ -700,7 +695,7 @@ class _StateHomePage extends State<PageHomePage> {
                                           ],
                                         ),
                                       ],
-                                    ))));})
+                                    ))))
                     ],
                   ))
                 ],
