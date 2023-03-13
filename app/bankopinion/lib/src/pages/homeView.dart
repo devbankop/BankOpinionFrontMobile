@@ -370,6 +370,7 @@ class _StateHomePage extends State<PageHomePage> {
                     children: [
                       for (int index = 0; index < banks.length; index++)
                         SizedBox(
+                          width: 480,
                             child: InkWell(
                                 onTap: () {
                                   LatLng newlatlong = LatLng(
