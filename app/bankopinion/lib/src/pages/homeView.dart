@@ -238,10 +238,13 @@ class _StateHomePage extends State<PageHomePage> {
       backgroundColor: Color.fromARGB(255, 255, 255, 255),
       bottomNavigationBar: BottomBar(),
       body: kIsWeb
-          ?   Center(
+          ?   ListView.builder(
+  itemCount: banks.length, // número de elementos que se mostrarán en el ListView
+  itemBuilder: (context, index) {
+    // itemBuilder es la función que construye cada elemento en el ListView
+    return Center(
               child: 
-              SingleChildScrollView(
-                          child:
+              
               Container(
                 padding: EdgeInsets.only(top: 1),
                 child: 
@@ -368,7 +371,7 @@ class _StateHomePage extends State<PageHomePage> {
                   Expanded(
                       child: Wrap(
                     children: [
-                      for (int index = 0; index < banks.length; index++)
+                      // for (int index = 0; index < banks.length; index++)
                         SizedBox(
                           width: 500,
                             child: InkWell(
@@ -701,7 +704,8 @@ class _StateHomePage extends State<PageHomePage> {
                   ))
                 ],
               ),
-            )))
+            ));
+            })
           : Column(
               children: [
                 Container(
