@@ -242,7 +242,9 @@ class _StateHomePage extends State<PageHomePage> {
               child: 
               SingleChildScrollView(
                           child:
-              Container(child: 
+              Container(
+                padding: EdgeInsets.only(top: 2),
+                child: 
               
                Column(
                 children: [
@@ -368,7 +370,6 @@ class _StateHomePage extends State<PageHomePage> {
                     children: [
                       for (int index = 0; index < banks.length; index++)
                         SizedBox(
-                            width: 520,
                             child: InkWell(
                                 onTap: () {
                                   LatLng newlatlong = LatLng(
