@@ -275,7 +275,7 @@ class _StateHomePage extends State<PageHomePage> {
                       padding: EdgeInsets.only(
                           top: 20, left: 10, right: 10, bottom: 10),
                       child: Container(
-                          width: 500,
+                          width: 650,
                           padding: EdgeInsets.only(
                               top: 2, left: 8, right: 8, bottom: 2),
                           decoration: BoxDecoration(
@@ -372,6 +372,17 @@ class _StateHomePage extends State<PageHomePage> {
                         SizedBox(
                           width: 500,
                             child: InkWell(
+                              onDoubleTap: () {
+                                 Navigator.push(
+                                                                context,
+                                                                MaterialPageRoute(
+                                                                    builder:
+                                                                        (context) =>
+                                                                            allReviews(
+                                                                              bank: banks.elementAt(index)["value"],
+                                                                            )),
+                                                              );
+                              },
                                 onTap: () {
                                   LatLng newlatlong = LatLng(
                                       banks.elementAt(index)["value"]
