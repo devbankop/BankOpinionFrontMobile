@@ -45,7 +45,7 @@ class _MyAppViewState extends State<MyAppView> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'BankOpinion',
       theme: ThemeData(
         // This is the theme of your application.
         //
@@ -58,9 +58,7 @@ class _MyAppViewState extends State<MyAppView> {
         // is not restarted.
         primarySwatch: Colors.blue,
       ),
-      home: StartView()
-      
-      //jwt == null ? StartView() : NewsView(),
+      home: jwt == null ? StartView() : PageHomePage(),
     );
   }
 }
