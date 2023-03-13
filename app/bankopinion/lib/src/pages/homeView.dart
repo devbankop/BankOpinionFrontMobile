@@ -243,7 +243,7 @@ class _StateHomePage extends State<PageHomePage> {
               SingleChildScrollView(
                           child:
               Container(
-                padding: EdgeInsets.only(top: 2),
+                padding: EdgeInsets.only(top: 1),
                 child: 
               
                Column(
