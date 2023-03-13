@@ -700,7 +700,7 @@ class _StateHomePage extends State<PageHomePage> {
                                           ],
                                         ),
                                       ],
-                                    )))); } )
+                                    ))));})
                     ],
                   ))
                 ],
