@@ -42448,7 +42448,7 @@ s.x2$=$.ay()
 s.x1$=0
 this.aw()},
 H(a0){var s,r,q,p,o,n,m,l,k,j,i,h,g=this,f=null,e="value",d="branchName",c="branchRating",b=A.U(255,255,255,255),a=A.ir(10)
-a=A.aw(f,A.aTl(new A.it(0,B.P7,0,13.5),B.a_V,g.at,g.gadH(),new A.ayM(g),!0),B.k,f,f,new A.c8(f,f,f,a,f,f,B.a_),f,600,f,f,f,f,900)
+a=A.aw(f,A.aTl(new A.it(0,B.P7,0,13.5),B.a_V,g.at,g.gadH(),new A.ayM(g),!0),B.k,f,f,new A.c8(f,f,f,a,f,f,B.a_),f,500,f,f,f,f,f)
 s=A.yN(A.U(255,224,224,224),1)
 r=A.ir(8)
 q=g.Q
