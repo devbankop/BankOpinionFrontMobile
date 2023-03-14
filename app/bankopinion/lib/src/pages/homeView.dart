@@ -187,36 +187,43 @@ class _StateHomePage extends State<PageHomePage> {
   }
 
   Future<void> fetchData() async {
-    var prueba = Uri.parse(
-        'https://bankopinion-backend-development-3vucy.ondigitalocean.app/branches/branchesOfChunkInDB/${showLocation.latitude},${showLocation.longitude}');
-    final response = await http.get(prueba);
+  // Define el URI de la solicitud http
+  var prueba = Uri.parse(
+      'https://bankopinion-backend-development-3vucy.ondigitalocean.app/branches/branchesOfChunkInDB/${showLocation.latitude},${showLocation.longitude}');
+  
+  // Realiza la solicitud http y espera la respuesta
+  final response = await http.get(prueba);
 
-    setState(() {
-      banks = jsonDecode(response.body);
+  // Borra todos los marcadores existentes
+  markers.clear();
 
-      banks.forEach((element) async {
-        if (element["value"]["location"] == null) return;
+  setState(() {
+    banks = jsonDecode(response.body);
 
-        LatLng showLocation = LatLng(element["value"]["location"]["lat"],
-            element["value"]["location"]["lng"]);
+    banks.forEach((element) async {
+      if (element["value"]["location"] == null) return;
 
-        //location to show in map
-        markers.add(Marker(
-            onTap: () => {sort(element["id"])},
-            //add marker on google map
-            markerId: MarkerId(showLocation.toString()),
-            position: showLocation, //position of marker
-            infoWindow: InfoWindow(
-              //popup info
-              title: element["value"]["branchName"],
-              snippet: element["value"]["address"],
-            ),
-            icon: await BitmapDescriptor.fromAssetImage(
-                const ImageConfiguration(size: Size(30, 30)),
-                'assets/images/bankMarker.png')));
-      });
+      LatLng showLocation = LatLng(element["value"]["location"]["lat"],
+          element["value"]["location"]["lng"]);
+
+      //location to show in map
+      markers.add(Marker(
+          onTap: () => {sort(element["id"])},
+          //add marker on google map
+          markerId: MarkerId(showLocation.toString()),
+          position: showLocation, //position of marker
+          infoWindow: InfoWindow(
+            //popup info
+            title: element["value"]["branchName"],
+            snippet: element["value"]["address"],
+          ),
+          icon: await BitmapDescriptor.fromAssetImage(
+              const ImageConfiguration(size: Size(30, 30)),
+              'assets/images/bankMarker.png')));
     });
-  }
+  });
+}
+
 
   @override
   void dispose() {
@@ -260,6 +267,10 @@ class _StateHomePage extends State<PageHomePage> {
                           target: showLocation, //initial position
                           zoom: 13.5, //initial zoom level
                         ),
+                        onCameraIdle: () {
+                          fetchData();
+                        },
+
                         markers: markers, //markers to show on map
                         mapType: MapType.normal, //map type
                         onCameraMove: _onCameraMove,
