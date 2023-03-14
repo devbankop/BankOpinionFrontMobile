@@ -124,46 +124,7 @@ class _StateHomePage extends State<PageHomePage> {
       }
     }
   }
-
-  Future<void> _onCameraMove(CameraPosition position) async {
-    _lastMapPosition = position.target;
-    if (position.zoom <= 10) return;
-
-    var urlSucursales = Uri.parse(
-        'https://bankopinion-backend-development-3vucy.ondigitalocean.app/branches/branchesOfChunkInDB/${_lastMapPosition.latitude},${_lastMapPosition.longitude}');
-
-    final response = await http.get(urlSucursales);
-    print(urlSucursales);
-
-    setState(() {
-      banks = jsonDecode(response.body);
-
-      banks.forEach((element) async {
-        if (element["value"]["location"] == null) return;
-
-        LatLng showLocation = LatLng(element["value"]["location"]["lat"],
-            element["value"]["location"]["lng"]);
-
-        //location to show in map
-        print(showLocation);
-        markers.add(Marker(
-            onTap: () => {sort(element["value"]["id"])},
-            //add marker on google map
-            markerId: MarkerId(showLocation.toString()),
-            position: showLocation, //position of marker
-            infoWindow: InfoWindow(
-              //popup info
-              title: element["value"]["branchName"].toString(),
-              snippet: element["value"]["address"],
-            ),
-            icon: await BitmapDescriptor.fromAssetImage(
-                const ImageConfiguration(size: Size(30, 30)),
-                'assets/images/bankMarker.png')));
-      });
-    });
-  }
-
-  void sort(int id) {
+void sort(int id) {
     setState(() {
       var index = -1;
       for (var i = 0; i < banks.length; ++i)
@@ -186,10 +147,32 @@ class _StateHomePage extends State<PageHomePage> {
     print(address);
   }
 
-  Future<void> fetchData() async {
+ Timer? _timer;
+
+void _startTimer() {
+  _timer?.cancel(); // Cancela el temporizador existente antes de iniciar uno nuevo.
+  _timer = Timer(const Duration(seconds: 2), () {
+    fetchData();
+  });
+}
+
+void _cancelTimer() {
+  _timer?.cancel();
+  _timer = null as Timer?;;
+}
+
+Future<void> _onCameraMove(CameraPosition position) async {
+  _lastMapPosition = position.target;
+  if (position.zoom <= 10) return;
+
+  _cancelTimer();
+  _startTimer();
+}
+
+Future<void> fetchData() async {
   // Define el URI de la solicitud http
   var prueba = Uri.parse(
-      'https://bankopinion-backend-development-3vucy.ondigitalocean.app/branches/branchesOfChunkInDB/${showLocation.latitude},${showLocation.longitude}');
+      'https://bankopinion-backend-development-3vucy.ondigitalocean.app/branches/branchesOfChunkInDB/${_lastMapPosition.latitude},${_lastMapPosition.longitude}');
   
   // Realiza la solicitud http y espera la respuesta
   final response = await http.get(prueba);
@@ -223,6 +206,7 @@ class _StateHomePage extends State<PageHomePage> {
     });
   });
 }
+
 
 
   @override
