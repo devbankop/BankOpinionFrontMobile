@@ -211,6 +211,7 @@ Future<void> fetchData() async {
 
   @override
   void dispose() {
+    fetchData();
     _controller.dispose();
     super.dispose();
   }
@@ -242,7 +243,7 @@ Future<void> fetchData() async {
                   Container(
                       decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(10)),
-                      height: kIsWeb ? 500 : 400,
+                      height: kIsWeb ? 600 : 400,
                       child: GoogleMap(
                         //Map widget from google_maps_flutter packages
                         zoomGesturesEnabled: true, //enable Zoom in, out on map
