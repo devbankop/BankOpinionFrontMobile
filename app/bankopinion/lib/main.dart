@@ -45,6 +45,7 @@ class _MyAppViewState extends State<MyAppView> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       title: 'BankOpinion',
       theme: ThemeData(
         // This is the theme of your application.

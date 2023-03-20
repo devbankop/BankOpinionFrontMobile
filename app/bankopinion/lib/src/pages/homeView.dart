@@ -124,7 +124,8 @@ class _StateHomePage extends State<PageHomePage> {
       }
     }
   }
-void sort(int id) {
+
+  void sort(int id) {
     setState(() {
       var index = -1;
       for (var i = 0; i < banks.length; ++i)
@@ -147,67 +148,67 @@ void sort(int id) {
     print(address);
   }
 
- Timer? _timer;
+  Timer? _timer;
 
-void _startTimer() {
-  _timer?.cancel(); // Cancela el temporizador existente antes de iniciar uno nuevo.
-  _timer = Timer(const Duration(seconds: 2), () {
-    fetchData();
-  });
-}
-
-void _cancelTimer() {
-  _timer?.cancel();
-  _timer = null as Timer?;;
-}
-
-Future<void> _onCameraMove(CameraPosition position) async {
-  _lastMapPosition = position.target;
-  if (position.zoom <= 10) return;
-
-  _cancelTimer();
-  _startTimer();
-}
-
-Future<void> fetchData() async {
-  // Define el URI de la solicitud http
-  var prueba = Uri.parse(
-      'https://bankopinion-backend-development-3vucy.ondigitalocean.app/branches/branchesOfChunkInDB/${_lastMapPosition.latitude},${_lastMapPosition.longitude}');
-  
-  // Realiza la solicitud http y espera la respuesta
-  final response = await http.get(prueba);
-
-  // Borra todos los marcadores existentes
-  markers.clear();
-
-  setState(() {
-    banks = jsonDecode(response.body);
-
-    banks.forEach((element) async {
-      if (element["value"]["location"] == null) return;
-
-      LatLng showLocation = LatLng(element["value"]["location"]["lat"],
-          element["value"]["location"]["lng"]);
-
-      //location to show in map
-      markers.add(Marker(
-          onTap: () => {sort(element["id"])},
-          //add marker on google map
-          markerId: MarkerId(showLocation.toString()),
-          position: showLocation, //position of marker
-          infoWindow: InfoWindow(
-            //popup info
-            title: element["value"]["branchName"],
-            snippet: element["value"]["address"],
-          ),
-          icon: await BitmapDescriptor.fromAssetImage(
-              const ImageConfiguration(size: Size(30, 30)),
-              'assets/images/bankMarker.png')));
+  void _startTimer() {
+    _timer
+        ?.cancel(); // Cancela el temporizador existente antes de iniciar uno nuevo.
+    _timer = Timer(const Duration(seconds: 2), () {
+      fetchData();
     });
-  });
-}
+  }
 
+  void _cancelTimer() {
+    _timer?.cancel();
+    _timer = null as Timer?;
+    ;
+  }
 
+  Future<void> _onCameraMove(CameraPosition position) async {
+    _lastMapPosition = position.target;
+    if (position.zoom <= 10) return;
+
+    _cancelTimer();
+    _startTimer();
+  }
+
+  Future<void> fetchData() async {
+    // Define el URI de la solicitud http
+    var prueba = Uri.parse(
+        'https://bankopinion-backend-development-3vucy.ondigitalocean.app/branches/branchesOfChunkInDB/${_lastMapPosition.latitude},${_lastMapPosition.longitude}');
+
+    // Realiza la solicitud http y espera la respuesta
+    final response = await http.get(prueba);
+
+    // Borra todos los marcadores existentes
+    markers.clear();
+
+    setState(() {
+      banks = jsonDecode(response.body);
+
+      banks.forEach((element) async {
+        if (element["value"]["location"] == null) return;
+
+        LatLng showLocation = LatLng(element["value"]["location"]["lat"],
+            element["value"]["location"]["lng"]);
+
+        //location to show in map
+        markers.add(Marker(
+            onTap: () => {sort(element["id"])},
+            //add marker on google map
+            markerId: MarkerId(showLocation.toString()),
+            position: showLocation, //position of marker
+            infoWindow: InfoWindow(
+              //popup info
+              title: element["value"]["branchName"],
+              snippet: element["value"]["address"],
+            ),
+            icon: await BitmapDescriptor.fromAssetImage(
+                const ImageConfiguration(size: Size(20, 20)),
+                'assets/images/bankMarker.png')));
+      });
+    });
+  }
 
   @override
   void dispose() {
@@ -230,15 +231,11 @@ Future<void> fetchData() async {
       backgroundColor: Color.fromARGB(255, 255, 255, 255),
       bottomNavigationBar: BottomBar(),
       body: kIsWeb
-          ?   Center(
-              child: 
-              SingleChildScrollView(
-                          child:
-              Container(
-                padding: EdgeInsets.only(top: 1),
-                child: 
-              
-               Column(
+          ? Center(
+              child: SingleChildScrollView(
+                  child: Container(
+              padding: EdgeInsets.only(top: 1),
+              child: Column(
                 children: [
                   Container(
                       decoration: BoxDecoration(
@@ -366,19 +363,18 @@ Future<void> fetchData() async {
                     children: [
                       for (int index = 0; index < banks.length; index++)
                         SizedBox(
-                          width: 500,
+                            width: 500,
                             child: InkWell(
-                              onDoubleTap: () {
-                                 Navigator.push(
-                                                                context,
-                                                                MaterialPageRoute(
-                                                                    builder:
-                                                                        (context) =>
-                                                                            allReviews(
-                                                                              bank: banks.elementAt(index)["value"],
-                                                                            )),
-                                                              );
-                              },
+                                onDoubleTap: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => allReviews(
+                                              bank: banks
+                                                  .elementAt(index)["value"],
+                                            )),
+                                  );
+                                },
                                 onTap: () {
                                   LatLng newlatlong = LatLng(
                                       banks.elementAt(index)["value"]
