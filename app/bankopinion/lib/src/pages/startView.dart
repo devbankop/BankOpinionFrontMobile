@@ -1,14 +1,16 @@
 import 'dart:async';
 import 'package:bankopinion/src/auth/loginView.dart';
 import 'package:bankopinion/src/auth/signup1.dart';
-import 'package:bankopinion/src/auth/signup2.dart';
-import 'package:bankopinion/src/auth/signup3.dart';
-import 'package:bankopinion/src/pages/configuraci%C3%B3n.dart';
 import 'package:bankopinion/src/pages/homeView.dart';
+
+import 'package:bankopinion/src/pages/news.dart';
+import 'package:flutter/foundation.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:permission_handler/permission_handler.dart';
+
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../authServices/refreshToken.dart';
 
 class StartView extends StatefulWidget {
   const StartView({super.key});
@@ -19,16 +21,63 @@ class StartView extends StatefulWidget {
 
 class _StartViewState extends State<StartView> {
   String? jwt;
+  String? userRole;
+
 
   @override
   void initState() {
+    _getCurrentLocation();
     super.initState();
     _getJWT();
+    _getRole();
+     SharedPreferences.getInstance().then((value) {
+    prefs = value;
+  }
+  );
     // var refresh = AuthService();
     // refresh.refreshToken();
      
   }
 
+
+Future<void> _getCurrentLocation() async {
+// Solicita el permiso de ubicación
+var status = await Permission.location.request();
+
+if( await Permission.locationWhenInUse.serviceStatus.isEnabled )
+{
+status = PermissionStatus.granted;
+prefs.setBool('isLocationEnabled', true);
+} else if( await Permission.locationWhenInUse.isPermanentlyDenied )
+{
+status = PermissionStatus.permanentlyDenied;
+prefs.setBool('isLocationEnabled', false);
+}
+
+if (status != PermissionStatus.granted) {
+print('Permiso de ubicación denegado');
+prefs.setBool('isLocationEnabled', false);
+return;
+}
+
+// Obtiene la posición actual del usuario
+var position = await Geolocator.getCurrentPosition();
+print('Latitud: ${position.latitude}, Longitud: ${position.longitude}');
+}
+
+
+
+
+  Future<void> _getRole() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      if(jwt == null)
+      prefs.setString('userRole', 'user');
+        userRole = 'user';
+
+      jwt = prefs.getString('jwt');
+    });
+  }
   Future<void> _getJWT() async {
     final prefs = await SharedPreferences.getInstance();
     setState(() {
@@ -36,16 +85,14 @@ class _StartViewState extends State<StartView> {
     });
   }
 
-  late TextEditingController _controller;
 
   var banks = [];
   var prefs;
 
   Future<void> fetchData() async {}
 
-  @override
+  @override 
   void dispose() {
-    _controller.dispose();
     super.dispose();
   }
 
@@ -57,12 +104,21 @@ class _StartViewState extends State<StartView> {
       key: _scaffoldKey,
       resizeToAvoidBottomInset: true,
       backgroundColor: Color.fromARGB(255, 255, 255, 255),
-      body: Column(children: [
+      body: Center(
+        child: Column(children: [
+
+        Padding(padding: EdgeInsets.only(top: 50),
+        child: Text("BankOpinion",
+        style: TextStyle(
+          fontSize: 45,
+          fontWeight: FontWeight.w900,
+          color: Color.fromARGB(255, 122, 93, 178)
+        ))),
         Padding(
-            padding: EdgeInsets.only(top: 50, left: 20, right: 20, bottom: 30),
+            padding: EdgeInsets.only(top: 20, left: 20, right: 20, bottom: 40),
             child: Container(
               child: Image.asset(
-                'assets/images/imageStartView.jpeg',
+                'assets/images/imageStartView.png',
                 width: double.infinity,
                 height: 300.0,
                 //fit: BoxFit.cover,
@@ -74,13 +130,21 @@ class _StartViewState extends State<StartView> {
 
           // ignore: prefer_const_literals_to_create_immutables
           children: [
+            Padding(padding: EdgeInsets.only(top: 5),
+            child: Text("¿PROBLEMAS CON TU BANCO?",
+            softWrap: true,
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                  color: Color.fromARGB(255, 55, 18, 125),
+                  fontSize: 22,
+                  fontWeight: FontWeight.bold))),
             const Padding(
-              padding: EdgeInsets.only(left: 20, right: 20, top: 10),
+              padding: EdgeInsets.only(left: 25, right: 25, top: 10),
               child: Text(
-                  "Encuentra las mejores recomentaciones de sucursales bancarias",
+                  "Haz que tu opinión cuente y mantente al día sobre el mundo financiero",
                   softWrap: true,
                   textAlign: TextAlign.center,
-                  style: TextStyle(fontSize: 26)),
+                  style: TextStyle(fontSize: 18.5)),
             )
           ],
         ),
@@ -88,83 +152,86 @@ class _StartViewState extends State<StartView> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Padding(
-                padding: EdgeInsets.only(top: 40, left: 20, right: 20),
+                padding: EdgeInsets.only(top: 60, left: 20, right: 20),
                 child: Container(
                     child: ElevatedButton(
                   onPressed: (() {
-                    
-    //                 var refresh = AuthService();
-    // refresh.refreshToken();
+                  
                       Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => PageHomePage()));
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => PageHomePage()));
                     
                   }),
                   style: ElevatedButton.styleFrom(
                     shape: const StadiumBorder(),
                     padding: const EdgeInsets.symmetric(
-                        horizontal: 50, vertical: 14),
+                        horizontal: 100, vertical: 14),
                     backgroundColor: const Color.fromARGB(255, 153, 116, 223),
                   ),
                   child: Text(
-                          "Opinar sobre sucursales",
+                          "Acceder",
                       style: TextStyle(fontSize: 16)),
                 )))
           ],
         ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Padding(
-                padding: EdgeInsets.only(top: 20, left: 20, right: 20),
-                child: Container(
-                    child: ElevatedButton(
-                  onPressed: (() {
-                    if (jwt == null) {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) =>
-                                  LoginView()));
-                    }
-                  }),
-                  style: ElevatedButton.styleFrom(
-                    shape: const StadiumBorder(),
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 55, vertical: 14),
-                    backgroundColor:                       
-                    jwt == null
-                        ?const Color.fromARGB(255, 153, 116, 223)
-                        :Color.fromARGB(67, 154, 116, 223)
-                  ),
-                  child: Text(
-                      jwt == null
-                          ? "Iniciar sesión o registrarme"
-                          : "Ya has iniciado sesión",
-                      style: TextStyle(fontSize: 16)),
-                )))
-          ],
-        ),
+     
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           // ignore: prefer_const_literals_to_create_immutables
           children: [
             // ignore: prefer_const_constructors
             Padding(
-                padding: const EdgeInsets.only(top: 20),
+                padding: const EdgeInsets.only(top: kIsWeb ? 20 : 60),
                 child:
                     // ignore: prefer_const_constructors
                     InkWell(
-                        onTap: () {},
+                        onTap: () {
+
+                           if (jwt == null) {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) =>
+                                  LoginView()));
+                    }
+                        },
                         // ignore: prefer_const_constructors
-                        child: Text("Sobre nosotros",
+                        child: Text("Inicia sesión",
+                            style: const TextStyle(
+                                color: Color.fromARGB(255, 153, 116, 223),
+                                decoration: TextDecoration.underline)))),
+            Padding(
+                padding: const EdgeInsets.only(top: kIsWeb ? 20 : 60),
+                child:
+            Text("    ó    ",
+            style: const TextStyle(
+            color: Color.fromARGB(255, 153, 116, 223)))),
+
+            Padding(
+                padding: const EdgeInsets.only(top: kIsWeb ? 20 : 60),
+                child:
+                    // ignore: prefer_const_constructors
+                    InkWell(
+                        onTap: () {
+
+                           if (jwt == null) {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) =>
+                                  SignUpView1()));
+                    }
+                        },
+                        // ignore: prefer_const_constructors
+                        child: Text("Regístrate",
                             style: const TextStyle(
                                 color: Color.fromARGB(255, 153, 116, 223),
                                 decoration: TextDecoration.underline))))
           ],
         )
-      ]),
+      ])
+      )
     );
   }
 }

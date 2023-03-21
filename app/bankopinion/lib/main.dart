@@ -1,21 +1,52 @@
+import 'package:bankopinion/src/auth/loginView.dart';
+import 'package:bankopinion/src/auth/signup2.dart';
+import 'package:bankopinion/src/auth/signup3.dart';
+import 'package:bankopinion/src/pages/allReviewsView.dart';
+import 'package:bankopinion/src/pages/config.dart';
 import 'package:bankopinion/src/pages/homeView.dart';
+import 'package:bankopinion/src/pages/news.dart';
 import 'package:bankopinion/src/pages/startView.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+//ACTUALIZADO
 
 void main() {
-  runApp(const MyApp());
+  runApp(MyAppView());
+
+
+}
+class MyAppView extends StatefulWidget {
+  const MyAppView({super.key});
+
+  @override
+  State<MyAppView> createState() => _MyAppViewState();
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+class _MyAppViewState extends State<MyAppView> {
+  String? jwt;
+  String? userRole;
+
+  @override
+  void initState() {
+    super.initState();
+    _getRole();
+  }
+
+  Future<void> _getRole() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      userRole = prefs.getString('userRole');
+      jwt = prefs.getString('jwt');
+    });
+  }
 
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      debugShowCheckedModeBanner: false,
+      title: 'BankOpinion',
       theme: ThemeData(
         // This is the theme of your application.
         //
@@ -28,13 +59,15 @@ class MyApp extends StatelessWidget {
         // is not restarted.
         primarySwatch: Colors.blue,
       ),
-      home: const StartView( ),
+      home: jwt == null ? StartView() : PageHomePage(),
     );
   }
 }
 
 class MyHomePage extends StatefulWidget {
+  
   const MyHomePage({super.key, required this.title});
+  
 
   // This widget is the home page of your application. It is stateful, meaning
   // that it has a State object (defined below) that contains fields that affect

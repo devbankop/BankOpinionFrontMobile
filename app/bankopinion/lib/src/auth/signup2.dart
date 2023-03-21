@@ -1,6 +1,6 @@
 import 'dart:async';
 import 'package:bankopinion/src/auth/signup3.dart';
-import 'package:bankopinion/src/pages/homeView.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 class SignUpView2 extends StatefulWidget {
@@ -45,34 +45,10 @@ class _SignUpView2State extends State<SignUpView2> {
         key: _scaffoldKey,
         resizeToAvoidBottomInset: true,
         backgroundColor: const Color.fromARGB(255, 255, 255, 255),
-        body: SingleChildScrollView(
+        body: Center(child: 
+        SingleChildScrollView(
             child: Column(children: [
-          Padding(
-              padding: EdgeInsets.all(15),
-              child: Row(
-                children: [
-                  SizedBox(
-                      width: 70.0,
-                      height: 70.0,
-                      child: Padding(
-                        padding: const EdgeInsets.only(top: 20),
-                        child: ElevatedButton(
-                            onPressed: () {
-                              Navigator.pop(context);
-                            },
-                            style: ElevatedButton.styleFrom(
-                              shape: const CircleBorder(),
-                              padding: const EdgeInsets.all(5),
-                              backgroundColor:
-                                  Color.fromARGB(255, 255, 255, 255),
-                            ),
-                            child: const Icon(
-                              Icons.arrow_back,
-                              color: Color.fromARGB(255, 153, 116, 223),
-                            )),
-                      )),
-                ],
-              )),
+          
           Row(mainAxisAlignment: MainAxisAlignment.center, children: [
             Column(
               // ignore: prefer_const_literals_to_create_immutables
@@ -126,7 +102,9 @@ class _SignUpView2State extends State<SignUpView2> {
                             color: Color.fromARGB(255, 0, 0, 0),
                             fontWeight: FontWeight.bold)),
                   ])),
-          Padding(
+          Container(
+            width: kIsWeb ? 400 : null,
+            child: Padding(
             padding: EdgeInsets.only(left: 20, right: 20),
             child: Column(
               children: [
@@ -167,9 +145,8 @@ class _SignUpView2State extends State<SignUpView2> {
                             hintText: "Introduce tu nueva contraseña",
                           ),
                           onChanged: (String value) {
-                            setState(() {
-                              _isDeleting = false;
-                              password1 = value;
+
+                            password1 = value;
                               _passwordErrorNumber = !_isDeleting &&
                                       RegExp(r'^(?=.*[0-9])')
                                           .hasMatch(password1)
@@ -192,14 +169,16 @@ class _SignUpView2State extends State<SignUpView2> {
                                       ? "Al menos 8 caracteres"
                                       : null;
 
+
+
+                            setState(() {
+                              
+                              if(_passwordErrorLength != null && _passwordErrorMayus != null && _passwordErrorMinus != null && _passwordErrorNumber != null)
                               _isValid = true;
                             });
+                             
                           },
-                          onEditingComplete: () {
-                            setState(() {
-                              _isDeleting = true;
-                            });
-                          },
+                          
                         ),
                       ),
                     ),
@@ -399,18 +378,19 @@ class _SignUpView2State extends State<SignUpView2> {
                       obscureText: _isObscure2,
                       onChanged: (value) {
                         
-                      _password2 = value;
+                      setState(() {
+                        _password2 = value;
 
-                      password1 == _password2
+                        password1 == _password2
                         ?  _isValid2 = true
-                        :  _isValid == false;
+                        :  _isValid2 == false;
 
+                      });
                       },
                       decoration: InputDecoration(
                         suffixIcon: GestureDetector(
                           onTap: () {
                             setState(() {
-                              
                               _isObscure2 = !_isObscure2;
                             });
                             
@@ -429,19 +409,20 @@ class _SignUpView2State extends State<SignUpView2> {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        _isValid2
-                            ? ElevatedButton(
+                        
+                             ElevatedButton(
                                 onPressed: 
                                      () {
-                                        if (_isValid2) {
+                                        if (_isValid2 && password1 == _password2) {
                                           
                                           Navigator.push(
                                               context,
                                               MaterialPageRoute(
                                                   builder: (context) =>
                                                       SignUpView3(password1: password1, email: widget.email)));
-                                                      print(widget.email + password1);
-                                        } else {}
+                                        } else {
+
+                                        }
                                       },
                                     
                                 style: ElevatedButton.styleFrom(
@@ -449,36 +430,19 @@ class _SignUpView2State extends State<SignUpView2> {
                                   padding: const EdgeInsets.symmetric(
                                       horizontal: 130, vertical: 14),
                                   backgroundColor:
-                                      const Color.fromARGB(255, 153, 116, 223),
+                                      _isValid2 && password1 == _password2 ? const Color.fromARGB(255, 153, 116, 223) : Color.fromARGB(121, 154, 116, 223),
                                 ),
                                 child: const Text("Siguiente",
                                     style: TextStyle(fontSize: 16)))
-                            : ElevatedButton(
-                                onPressed: !_isValid
-                                    ? () {
-                                        if (_isValid) {
-                                          Navigator.push(
-                                              context,
-                                              MaterialPageRoute(
-                                                  builder: (context) =>
-                                                      SignUpView3(password1: password1, email: widget.email)));
-                                        } else {}
-                                      }
-                                    : null,
-                                style: ElevatedButton.styleFrom(
-                                  shape: const StadiumBorder(),
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 130, vertical: 14),
-                                  backgroundColor:
-                                      const Color.fromARGB(127, 154, 116, 223),
-                                ),
-                                child: const Text("Siguiente",
-                                    style: TextStyle(fontSize: 16))),
+                            
                       ],
                     ))
               ],
             ),
           )
-        ])));
+          )
+        ])))
+        
+        );
   }
 }

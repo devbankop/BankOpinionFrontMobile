@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'package:bankopinion/src/auth/signup1.dart';
 import 'package:bankopinion/src/pages/homeView.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
@@ -19,6 +20,10 @@ class _LoginViewState extends State<LoginView> {
   var banks = [];
   var correo;
   var passwd;
+  var _isObscure = true;
+  var error404 = false;
+  
+
 
   Future<void> fetchData() async {}
 
@@ -42,10 +47,11 @@ class _LoginViewState extends State<LoginView> {
         key: _scaffoldKey,
         resizeToAvoidBottomInset: true,
         backgroundColor: const Color.fromARGB(255, 255, 255, 255),
-        body: SingleChildScrollView(
+        body: Center(
+          child: SingleChildScrollView(
             child: Column(children: [
           Padding(
-              padding: EdgeInsets.only(top: 15, left: 15, bottom: 5),
+              padding: EdgeInsets.only(top: 15, left: 15),
               child: Row(
                 children: [
                   SizedBox(
@@ -86,7 +92,7 @@ class _LoginViewState extends State<LoginView> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 // ignore: prefer_const_literals_to_create_immutables
                 children: [
-                  const Text("INICIO DE SESIÓN",
+                  const Text(kIsWeb ? "INICIO  DE  SESIÓN" : "INICIO DE SESIÓN",
                       style: TextStyle(
                           fontSize: 24,
                           color: Color.fromARGB(255, 55, 11, 137),
@@ -95,7 +101,12 @@ class _LoginViewState extends State<LoginView> {
               )),
           Padding(
             padding: const EdgeInsets.all(20),
-            child: Column(
+            child: 
+            Container(
+              
+              width: kIsWeb ? 400 : null,
+              child: 
+            Column(
               children: [
                 Row(
                   // ignore: prefer_const_literals_to_create_immutables
@@ -149,8 +160,18 @@ class _LoginViewState extends State<LoginView> {
                         onChanged: (value) {
                           passwd = value;
                         },
-                        obscureText: true,
+                        obscureText: _isObscure,
                         decoration: InputDecoration(
+                          suffixIcon: GestureDetector(
+                              onTap: () {
+                                setState(() {
+                                  _isObscure = !_isObscure;
+                                });
+                              },
+                              child: Icon(_isObscure
+                                  ? Icons.visibility_off
+                                  : Icons.visibility),
+                            ),
                             border: OutlineInputBorder(),
                             hintText: 'Contraseña'),
                         maxLines: 1,
@@ -159,6 +180,18 @@ class _LoginViewState extends State<LoginView> {
                     )
                   ],
                 ),
+                error404 == true
+                ? 
+                    RichText(
+                      text: 
+                    const TextSpan(
+                            text: "Credenciales de acceso incorrectas",
+                            style: TextStyle(
+                                color: Color.fromARGB(143, 255, 0, 0),
+                                fontWeight: FontWeight.normal),
+                          ))
+                  
+                : Text(""),
                 Column(
                   children: [
                     Padding(
@@ -174,7 +207,7 @@ class _LoginViewState extends State<LoginView> {
                                     "password": passwd
                                     });
 
-                                print(body);
+                                
 
                                 var loginUser = Uri.parse(
                                     'https://bankopinion-backend-development-3vucy.ondigitalocean.app/users/signIn');
@@ -186,12 +219,10 @@ class _LoginViewState extends State<LoginView> {
                                     });
 
                                 print("statusCode: ${response.statusCode}");
-                                print("response.body: ${response.body}");
 
                                 if (response.statusCode == 200) {
                                   Map<String, dynamic> responseData =
                                       json.decode(response.body);
-                                  print("hola");
                                   var token =
                                       responseData["session"]["access_token"];
                                   var refreshToken =
@@ -209,15 +240,11 @@ class _LoginViewState extends State<LoginView> {
 
                                   var prefs =
                                       await SharedPreferences.getInstance();
-                                  print(token);
 
                                   prefs.setString('jwt', token);
                                   prefs.setString('refresh_token', refreshToken);
                                   prefs.setInt('expires_in', expiresIn);
                                   prefs.setString('userRole', userRole);
-
-
-                                  print(userRole);
 
 
                                   if (prefs.getString('jwt') != null) {
@@ -227,7 +254,18 @@ class _LoginViewState extends State<LoginView> {
                                             builder: (context) =>
                                                 const PageHomePage()));
                                   }
+
+
+                                 
+
+
                                 }
+                                 if(response.statusCode == 404)
+                                 setState(() {
+                                    
+                                    error404 = true;
+
+                                  });
                               }),
                               style: ElevatedButton.styleFrom(
                                 shape: const StadiumBorder(),
@@ -241,42 +279,44 @@ class _LoginViewState extends State<LoginView> {
                         ],
                       ),
                     ),
-                    Padding(
-                      padding: const EdgeInsets.only(top: 10),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          ElevatedButton(
-                            onPressed: (() {}),
-                            style: ElevatedButton.styleFrom(
-                              shape: const StadiumBorder(
-                                side: BorderSide(
-                                  color: Color.fromARGB(46, 35, 0, 100),
-                                  width: .5,
-                                ),
-                              ),
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 55, vertical: 14),
-                              backgroundColor:
-                                  const Color.fromARGB(255, 255, 255, 255),
-                            ),
-                            child: Row(
-                              children: const [
-                                Icon(
-                                  Icons.login,
-                                  color: Colors.black,
-                                ),
-                                Text(
-                                  " Iniciar sesión con Google",
-                                  style: TextStyle(
-                                      fontSize: 16, color: Colors.black),
-                                )
-                              ],
-                            ),
-                          )
-                        ],
-                      ),
-                    )
+
+              //Inicio con Google
+                    // Padding(
+                    //   padding: const EdgeInsets.only(top: 10),
+                    //   child: Row(
+                    //     mainAxisAlignment: MainAxisAlignment.center,
+                    //     children: [
+                    //       ElevatedButton(
+                    //         onPressed: (() {}),
+                    //         style: ElevatedButton.styleFrom(
+                    //           shape: const StadiumBorder(
+                    //             side: BorderSide(
+                    //               color: Color.fromARGB(46, 35, 0, 100),
+                    //               width: .5,
+                    //             ),
+                    //           ),
+                    //           padding: const EdgeInsets.symmetric(
+                    //               horizontal: 55, vertical: 14),
+                    //           backgroundColor:
+                    //               const Color.fromARGB(255, 255, 255, 255),
+                    //         ),
+                    //         child: Row(
+                    //           children: const [
+                    //             Icon(
+                    //               Icons.login,
+                    //               color: Colors.black,
+                    //             ),
+                    //             Text(
+                    //               " Iniciar sesión con Google",
+                    //               style: TextStyle(
+                    //                   fontSize: 16, color: Colors.black),
+                    //             )
+                    //           ],
+                    //         ),
+                    //       )
+                    //     ],
+                    //   ),
+                    // )
                   ],
                 ),
                 Padding(
@@ -299,7 +339,7 @@ class _LoginViewState extends State<LoginView> {
                       ],
                     )),
                 Padding(
-                    padding: EdgeInsets.only(top: 40),
+                    padding: EdgeInsets.only(top: 40, bottom: 50),
                     child: ElevatedButton(
                         onPressed: (() {
                           Navigator.push(
@@ -317,8 +357,10 @@ class _LoginViewState extends State<LoginView> {
                         child: const Text("Registrarse",
                             style: TextStyle(fontSize: 16))))
               ],
-            ),
+            ),)
           ),
-        ])));
+        ]))
+        )
+        );
   }
 }

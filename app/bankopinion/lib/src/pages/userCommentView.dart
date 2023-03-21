@@ -4,6 +4,8 @@ import 'dart:io';
 import 'dart:math';
 
 import 'package:bankopinion/src/auth/loginView.dart';
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:easy_debounce/easy_debounce.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
@@ -24,9 +26,9 @@ class userCommentView extends StatefulWidget {
 }
 
 class userCommentViewState extends State<userCommentView> {
-  Future<void> fetchData() async {}
-
+ 
   String? jwt;
+  String? userRole;
   String? refresh_token;
 
   var agradecimientos = [
@@ -58,6 +60,7 @@ class userCommentViewState extends State<userCommentView> {
   Future<void> _getJWT() async {
     final SharedPreferences preferences = await SharedPreferences.getInstance();
     jwt = preferences.getString('jwt');
+    userRole = preferences.getString('userRole');
     refresh_token = preferences.getString('refresh_token');
   }
 
@@ -84,6 +87,8 @@ class userCommentViewState extends State<userCommentView> {
   void _onChanged(bool? value) {
     setState(() {
       checkShowUser = value ?? false;
+      checkShowUser = value ?? true;
+
     });
   }
 
@@ -96,7 +101,289 @@ class userCommentViewState extends State<userCommentView> {
         resizeToAvoidBottomInset: true,
         bottomNavigationBar: BottomBar(),
         backgroundColor: const Color.fromARGB(255, 255, 255, 255),
-        body: SingleChildScrollView(
+        body: 
+        kIsWeb
+        ? SingleChildScrollView(
+            child: Column(children: [
+          Row(children: [
+            Container(
+                color: const Color.fromARGB(255, 255, 255, 255),
+                width: screenWidth,
+                child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Stack(children: <Widget>[
+                            ClipRRect(
+                                              
+                                    child: CachedNetworkImage(
+                                      imageUrl: 'https://maps.googleapis.com/maps/api/streetview?location=${widget.bank["location"]["lat"]},${widget.bank["location"]["lng"]}&size=1200x800&key=AIzaSyCQctW3M3O3TUSj5oDr9BLYNEwm0Vxm4Ak',
+                                      width: 1000,
+                                      height: 520,
+                                      fit: BoxFit.cover,
+                                      errorWidget: (BuildContext context, String url, dynamic error) {
+                                        print('Error al cargar la imagen: $error');
+                                        return const Center(child: Text('Error al cargar la imagen'));
+                                      },
+                                    ),
+                                  ),
+                            
+                            
+                          ])
+                        ],
+                      ),
+                      Center(
+                        child: Container(
+                          width: 1000,
+                          child: Padding(
+                        padding: const EdgeInsets.only(
+                            top: 25, left: 17, bottom: 15),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            Row(
+                              children: [
+                                Text(widget.bank["branchName"],
+                                    textAlign: TextAlign.left,
+                                    style: const TextStyle(
+                                        fontSize: 18,
+                                        color: Color.fromARGB(255, 0, 0, 0),
+                                        fontWeight: FontWeight.bold)),
+                              ],
+                            ),
+                            Row(
+                              children: [
+                                Text(widget.bank["address"],
+                                    textAlign: TextAlign.left,
+                                    style: const TextStyle(
+                                      fontSize: 11,
+                                      color: Color.fromARGB(255, 0, 0, 0),
+                                    ))
+                              ],
+                            ),
+                            Padding(
+                                padding:
+                                    const EdgeInsets.only(top: 5, bottom: 4),
+                                child: Row(
+                                  children: [
+                                    Column(children: [
+                                      StatmentRatings(bank: widget.bank)
+                                    ]),
+                                    Column(
+                                      children: [
+                                        Padding(
+                                          padding:
+                                              const EdgeInsets.only(top: 1),
+                                          child: Text(
+                                              "(${widget.bank["branchRating"]})",
+                                              style: const TextStyle(
+                                                fontSize: 14,
+                                                fontWeight: FontWeight.bold,
+                                                color: Color.fromARGB(
+                                                    255, 66, 66, 66),
+                                              )),
+                                        )
+                                      ],
+                                    )
+                                  ],
+                                )),
+                               
+                          ],
+                        ),
+                      ),
+                        )
+                      ),
+                       Center(
+                        child: Container(
+                          width: 1000,
+                          child: Column(
+                            children: [
+                              Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.only(bottom: 10),
+                            child: Container(
+                              
+                              height: 1,
+                              width: 1000,
+                              color: const Color.fromARGB(255, 138, 138, 138),
+                            ),
+                          )
+                        ],
+                      ),
+                      Padding(
+                          padding: const EdgeInsets.only(top: 25),
+                          child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                RatingBar.builder(
+                                    initialRating: rating,
+                                    minRating: 1,
+                                    itemSize: 60.0,
+                                    direction: Axis.horizontal,
+                                    allowHalfRating: true,
+                                    itemCount: 5,
+                                    itemPadding: const EdgeInsets.symmetric(
+                                        horizontal: 4.0),
+                                    // ignore: prefer_const_constructors
+                                    itemBuilder: (context, _) => Icon(
+                                          Icons.star,
+                                          color: Colors.amber,
+                                        ),
+                                    onRatingUpdate: (value) {
+                                      setState(() {
+                                        rating = value;
+                                      });
+
+                                      print(rating.toString());
+                                    })
+                              ])),
+                      Padding(
+                        padding: const EdgeInsets.all(15),
+                        child: Row(
+                          // ignore: prefer_const_literals_to_create_immutables
+                          children: [
+                            // ignore: prefer_const_constructors
+                            Text("Déjanos tu comentario",
+                                style: const TextStyle(
+                                    fontSize: 18,
+                                    color: Color.fromARGB(255, 0, 0, 0),
+                                    fontWeight: FontWeight.bold)),
+                          ],
+                        ),
+                      ),
+                      // ignore: prefer_const_constructors
+                      Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 15),
+                          child: TextField(
+                            onChanged: (value) {
+                              setState(() {
+                                textoReview = value;
+                              });
+                            },
+                            decoration: InputDecoration(
+                              border: OutlineInputBorder(),
+                              hintText: '',
+                            ),
+                            maxLines: 18,
+                            minLines: 10,
+                          )),
+
+                      Padding(
+                          padding: EdgeInsets.only(),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: <Widget>[
+                            Checkbox(
+                              value: checkShowUser,
+                              activeColor: Color.fromARGB(255, 153, 116, 223),
+                              checkColor: Colors.white,
+                              tristate: false,
+                              onChanged: _onChanged,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                            ),
+                            Text("Mostrar con el nombre real",
+                                style: TextStyle(
+                                    color: !checkShowUser
+                                        ? Color.fromARGB(255, 0, 0, 0)
+                                        : Color.fromARGB(255, 153, 116, 223))),
+                          ])),
+
+                      Padding(
+                          padding: EdgeInsets.all(10),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Container(
+                                  constraints: BoxConstraints(
+                                      minWidth: 300,
+                                      maxWidth:
+                                          (MediaQuery.of(context).size.width *
+                                                  1) -
+                                              30),
+                                  child: jwt != null && jwt != ""
+                                      ? ElevatedButton(
+                                          onPressed: (() async {
+                                            var body = jsonEncode({
+                                              "review": textoReview,
+                                              "reviewRating": rating,
+                                              "showUser": checkShowUser
+                                            });
+
+                                            print(body);
+                                            print(widget.bank["id"].toString());
+                                            var sendReview = Uri.parse(
+                                                'https://bankopinion-backend-development-3vucy.ondigitalocean.app/reviews/insertReview/' + widget.bank["id"].toString());
+
+                                            // if (jwt != null) {
+                                              var response = await http.post(
+                                                sendReview,
+                                                body: body,
+                                                headers: {
+                                                  'Authorization': '$jwt',
+                                                  'Content-Type': 'application/json'
+
+                                                },
+                                              );
+                                              //print("$jwt");
+                                              print(response.statusCode);
+                                              print(response.body);
+
+                                              if (response.statusCode == 200) {
+                                                 _showAlertDialog();
+                                              }
+                                            // } else {
+                                            //   print("jwt es null");
+                                            // }
+                                          }),
+                                          style: ElevatedButton.styleFrom(
+                                            shape: const StadiumBorder(),
+                                            padding: const EdgeInsets.all(12),
+                                            backgroundColor:
+                                                 userRole == 'superAdmin' ? Color.fromARGB(255, 223, 116, 116) :const Color.fromARGB(255, 153, 116, 223),
+                                          ),
+                                          child: const Text("Enviar",
+                                              style: TextStyle(fontSize: 16)))
+                                      : ElevatedButton(
+                                          onPressed: (() async {
+                                            Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      const LoginView()),
+                                            );
+                                          }),
+                                          style: ElevatedButton.styleFrom(
+                                            shape: const StadiumBorder(),
+                                            padding: const EdgeInsets.all(12),
+                                            backgroundColor: Color.fromARGB(
+                                                127, 154, 116, 223),
+                                          ),
+                                          child: const Text(
+                                              "Primero debes iniciar sesión",
+                                              style: TextStyle(fontSize: 16))))
+                            ],
+                          ))
+                            ],
+                          )
+                        )
+                       )
+                    ]))
+          ])
+        ]))
+
+
+
+//MÓVIL
+        : SingleChildScrollView(
             child: Column(children: [
           Row(children: [
             Container(
@@ -277,8 +564,10 @@ class userCommentViewState extends State<userCommentView> {
                           )),
 
                       Padding(
-                          padding: EdgeInsets.only(left: 10),
-                          child: Row(children: <Widget>[
+                          padding: EdgeInsets.only(),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: <Widget>[
                             Checkbox(
                               value: checkShowUser,
                               activeColor: Color.fromARGB(255, 153, 116, 223),
@@ -311,7 +600,6 @@ class userCommentViewState extends State<userCommentView> {
                                   child: jwt != null && jwt != ""
                                       ? ElevatedButton(
                                           onPressed: (() async {
-                                            _showAlertDialog();
                                             var body = jsonEncode({
                                               "review": textoReview,
                                               "reviewRating": rating,
@@ -319,44 +607,36 @@ class userCommentViewState extends State<userCommentView> {
                                             });
 
                                             print(body);
-
+                                            print(widget.bank["id"].toString());
                                             var sendReview = Uri.parse(
-                                                'https://bankopinion-backend-development-3vucy.ondigitalocean.app/reviews/insertReview/' +
-                                                    widget.bank["id"]
-                                                        .toString());
+                                                'https://bankopinion-backend-development-3vucy.ondigitalocean.app/reviews/insertReview/' + widget.bank["id"].toString());
 
-                                            if (jwt != null) {
+                                            // if (jwt != null) {
                                               var response = await http.post(
                                                 sendReview,
                                                 body: body,
                                                 headers: {
-                                                  HttpHeaders
-                                                          .authorizationHeader:
-                                                      "$jwt"
+                                                  'Authorization': '$jwt',
+                                                  'Content-Type': 'application/json'
+
                                                 },
                                               );
-                                              print("$jwt");
+                                              //print("$jwt");
                                               print(response.statusCode);
                                               print(response.body);
 
                                               if (response.statusCode == 200) {
-                                                Navigator.push(
-                                                  context,
-                                                  MaterialPageRoute(
-                                                      builder: (context) =>
-                                                          const PageHomePage()),
-                                                );
+                                                 _showAlertDialog();
                                               }
-                                            } else {
-                                              print("jwt es null");
-                                            }
+                                            // } else {
+                                            //   print("jwt es null");
+                                            // }
                                           }),
                                           style: ElevatedButton.styleFrom(
                                             shape: const StadiumBorder(),
                                             padding: const EdgeInsets.all(12),
                                             backgroundColor:
-                                                const Color.fromARGB(
-                                                    255, 153, 116, 223),
+                                                 userRole == 'superAdmin' ? Color.fromARGB(255, 223, 116, 116) :const Color.fromARGB(255, 153, 116, 223),
                                           ),
                                           child: const Text("Enviar",
                                               style: TextStyle(fontSize: 16)))
@@ -420,10 +700,15 @@ class userCommentViewState extends State<userCommentView> {
                               backgroundColor:
                                   Color.fromARGB(255, 153, 116, 223)),
                           onPressed: () {
-                            Navigator.of(context).pop();
+                            Navigator.push(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                      builder: (context) =>
+                                                          const PageHomePage()),
+                                                );
                           },
                           child: Text(
-                            "Vale",
+                            "Continuar",
                             style: TextStyle(color: Colors.white),
                           ),
                         ),

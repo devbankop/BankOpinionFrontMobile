@@ -1,5 +1,4 @@
-import 'package:bankopinion/src/pages/configuraci%C3%B3n.dart';
-import 'package:bankopinion/src/pages/startView.dart';
+import 'package:bankopinion/src/pages/config.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -33,20 +32,23 @@ class _BottomBarState extends State<BottomBar> {
     setState(() {
       _currentIndex = index;
       if (index == 0) {
+          
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => PageHomePage() ,
+          ),
+        );
+      } else if (index == 1) {
+         
         Navigator.push(
           context,
           MaterialPageRoute(
             builder: (context) => NewsView(),
           ),
         );
-      } else if (index == 1) {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => PageHomePage(),
-          ),
-        );
       } else if (index == 2) {
+          
         Navigator.push(
           context,
           MaterialPageRoute(
@@ -60,29 +62,34 @@ class _BottomBarState extends State<BottomBar> {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: 54,
+      height: 65,
       child: BottomNavigationBar(
         backgroundColor: userRole == 'superAdmin' ? Color.fromARGB(255, 223, 116, 116) :const Color.fromARGB(255, 153, 116, 223),
         selectedItemColor: Colors.white,
-        
+        unselectedItemColor: Colors.white,    
         showSelectedLabels: true,
         showUnselectedLabels: true,
         currentIndex: _currentIndex,
         onTap: _onItemTapped,
         items: <BottomNavigationBarItem>[
           BottomNavigationBarItem(
+            backgroundColor: _currentIndex == 1 ? Colors.white : null,
+            icon: Icon(Icons.rate_review_outlined,
+            size: 30),
+            label: 'Opiniones',
+          ), 
+          
+          BottomNavigationBarItem(
             backgroundColor: _currentIndex == 0 ? Colors.white : null,
-            icon: Icon(Icons.newspaper),
+            icon: Icon(Icons.newspaper,
+            size: 30),
             label: 'Noticias',
           ),
-          BottomNavigationBarItem(
-            backgroundColor: _currentIndex == 1 ? Colors.white : null,
-            icon: Icon(Icons.rate_review_outlined),
-            label: 'Opiniones',
-          ),
+          
           BottomNavigationBarItem(
             backgroundColor: _currentIndex == 2 ? Colors.white : null,
-            icon: Icon(Icons.account_circle),
+            icon: Icon(Icons.account_circle,
+            size: 30),
             label: 'Perfil',
           )
         ],
