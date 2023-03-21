@@ -1,10 +1,6 @@
 import 'dart:async';
-import 'dart:convert';
-import 'package:bankopinion/src/auth/signup2.dart';
-import 'package:bankopinion/src/auth/signup3.dart';
-import 'package:bankopinion/src/pages/homeView.dart';
+
 import 'package:flutter/material.dart';
-import 'package:email_validator/email_validator.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 
@@ -17,7 +13,6 @@ class Profile extends StatefulWidget {
 }
 
 class ProfileState extends State<Profile> {
-  Future<void> fetchData() async {}
   bool _isChecked = true;
   String? jwt;
 
@@ -33,7 +28,7 @@ var email;
     super.initState();
     getUserProfile();
     print(name);
-    fetchData();
+    
   }
 
   @override

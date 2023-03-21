@@ -20,6 +20,10 @@ class _LoginViewState extends State<LoginView> {
   var banks = [];
   var correo;
   var passwd;
+  var _isObscure = true;
+  var error404 = false;
+  
+
 
   Future<void> fetchData() async {}
 
@@ -47,7 +51,7 @@ class _LoginViewState extends State<LoginView> {
           child: SingleChildScrollView(
             child: Column(children: [
           Padding(
-              padding: EdgeInsets.only(top: 15, left: 15, bottom: 5),
+              padding: EdgeInsets.only(top: 15, left: 15),
               child: Row(
                 children: [
                   SizedBox(
@@ -88,7 +92,7 @@ class _LoginViewState extends State<LoginView> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 // ignore: prefer_const_literals_to_create_immutables
                 children: [
-                  const Text("INICIO DE SESIÓN",
+                  const Text(kIsWeb ? "INICIO  DE  SESIÓN" : "INICIO DE SESIÓN",
                       style: TextStyle(
                           fontSize: 24,
                           color: Color.fromARGB(255, 55, 11, 137),
@@ -156,8 +160,18 @@ class _LoginViewState extends State<LoginView> {
                         onChanged: (value) {
                           passwd = value;
                         },
-                        obscureText: true,
+                        obscureText: _isObscure,
                         decoration: InputDecoration(
+                          suffixIcon: GestureDetector(
+                              onTap: () {
+                                setState(() {
+                                  _isObscure = !_isObscure;
+                                });
+                              },
+                              child: Icon(_isObscure
+                                  ? Icons.visibility_off
+                                  : Icons.visibility),
+                            ),
                             border: OutlineInputBorder(),
                             hintText: 'Contraseña'),
                         maxLines: 1,
@@ -166,6 +180,18 @@ class _LoginViewState extends State<LoginView> {
                     )
                   ],
                 ),
+                error404 == true
+                ? 
+                    RichText(
+                      text: 
+                    const TextSpan(
+                            text: "Credenciales de acceso incorrectas",
+                            style: TextStyle(
+                                color: Color.fromARGB(143, 255, 0, 0),
+                                fontWeight: FontWeight.normal),
+                          ))
+                  
+                : Text(""),
                 Column(
                   children: [
                     Padding(
@@ -181,7 +207,7 @@ class _LoginViewState extends State<LoginView> {
                                     "password": passwd
                                     });
 
-                                print(body);
+                                
 
                                 var loginUser = Uri.parse(
                                     'https://bankopinion-backend-development-3vucy.ondigitalocean.app/users/signIn');
@@ -193,12 +219,10 @@ class _LoginViewState extends State<LoginView> {
                                     });
 
                                 print("statusCode: ${response.statusCode}");
-                                print("response.body: ${response.body}");
 
                                 if (response.statusCode == 200) {
                                   Map<String, dynamic> responseData =
                                       json.decode(response.body);
-                                  print("hola");
                                   var token =
                                       responseData["session"]["access_token"];
                                   var refreshToken =
@@ -216,15 +240,11 @@ class _LoginViewState extends State<LoginView> {
 
                                   var prefs =
                                       await SharedPreferences.getInstance();
-                                  print(token);
 
                                   prefs.setString('jwt', token);
                                   prefs.setString('refresh_token', refreshToken);
                                   prefs.setInt('expires_in', expiresIn);
                                   prefs.setString('userRole', userRole);
-
-
-                                  print(userRole);
 
 
                                   if (prefs.getString('jwt') != null) {
@@ -234,7 +254,18 @@ class _LoginViewState extends State<LoginView> {
                                             builder: (context) =>
                                                 const PageHomePage()));
                                   }
+
+
+                                 
+
+
                                 }
+                                 if(response.statusCode == 404)
+                                 setState(() {
+                                    
+                                    error404 = true;
+
+                                  });
                               }),
                               style: ElevatedButton.styleFrom(
                                 shape: const StadiumBorder(),
@@ -308,7 +339,7 @@ class _LoginViewState extends State<LoginView> {
                       ],
                     )),
                 Padding(
-                    padding: EdgeInsets.only(top: 40),
+                    padding: EdgeInsets.only(top: 40, bottom: 50),
                     child: ElevatedButton(
                         onPressed: (() {
                           Navigator.push(

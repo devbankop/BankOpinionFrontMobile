@@ -103,15 +103,15 @@ class _SignUpView1State extends State<SignUpView1> {
                       controller: emailTextController,
                       onChanged: (String value) {
                         setState(() {                 
-                            email = value;                      
-                        });
-                      },
-                     onEditingComplete: () {
-                       setState(() {
-                                      isValid = EmailValidator.validate(email);
+                            email = value;  
 
-                      });
-                     },
+                            isValid = EmailValidator.validate(email);
+                    
+                        });
+                        
+                        
+                      },
+                     
                       decoration: InputDecoration(
                         hintText: 'ejemplo@correo.com',
                       ),

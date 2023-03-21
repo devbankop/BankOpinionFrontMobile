@@ -13,6 +13,9 @@ import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:flutter_google_places_hoc081098/flutter_google_places_hoc081098.dart';
 import 'package:google_maps_webservice/places.dart';
+import  'package:flutter_google_places_web/flutter_google_places_web.dart';
+
+
 
 import 'package:google_api_headers/google_api_headers.dart';
 
@@ -43,12 +46,15 @@ class _StateHomePage extends State<PageHomePage> {
   List bankList = [];
   List filteredList = [];
   var favorite = false;
+    String test = '';
+
 
   @override
   void initState() {
     super.initState();
     filteredList = bankList;
     Jiffy.locale('es');
+    _placesApiClient = GoogleMapsPlaces(apiKey: "AIzaSyATDrJ5JGDI5lYdILFfSPO2qI311W6mPw0");
     Jiffy().yMMMMEEEEdjm;
     getUserProfile();
 
@@ -88,13 +94,19 @@ class _StateHomePage extends State<PageHomePage> {
 
   Set<Marker> markers = Set(); //markers for google map
   LatLng showLocation = const LatLng(39.4697500, -0.3773900);
-  static const LatLng _center = LatLng(45.343434, -122.545454);
+  static const LatLng _center = LatLng(39.4697500, -0.3773900);
   final Set<Marker> _markers = {};
   LatLng _lastMapPosition = _center;
   var banks = [];
   var banksFound = [];
   var selectedBank = -1;
   late List<dynamic> userBranchesFavorites = [];
+
+    late GoogleMapsPlaces _placesApiClient;
+
+
+  
+
 
   Future<void> getUserProfile() async {
     final prefs = await SharedPreferences.getInstance();
@@ -112,7 +124,6 @@ class _StateHomePage extends State<PageHomePage> {
         setState(() {
           userBranchesFavorites =
               responseData["userProfile"]["userBranchesFavorites"];
-          print(userBranchesFavorites.length);
           var userId = responseData["userProfile"]["user_id"].toString();
 
           //GUARDAMOS EN SHAREDPREFERENCES LOS VALORES RECUPERADOS
@@ -124,8 +135,7 @@ class _StateHomePage extends State<PageHomePage> {
       }
     }
   }
-
-  void sort(int id) {
+void sort(int id) {
     setState(() {
       var index = -1;
       for (var i = 0; i < banks.length; ++i)
@@ -143,76 +153,69 @@ class _StateHomePage extends State<PageHomePage> {
         'https://bankopinion-backend-development-3vucy.ondigitalocean.app/branches/branchesOfChunkInDB/' +
             address);
     final response = await http.get(URL);
-
-    // Hacer petición al backend con la dirección
-    print(address);
   }
 
-  Timer? _timer;
+ Timer? _timer;
 
-  void _startTimer() {
-    _timer
-        ?.cancel(); // Cancela el temporizador existente antes de iniciar uno nuevo.
-    _timer = Timer(const Duration(seconds: 2), () {
-      fetchData();
+void _startTimer() {
+  _timer?.cancel(); // Cancela el temporizador existente antes de iniciar uno nuevo.
+  _timer = Timer(const Duration(seconds: 2), () {
+    fetchData();
+  });
+}
+
+void _cancelTimer() {
+  _timer?.cancel();
+  _timer = null as Timer?;;
+}
+
+Future<void> _onCameraMove(CameraPosition position) async {
+  _lastMapPosition = position.target;
+  if (position.zoom <= 10) return;
+
+  _cancelTimer();
+  _startTimer();
+}
+
+Future<void> fetchData() async {
+  // Define el URI de la solicitud http
+  var prueba = Uri.parse(
+      'https://bankopinion-backend-development-3vucy.ondigitalocean.app/branches/branchesOfChunkInDB/${_lastMapPosition.latitude},${_lastMapPosition.longitude}');
+  
+  // Realiza la solicitud http y espera la respuesta
+  final response = await http.get(prueba);
+
+  setState(() {
+    banks = jsonDecode(response.body);
+
+    banks.forEach((element) async {
+      if (element["value"]["location"] == null) return;
+
+      LatLng showLocation = LatLng(element["value"]["location"]["lat"],
+          element["value"]["location"]["lng"]);
+
+      //location to show in map
+      markers.add(Marker(
+          onTap: () => {sort(element["id"])},
+          //add marker on google map
+          markerId: MarkerId(showLocation.toString()),
+          position: showLocation, //position of marker
+          infoWindow: InfoWindow(
+            //popup info
+            title: element["value"]["branchName"],
+            snippet: element["value"]["address"],
+          ),
+          icon: await BitmapDescriptor.fromAssetImage(
+              const ImageConfiguration(size: Size(30, 30)),
+              'assets/images/bankMarker.png')));
     });
-  }
+  });
+}
 
-  void _cancelTimer() {
-    _timer?.cancel();
-    _timer = null as Timer?;
-    ;
-  }
 
-  Future<void> _onCameraMove(CameraPosition position) async {
-    _lastMapPosition = position.target;
-    if (position.zoom <= 10) return;
-
-    _cancelTimer();
-    _startTimer();
-  }
-
-  Future<void> fetchData() async {
-    // Define el URI de la solicitud http
-    var prueba = Uri.parse(
-        'https://bankopinion-backend-development-3vucy.ondigitalocean.app/branches/branchesOfChunkInDB/${_lastMapPosition.latitude},${_lastMapPosition.longitude}');
-
-    // Realiza la solicitud http y espera la respuesta
-    final response = await http.get(prueba);
-
-    // Borra todos los marcadores existentes
-    markers.clear();
-
-    setState(() {
-      banks = jsonDecode(response.body);
-
-      banks.forEach((element) async {
-        if (element["value"]["location"] == null) return;
-
-        LatLng showLocation = LatLng(element["value"]["location"]["lat"],
-            element["value"]["location"]["lng"]);
-
-        //location to show in map
-        markers.add(Marker(
-            onTap: () => {sort(element["id"])},
-            //add marker on google map
-            markerId: MarkerId(showLocation.toString()),
-            position: showLocation, //position of marker
-            infoWindow: InfoWindow(
-              //popup info
-              title: element["value"]["branchName"],
-              snippet: element["value"]["address"],
-            ),
-            icon: await BitmapDescriptor.fromAssetImage(
-                const ImageConfiguration(size: Size(20, 20)),
-                'assets/images/bankMarker.png')));
-      });
-    });
-  }
 
   @override
   void dispose() {
-    fetchData();
     _controller.dispose();
     super.dispose();
   }
@@ -231,16 +234,19 @@ class _StateHomePage extends State<PageHomePage> {
       backgroundColor: Color.fromARGB(255, 255, 255, 255),
       bottomNavigationBar: BottomBar(),
       body: kIsWeb
-          ? Center(
-              child: SingleChildScrollView(
-                  child: Container(
-              padding: EdgeInsets.only(top: 1),
-              child: Column(
+          ?   Center(
+              child: 
+              
+              Container(
+                padding: EdgeInsets.only(top: 1),
+                child: 
+              
+               Column(
                 children: [
                   Container(
                       decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(10)),
-                      height: kIsWeb ? 600 : 400,
+                      height: kIsWeb ? 500 : 400,
                       child: GoogleMap(
                         //Map widget from google_maps_flutter packages
                         zoomGesturesEnabled: true, //enable Zoom in, out on map
@@ -264,117 +270,191 @@ class _StateHomePage extends State<PageHomePage> {
                         },
                       )),
 
-                  Padding(
+              
+         
+
+ 
+
+
+Padding(
                       padding: EdgeInsets.only(
                           top: 20, left: 10, right: 10, bottom: 10),
-                      child: Container(
-                          width: 650,
-                          padding: EdgeInsets.only(
-                              top: 2, left: 8, right: 8, bottom: 2),
-                          decoration: BoxDecoration(
-                            border: Border.all(
-                                width: 1,
-                                color: Color.fromARGB(255, 224, 224, 224)),
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          child: Row(children: [
-                            const Icon(
-                              Icons.search,
-                            ),
-                            Expanded(
-                              child: Padding(
-                                padding: const EdgeInsets.only(left: 5),
-                                child: TextField(
-                                    controller: _controller,
-                                    onTap: () async {
-                                      var place = await PlacesAutocomplete.show(
-                                          context: context,
-                                          apiKey:
-                                              "AIzaSyATDrJ5JGDI5lYdILFfSPO2qI311W6mPw0",
-                                          mode: Mode.overlay,
-                                          //overlayBorderRadius: ,
-                                          types: [],
-                                          strictbounds: false,
-                                          logo: const SizedBox.shrink(),
-                                          language: "es",
-                                          components: [
-                                            Component(Component.country, 'es')
-                                          ],
-                                          //google_map_webservice package
-                                          onError: (err) {
-                                            // ignore: avoid_print
-                                            print(err);
-                                          });
+                      child: 
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          ElevatedButton(
+                            onPressed: (() async {
 
-                                      if (place != null) {
-                                        setState(() {
-                                          var location =
-                                              place.description.toString();
-                                        });
 
-                                        //form google_maps_webservice package
-                                        final plist = GoogleMapsPlaces(
-                                          apiKey:
-                                              "AIzaSyATDrJ5JGDI5lYdILFfSPO2qI311W6mPw0",
-                                          apiHeaders:
-                                              await const GoogleApiHeaders()
-                                                  .getHeaders(),
-                                          //from google_api_headers package
-                                        );
-                                        String placeid = place.placeId ?? "0";
-                                        final detail = await plist
-                                            .getDetailsByPlaceId(placeid);
-                                        final geometry =
-                                            detail.result.geometry!;
-                                        final lat = geometry.location.lat;
-                                        final lang = geometry.location.lng;
-                                        var newlatlang = LatLng(lat, lang);
 
-                                        //move map camera to selected place with animation
-                                        mapController?.animateCamera(
-                                            CameraUpdate.newCameraPosition(
-                                                CameraPosition(
-                                                    target: newlatlang,
-                                                    zoom: 15)));
-                                        mapController?.animateCamera(
-                                            CameraUpdate.newCameraPosition(
-                                                CameraPosition(
-                                                    target: newlatlang,
-                                                    zoom: 15)));
-                                      }
-                                    },
-                                    onSubmitted: (value) => {},
-                                    style: const TextStyle(color: Colors.black),
-                                    decoration: const InputDecoration(
-                                        border: InputBorder.none,
-                                        hintText: "Filtra por ubicación"),
-                                    onChanged: (text) {
-                                      find(text.toLowerCase());
-                                    }),
+                                  var place = await PlacesAutocomplete.show(
+                                    context: context,
+                                    apiKey: "AIzaSyATDrJ5JGDI5lYdILFfSPO2qI311W6mPw0",
+                                    proxyBaseUrl: 'https://cors-anywhere.herokuapp.com/',
+
+
+                                    mode: Mode.overlay,
+                                    types: [],
+                                    strictbounds: false,
+                                    logo: const SizedBox.shrink(),
+                                    language: "es",
+                                    components: [Component(Component.country, 'es')],
+                                    onError: (err) {
+                                      print(err);
+                                    }
+                                  );
+                                  if (place != null) {
+                                    setState(() {
+                                      var location = place.description.toString();
+                                    });
+                                    final placeDetails =
+                                      await _placesApiClient.getDetailsByPlaceId(place.placeId!);
+                                    final lat = placeDetails.result.geometry?.location.lat ?? 0;
+                                    final lng = placeDetails.result.geometry?.location.lng ?? 0;
+                                    var newlatlang = LatLng(lat, lng);
+                                    mapController?.animateCamera(
+                                      CameraUpdate.newCameraPosition(
+                                        CameraPosition(
+                                          target: newlatlang,
+                                          zoom: 15
+                                        )
+                                      )
+                                    );
+                                  }
+   
+                            }),
+                            style: ElevatedButton.styleFrom(
+                              shape: const StadiumBorder(
+                                side: BorderSide(
+                                  color: Color.fromARGB(46, 35, 0, 100),
+                                  width: .5,
+                                ),
                               ),
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 25, vertical: 14),
+                              backgroundColor:
+                                  const Color.fromARGB(255, 255, 255, 255),
                             ),
-                            const Icon(Icons.location_searching_sharp)
-                          ]))),
+                            child: Row(
+                              children: const [
+                                Icon(
+                               Icons.search,
+                               color: Color.fromARGB(255, 93, 43, 184),
+                               size: 30,
+                             ),
+                                Text(
+                                  " Búsqueda específica",
+                                  style: TextStyle(
+                                      fontSize: 16, color: Colors.black),
+                                )
+                              ],
+                            ),
+                          )
+                        ],
+                      )
+                      ),
+                      
+
+//                   Padding(
+//                       padding: EdgeInsets.only(
+//                           top: 20, left: 10, right: 10, bottom: 10),
+//                       child: Container(
+//                           width: 650,
+//                           padding: EdgeInsets.only(
+//                               top: 2, left: 8, right: 8, bottom: 2),
+//                           decoration: BoxDecoration(
+//                             border: Border.all(
+//                                 width: 1,
+//                                 color: Color.fromARGB(255, 224, 224, 224)),
+//                             borderRadius: BorderRadius.circular(8),
+//                           ),
+//                           child: Row(children: [
+//                             const Icon(
+//                               Icons.search,
+//                             ),
+//                             Expanded(
+//                               child: Button,
+//   // child: Padding(
+//   //   padding: const EdgeInsets.only(left: 5),
+//   //   child: TextField(
+//   //     controller: _controller,
+//   //     onTap: () async {
+//   //       var place = await PlacesAutocomplete.show(
+//   //         context: context,
+//   //         apiKey: "AIzaSyATDrJ5JGDI5lYdILFfSPO2qI311W6mPw0",
+//   //         mode: Mode.overlay,
+//   //         types: [],
+//   //         strictbounds: false,
+//   //         logo: const SizedBox.shrink(),
+//   //         language: "es",
+//   //         components: [Component(Component.country, 'es')],
+//   //         onError: (err) {
+//   //           print(err);
+//   //         }
+//   //       );
+
+//   //       if (place != null) {
+//   //         setState(() {
+//   //           var location = place.description.toString();
+//   //         });
+
+//   //         final placeDetails =
+//   //           await _placesApiClient.getDetailsByPlaceId(place.placeId!);
+
+//   //         final lat = placeDetails.result.geometry?.location.lat ?? 0;
+//   //         final lng = placeDetails.result.geometry?.location.lng ?? 0;
+//   //         var newlatlang = LatLng(lat, lng);
+
+//   //         mapController?.animateCamera(
+//   //           CameraUpdate.newCameraPosition(
+//   //             CameraPosition(
+//   //               target: newlatlang,
+//   //               zoom: 15
+//   //             )
+//   //           )
+//   //         );
+//   //       }
+//   //     },
+//   //     onSubmitted: (value) => {},
+//   //     style: const TextStyle(color: Colors.black),
+//   //     decoration: const InputDecoration(
+//   //       border: InputBorder.none,
+//   //       hintText: "Filtra por ubicación"
+//   //     ),
+//   //     onChanged: (text) {
+//   //       find(text.toLowerCase());
+//   //     }
+//   //   )
+//   // )
+// ),
+
+//                             const Icon(Icons.location_searching_sharp)
+//                           ]))),
 
 //LISTA DE UBICACIONES RESPECTO A MARCADORES DEL CHUNK
 
-                  Container(
-                      child: Wrap(
+                  Expanded(
+                      child:
+                      SingleChildScrollView(
+                          child: Wrap(
                     children: [
+                      
                       for (int index = 0; index < banks.length; index++)
                         SizedBox(
-                            width: 500,
+                          width: 500,
                             child: InkWell(
-                                onDoubleTap: () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) => allReviews(
-                                              bank: banks
-                                                  .elementAt(index)["value"],
-                                            )),
-                                  );
-                                },
+                              onDoubleTap: () {
+                                Navigator.push(
+                                     context,
+                                     MaterialPageRoute(
+                                         builder:
+                                             (context) =>
+                                                 allReviews(
+                                                   bank: banks.elementAt(index)["value"],
+                                                 )),
+                                );
+                              },
                                 onTap: () {
                                   LatLng newlatlong = LatLng(
                                       banks.elementAt(index)["value"]
@@ -451,7 +531,7 @@ class _StateHomePage extends State<PageHomePage> {
                                                 Container(
                                                   constraints:
                                                       const BoxConstraints(
-                                                          maxWidth: 200),
+                                                          maxWidth: 250),
                                                   child: Text(
                                                       banks.elementAt(
                                                               index)["value"]
@@ -622,11 +702,7 @@ class _StateHomePage extends State<PageHomePage> {
                                                                               223,
                                                                               116,
                                                                               116)
-                                                                          : const Color.fromARGB(
-                                                                              255,
-                                                                              153,
-                                                                              116,
-                                                                              223),
+                                                                          : const Color.fromARGB(255, 153, 116, 223),
                                                                     ),
                                                                     child: !userBranchesFavorites.contains(banks.elementAt(index)["value"]
                                                                             [
@@ -684,11 +760,7 @@ class _StateHomePage extends State<PageHomePage> {
                                                                           116,
                                                                           116)
                                                                   : const Color
-                                                                          .fromARGB(
-                                                                      255,
-                                                                      153,
-                                                                      116,
-                                                                      223),
+.fromARGB(255, 153, 116, 223),
                                                             ),
                                                             child: const Icon(
                                                               Icons.edit,
@@ -701,10 +773,10 @@ class _StateHomePage extends State<PageHomePage> {
                                       ],
                                     ))))
                     ],
-                  ))
+                  )))
                 ],
               ),
-            )))
+            ))
           : Column(
               children: [
                 Container(

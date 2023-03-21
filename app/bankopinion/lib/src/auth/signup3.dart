@@ -26,6 +26,7 @@ class _SignUpView3State extends State<SignUpView3> {
   var isValidUser = false;
   var body;
   var fecha;
+  var errorRegistro = false;
 
   TextEditingController _dateController = TextEditingController(text: '');
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
@@ -37,7 +38,6 @@ class _SignUpView3State extends State<SignUpView3> {
 
       // ignore: unused_local_variable
       final response = await http.post(registroUser, body: jsonEncode(body));
-      print(body);
     }
   }
 
@@ -249,7 +249,7 @@ class _SignUpView3State extends State<SignUpView3> {
                       itemBuilder: (BuildContext context) =>
                           <PopupMenuEntry<String>>[
                         const PopupMenuItem<String>(
-                          value: 'Item1',
+                          value: 'Info',
                           child: Text(
                               'Saldrá como predetermindado para proteger tu identidad, sin embargo, posteriormente podrás elegir en tu perfil si prefieres que se muestre tu nombre real o el nombre de usuario en las preferencias de tu perfil.'),
                         ),
@@ -326,6 +326,19 @@ class _SignUpView3State extends State<SignUpView3> {
                   ))
                 ],
               ),
+
+              errorRegistro == true
+                ? 
+                    RichText(
+                      text: 
+                    const TextSpan(
+                            text: "Se ha producido un error",
+                            style: TextStyle(
+                                color: Color.fromARGB(143, 255, 0, 0),
+                                fontWeight: FontWeight.normal),
+                          ))
+                  
+                : Text(""),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -382,6 +395,12 @@ class _SignUpView3State extends State<SignUpView3> {
                                           builder: (context) =>
                                               PageHomePage()));
                                 } else {
+                                  if(response.statusCode != 200)
+                                 setState(() {
+                                    
+                                    errorRegistro = true;
+
+                                  });
                                   print(
                                       "Error al registrar usuario, codigo de estado: ${response.statusCode}");
                                   // maneja el error segun el codigo de estado

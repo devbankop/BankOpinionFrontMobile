@@ -708,7 +708,7 @@ class userCommentViewState extends State<userCommentView> {
                                                 );
                           },
                           child: Text(
-                            "Vale",
+                            "Continuar",
                             style: TextStyle(color: Colors.white),
                           ),
                         ),
