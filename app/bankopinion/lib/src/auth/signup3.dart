@@ -249,6 +249,7 @@ class _SignUpView3State extends State<SignUpView3> {
                       itemBuilder: (BuildContext context) =>
                           <PopupMenuEntry<String>>[
                         const PopupMenuItem<String>(
+                          
                           value: 'Info',
                           child: Text(
                               'Saldrá como predetermindado para proteger tu identidad, sin embargo, posteriormente podrás elegir en tu perfil si prefieres que se muestre tu nombre real o el nombre de usuario en las preferencias de tu perfil.'),

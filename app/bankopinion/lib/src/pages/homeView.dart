@@ -52,6 +52,8 @@ class _StateHomePage extends State<PageHomePage> {
   @override
   void initState() {
     super.initState();
+    getLocation();
+    fetchData();
     filteredList = bankList;
     Jiffy.locale('es');
     _placesApiClient = GoogleMapsPlaces(apiKey: "AIzaSyATDrJ5JGDI5lYdILFfSPO2qI311W6mPw0");
@@ -63,9 +65,10 @@ class _StateHomePage extends State<PageHomePage> {
       refresh.refreshToken();
     }
     _getJWT();
-    fetchData();
     _controller = TextEditingController();
   }
+
+  
 
   void filter(String inputString) {
     filteredList =
@@ -80,32 +83,11 @@ class _StateHomePage extends State<PageHomePage> {
       userRole = prefs.getString('userRole');
     });
   }
-  // Future<void> _getFavoriteBranch() async {
-  //   final prefs = await SharedPreferences.getInstance();
-  //        favoritesService?.;
-
-  //   setState(() {
-  //     favoriteBranch = prefs.getStringList('favoriteBranches');
-  //   });
-  // }
-
-  late TextEditingController _controller;
-  GoogleMapController? mapController; //controller for Google map
-
-  Set<Marker> markers = Set(); //markers for google map
-  LatLng showLocation = const LatLng(39.4697500, -0.3773900);
-  static const LatLng _center = LatLng(39.4697500, -0.3773900);
-  final Set<Marker> _markers = {};
-  LatLng _lastMapPosition = _center;
-  var banks = [];
-  var banksFound = [];
-  var selectedBank = -1;
-  late List<dynamic> userBranchesFavorites = [];
-
-    late GoogleMapsPlaces _placesApiClient;
+ 
 
 
-  
+
+
 
 
   Future<void> getUserProfile() async {
@@ -169,6 +151,57 @@ void _cancelTimer() {
   _timer = null as Timer?;;
 }
 
+
+
+
+  Set<Marker> markers = Set(); //markers for google map
+  late LatLng showLocation;
+  static LatLng _center = LatLng(39.4697500, -0.3773900);
+  LatLng center = LatLng(39.4697500, -0.3773900);
+
+  late TextEditingController _controller;
+  GoogleMapController? mapController; //controller for Google map
+
+
+  final Set<Marker> _markers = {};
+  LatLng _lastMapPosition = _center;
+  var banks = [];
+  var banksFound = [];
+  var selectedBank = -1;
+  late List<dynamic> userBranchesFavorites = [];
+
+    late GoogleMapsPlaces _placesApiClient;
+
+
+
+
+late Position position;
+  var posLat;
+  var posLong;
+
+
+void getLocation() async {
+  bool locationEnabled = await Geolocator.isLocationServiceEnabled();
+
+  // Obtener la posición actual del usuario
+  if (locationEnabled) {
+    position = await Geolocator.getCurrentPosition(
+      desiredAccuracy: LocationAccuracy.medium, // reducir la precisión para obtener la ubicación más rápidamente
+    );
+  }
+
+  setState(() {
+    if (locationEnabled && position != null) {
+      _center = LatLng(position.latitude, position.longitude);
+      showLocation = LatLng(position.latitude, position.longitude);
+    } else {
+      _center = LatLng(39.4697500, -0.3773900);
+      showLocation = LatLng(39.4697500, -0.3773900);
+    }
+  });
+}
+
+
 Future<void> _onCameraMove(CameraPosition position) async {
   _lastMapPosition = position.target;
   if (position.zoom <= 10) return;
@@ -178,10 +211,18 @@ Future<void> _onCameraMove(CameraPosition position) async {
 }
 
 Future<void> fetchData() async {
+
+var prueba;
   // Define el URI de la solicitud http
-  var prueba = Uri.parse(
-      'https://bankopinion-backend-development-3vucy.ondigitalocean.app/branches/branchesOfChunkInDB/${_lastMapPosition.latitude},${_lastMapPosition.longitude}');
+  posLat == null && posLong == null
+  ?
+   prueba = Uri.parse(
+      'https://bankopinion-backend-development-3vucy.ondigitalocean.app/branches/branchesOfChunkInDB/${_lastMapPosition.latitude},${_lastMapPosition.longitude}')
+  : prueba = Uri.parse(
+      'https://bankopinion-backend-development-3vucy.ondigitalocean.app/branches/branchesOfChunkInDB/${posLat},${posLong}');
   
+
+
   // Realiza la solicitud http y espera la respuesta
   final response = await http.get(prueba);
 

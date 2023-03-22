@@ -1,10 +1,5 @@
-import 'package:bankopinion/src/auth/loginView.dart';
-import 'package:bankopinion/src/auth/signup2.dart';
-import 'package:bankopinion/src/auth/signup3.dart';
-import 'package:bankopinion/src/pages/allReviewsView.dart';
-import 'package:bankopinion/src/pages/config.dart';
+
 import 'package:bankopinion/src/pages/homeView.dart';
-import 'package:bankopinion/src/pages/news.dart';
 import 'package:bankopinion/src/pages/startView.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';

@@ -4,9 +4,9 @@ const TEMP = 'flutter-temp-cache';
 const CACHE_NAME = 'flutter-app-cache';
 const RESOURCES = {
   "version.json": "e82945aca89c7aafbcbb067559bed1bd",
-"index.html": "57ce47e07f2d95d839a3ce363e43a473",
-"/": "57ce47e07f2d95d839a3ce363e43a473",
-"main.dart.js": "1b291d111f9ed77771f3eb9be9e50247",
+"index.html": "1bb0f3c1ccee72e03a4306a911488b65",
+"/": "1bb0f3c1ccee72e03a4306a911488b65",
+"main.dart.js": "5c9c71a610de26f0f2e90d2201522314",
 "flutter.js": "f85e6fb278b0fd20c349186fb46ae36d",
 "favicon.png": "d635d4f2b0311324d45047c965c408ec",
 "icons/Icon-192.png": "ac9a721a12bbc803b44f645561ecb1e1",
@@ -27,7 +27,7 @@ const RESOURCES = {
 "assets/packages/font_awesome_flutter/lib/fonts/fa-brands-400.ttf": "b00363533ebe0bfdb95f3694d7647f6d",
 "assets/packages/flutter_inappwebview/assets/t_rex_runner/t-rex.css": "5a8d0222407e388155d7d1395a75d5b9",
 "assets/packages/flutter_inappwebview/assets/t_rex_runner/t-rex.html": "16911fcc170c8af1c5457940bd0bf055",
-"assets/shaders/ink_sparkle.frag": "552645a9fefd4ef88adb3f546c702dd9",
+"assets/shaders/ink_sparkle.frag": "8141c26bd27c1cffc6415ac56647bf66",
 "assets/fonts/MaterialIcons-Regular.otf": "95db9098c58fd6db106f1116bae85a0b",
 "assets/assets/images/bankMarker.png": "2f28d0d0e028977d1fa679fde0efe166",
 "assets/assets/images/imageStartView.png": "410554afe677b7b6bdf75b671c64aaee",
