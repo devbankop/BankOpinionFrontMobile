@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -23,12 +24,13 @@ var surname;
 var nickname;
 var email;
 
+var userData;
+
   @override
   void initState() {
     super.initState();
-    getUserProfile();
-    print(name);
-    
+    _getUserProfile(); 
+
   }
 
   @override
@@ -54,7 +56,35 @@ Future<void> getUserProfile() async {
       email = prefs.getString('email').toString();
 
     });
+
+
   }
+
+
+
+
+  Future<void> _getUserProfile() async {
+
+        final prefs = await SharedPreferences.getInstance();
+        jwt = prefs.getString("jwt");
+        var getUser = Uri.parse(
+            'https://bankopinion-backend-development-3vucy.ondigitalocean.app/users/getUser');
+
+        var response =
+            await http.get(getUser, headers: {"Authorization": '$jwt'});
+  print(response.statusCode);
+              if (response.statusCode == 200) {
+          //RECUPERAMOS VALORES DE LA RESPUESTA DE LA PETICIÓN
+                var responseData = json.decode(response.body);
+
+                setState(() {
+                   userData = responseData["userProfile"];
+                });
+                print(userData);
+              
+
+    }                                  
+    }
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
@@ -123,6 +153,7 @@ Future<void> getUserProfile() async {
               padding: const EdgeInsets.all(20),
               child: Column(children: [
                 Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
                   // ignore: prefer_const_literals_to_create_immutables
                   children: [
                     const Padding(
@@ -136,11 +167,12 @@ Future<void> getUserProfile() async {
                   ],
                 ),
                 Padding(
-                    padding: EdgeInsets.only(top: 10, left: 28),
+                    padding: EdgeInsets.only(top: 10),
                     child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
                         // ignore: prefer_const_literals_to_create_immutables
                         children: [
-                           Text(name.toString(),
+                           Text(userData["name"].toString(),
                               style: TextStyle(
                                 fontSize: 16,
                                 color: Color.fromARGB(255, 81, 81, 81),
@@ -154,10 +186,12 @@ Future<void> getUserProfile() async {
                   width: 300,
                 ),
                 Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+
                   // ignore: prefer_const_literals_to_create_immutables
                   children: [
                     const Padding(
-                        padding: EdgeInsets.only(bottom: 4, top: 25),
+                        padding: EdgeInsets.only(top: 30, bottom: 4),
                         // ignore: unnecessary_const
                         child: const Text("Apellidos",
                             style: TextStyle(
@@ -167,12 +201,14 @@ Future<void> getUserProfile() async {
                   ],
                 ),
                 Padding(
-                    padding: EdgeInsets.only(top: 10, left: 28),
+                    padding: EdgeInsets.only(top: 10),
                     child: Row(
+                                        mainAxisAlignment: MainAxisAlignment.center,
+
                         // ignore: prefer_const_literals_to_create_immutables
                         children: [
                           //Icon(Icons.lock),
-                           Text(surname.toString(),
+                           Text(userData["surname"].toString(),
                               style: TextStyle(
                                 fontSize: 16,
                                 color: Color.fromARGB(255, 81, 81, 81),
@@ -184,10 +220,12 @@ Future<void> getUserProfile() async {
                   width: 300,
                 ),
                 Row(
+                                        mainAxisAlignment: MainAxisAlignment.center,
+
                   // ignore: prefer_const_literals_to_create_immutables
                   children: [
                     const Padding(
-                        padding: EdgeInsets.only(bottom: 4, top: 25),
+                        padding: EdgeInsets.only(bottom: 4, top: 30),
                         // ignore: unnecessary_const
                         child: const Text("Nombre de usuario",
                             style: TextStyle(
@@ -197,12 +235,13 @@ Future<void> getUserProfile() async {
                   ],
                 ),
                 Padding(
-                    padding: EdgeInsets.only(top: 10, left: 28),
+                    padding: EdgeInsets.only(top: 10),
                     child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
                         // ignore: prefer_const_literals_to_create_immutables
                         children: [
                           //Icon(Icons.lock),
-                           Text(nickname.toString(),
+                           Text(userData["username"].toString(),
                               style: TextStyle(
                                 fontSize: 16,
                                 color: Color.fromARGB(255, 81, 81, 81),
@@ -214,10 +253,11 @@ Future<void> getUserProfile() async {
                   width: 300,
                 ),
                         Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
                   // ignore: prefer_const_literals_to_create_immutables
                   children: [
                     const Padding(
-                        padding: EdgeInsets.only(bottom: 4, top: 25),
+                        padding: EdgeInsets.only(bottom: 4, top: 30),
                         // ignore: unnecessary_const
                         child: const Text("Email",
                             style: TextStyle(
@@ -227,12 +267,13 @@ Future<void> getUserProfile() async {
                   ],
                 ),
                 Padding(
-                    padding: EdgeInsets.only(top: 10, left: 28),
+                    padding: EdgeInsets.only(top: 10),
                     child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
                         // ignore: prefer_const_literals_to_create_immutables
                         children: [
                           //Icon(Icons.lock),
-                           Text(email.toString(),
+                           Text(userData["email"].toString(),
                               style: TextStyle(
                                 fontSize: 16,
                                 color: Color.fromARGB(255, 81, 81, 81),
@@ -262,10 +303,11 @@ Future<void> getUserProfile() async {
                 //       )),
                 //     ])),
                 Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
                   // ignore: prefer_const_literals_to_create_immutables
                   children: [
                     const Padding(
-                        padding: EdgeInsets.only(bottom: 4, top: 25),
+                        padding: EdgeInsets.only(bottom: 4, top: 30),
                         // ignore: unnecessary_const
                         child: const Text("Contraseña",
                             style: TextStyle(
@@ -275,8 +317,9 @@ Future<void> getUserProfile() async {
                   ],
                 ),
                 Padding(
-                    padding: EdgeInsets.only(top: 10, left: 25),
+                    padding: EdgeInsets.only(top: 10),
                     child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
                         // ignore: prefer_const_literals_to_create_immutables
                         children: [
                           //Icon(Icons.lock),

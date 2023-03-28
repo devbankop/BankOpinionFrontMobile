@@ -46,17 +46,15 @@ class _StateHomePage extends State<PageHomePage> {
   List bankList = [];
   List filteredList = [];
   var favorite = false;
-    String test = '';
-
+  String test = '';
 
   @override
   void initState() {
     super.initState();
     getLocation();
-    fetchData();
+
     filteredList = bankList;
     Jiffy.locale('es');
-    _placesApiClient = GoogleMapsPlaces(apiKey: "AIzaSyATDrJ5JGDI5lYdILFfSPO2qI311W6mPw0");
     Jiffy().yMMMMEEEEdjm;
     getUserProfile();
 
@@ -68,7 +66,8 @@ class _StateHomePage extends State<PageHomePage> {
     _controller = TextEditingController();
   }
 
-  
+  final GoogleMapsPlaces _placesApiClient =
+      GoogleMapsPlaces(apiKey: "AIzaSyATDrJ5JGDI5lYdILFfSPO2qI311W6mPw0");
 
   void filter(String inputString) {
     filteredList =
@@ -83,12 +82,6 @@ class _StateHomePage extends State<PageHomePage> {
       userRole = prefs.getString('userRole');
     });
   }
- 
-
-
-
-
-
 
   Future<void> getUserProfile() async {
     final prefs = await SharedPreferences.getInstance();
@@ -117,7 +110,8 @@ class _StateHomePage extends State<PageHomePage> {
       }
     }
   }
-void sort(int id) {
+
+  void sort(int id) {
     setState(() {
       var index = -1;
       for (var i = 0; i < banks.length; ++i)
@@ -137,31 +131,28 @@ void sort(int id) {
     final response = await http.get(URL);
   }
 
- Timer? _timer;
+  Timer? _timer;
 
-void _startTimer() {
-  _timer?.cancel(); // Cancela el temporizador existente antes de iniciar uno nuevo.
-  _timer = Timer(const Duration(seconds: 2), () {
-    fetchData();
-  });
-}
+  void _startTimer() {
+    _timer
+        ?.cancel(); // Cancela el temporizador existente antes de iniciar uno nuevo.
+    _timer = Timer(const Duration(seconds: 2), () {
+      fetchData();
+    });
+  }
 
-void _cancelTimer() {
-  _timer?.cancel();
-  _timer = null as Timer?;;
-}
-
-
-
+  void _cancelTimer() {
+    _timer?.cancel();
+    _timer = null as Timer?;
+    ;
+  }
 
   Set<Marker> markers = Set(); //markers for google map
-  late LatLng showLocation;
-  static LatLng _center = LatLng(39.4697500, -0.3773900);
-  LatLng center = LatLng(39.4697500, -0.3773900);
+
+  static LatLng _center = const LatLng(39.4697500, -0.3773900);
 
   late TextEditingController _controller;
   GoogleMapController? mapController; //controller for Google map
-
 
   final Set<Marker> _markers = {};
   LatLng _lastMapPosition = _center;
@@ -170,88 +161,89 @@ void _cancelTimer() {
   var selectedBank = -1;
   late List<dynamic> userBranchesFavorites = [];
 
-    late GoogleMapsPlaces _placesApiClient;
-
-
-
-
-late Position position;
+  late Position position;
   var posLat;
   var posLong;
+  var pos;
 
+  void getLocation() async {
+    bool locationEnabled = await Geolocator.isLocationServiceEnabled();
 
-void getLocation() async {
-  bool locationEnabled = await Geolocator.isLocationServiceEnabled();
+    var permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+    }
 
-  // Obtener la posición actual del usuario
-  if (locationEnabled) {
-    position = await Geolocator.getCurrentPosition(
-      desiredAccuracy: LocationAccuracy.medium, // reducir la precisión para obtener la ubicación más rápidamente
-    );
+    if (permission == LocationPermission.denied ||
+        permission == LocationPermission.deniedForever ||
+        !locationEnabled) {
+      setState(() {
+        _center = const LatLng(39.4697500, -0.3773900);
+        _lastMapPosition = const LatLng(39.4697500, -0.3773900);
+      });
+    } else {
+      position = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy
+            .bestForNavigation, // reducir la precisión para obtener la ubicación más rápidamente
+      );
+      setState(() {
+        pos = LatLng(position.latitude, position.longitude);
+        _center = LatLng(position.latitude, position.longitude);
+        _lastMapPosition = LatLng(position.latitude, position.longitude);
+      });
+
+      CameraPosition currentPosition = CameraPosition(
+          target: LatLng(position.latitude, position.longitude), zoom: 14.5);
+
+      mapController
+          ?.animateCamera(CameraUpdate.newCameraPosition(currentPosition));
+    }
+
+    await fetchData();
   }
 
-  setState(() {
-    if (locationEnabled && position != null) {
-      _center = LatLng(position.latitude, position.longitude);
-      showLocation = LatLng(position.latitude, position.longitude);
-    } else {
-      _center = LatLng(39.4697500, -0.3773900);
-      showLocation = LatLng(39.4697500, -0.3773900);
-    }
-  });
-}
+  Future<void> _onCameraMove(CameraPosition position) async {
+    _lastMapPosition = position.target;
+    if (position.zoom <= 10) return;
 
+    _cancelTimer();
+    _startTimer();
+  }
 
-Future<void> _onCameraMove(CameraPosition position) async {
-  _lastMapPosition = position.target;
-  if (position.zoom <= 10) return;
+  Future<void> fetchData() async {
+    // Define el URI de la solicitud http
+    var prueba = Uri.parse(
+        'https://bankopinion-backend-development-3vucy.ondigitalocean.app/branches/branchesOfChunkInDB/${_lastMapPosition.latitude},${_lastMapPosition.longitude}');
 
-  _cancelTimer();
-  _startTimer();
-}
+    // Realiza la solicitud http y espera la respuesta
+    final response = await http.get(prueba);
 
-Future<void> fetchData() async {
+    setState(() {
+      banks = jsonDecode(response.body);
 
-var prueba;
-  // Define el URI de la solicitud http
-  posLat == null && posLong == null
-  ?
-   prueba = Uri.parse(
-      'https://bankopinion-backend-development-3vucy.ondigitalocean.app/branches/branchesOfChunkInDB/${_lastMapPosition.latitude},${_lastMapPosition.longitude}')
-  : prueba = Uri.parse(
-      'https://bankopinion-backend-development-3vucy.ondigitalocean.app/branches/branchesOfChunkInDB/${posLat},${posLong}');
-  
+      banks.forEach((element) async {
+        if (element["value"]["location"] == null) ;
 
+        LatLng showLocation = LatLng(element["value"]["location"]["lat"],
+            element["value"]["location"]["lng"]);
 
-  // Realiza la solicitud http y espera la respuesta
-  final response = await http.get(prueba);
-
-  setState(() {
-    banks = jsonDecode(response.body);
-
-    banks.forEach((element) async {
-      if (element["value"]["location"] == null) return;
-
-      LatLng showLocation = LatLng(element["value"]["location"]["lat"],
-          element["value"]["location"]["lng"]);
-
-      //location to show in map
-      markers.add(Marker(
-          onTap: () => {sort(element["id"])},
-          //add marker on google map
-          markerId: MarkerId(showLocation.toString()),
-          position: showLocation, //position of marker
-          infoWindow: InfoWindow(
-            //popup info
-            title: element["value"]["branchName"],
-            snippet: element["value"]["address"],
-          ),
-          icon: await BitmapDescriptor.fromAssetImage(
-              const ImageConfiguration(size: Size(30, 30)),
-              'assets/images/bankMarker.png')));
+        //location to show in map
+        markers.add(Marker(
+            onTap: () => {sort(element["id"])},
+            //add marker on google map
+            markerId: MarkerId(showLocation.toString()),
+            position: showLocation, //position of marker
+            infoWindow: InfoWindow(
+              //popup info
+              title: element["value"]["branchName"],
+              snippet: element["value"]["address"],
+            ),
+            icon: await BitmapDescriptor.fromAssetImage(
+                const ImageConfiguration(size: Size(30, 30)),
+                'assets/images/bankMarker.png')));
+      });
     });
-  });
-}
+  }
 
 
 
@@ -274,551 +266,7 @@ var prueba;
       resizeToAvoidBottomInset: true,
       backgroundColor: Color.fromARGB(255, 255, 255, 255),
       bottomNavigationBar: BottomBar(),
-      body: kIsWeb
-          ?   Center(
-              child: 
-              
-              Container(
-                padding: EdgeInsets.only(top: 1),
-                child: 
-              
-               Column(
-                children: [
-                  Container(
-                      decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(10)),
-                      height: kIsWeb ? 500 : 400,
-                      child: GoogleMap(
-                        //Map widget from google_maps_flutter packages
-                        zoomGesturesEnabled: true, //enable Zoom in, out on map
-                        initialCameraPosition: CameraPosition(
-                          //innital position in map
-                          target: showLocation, //initial position
-                          zoom: 13.5, //initial zoom level
-                        ),
-                        onCameraIdle: () {
-                          fetchData();
-                        },
-
-                        markers: markers, //markers to show on map
-                        mapType: MapType.normal, //map type
-                        onCameraMove: _onCameraMove,
-                        onMapCreated: (controller) {
-                          //method called when map is created
-                          setState(() {
-                            mapController = controller;
-                          });
-                        },
-                      )),
-
-              
-         
-
- 
-
-
-Padding(
-                      padding: EdgeInsets.only(
-                          top: 20, left: 10, right: 10, bottom: 10),
-                      child: 
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          ElevatedButton(
-                            onPressed: (() async {
-
-
-
-                                  var place = await PlacesAutocomplete.show(
-                                    context: context,
-                                    apiKey: "AIzaSyATDrJ5JGDI5lYdILFfSPO2qI311W6mPw0",
-                                    proxyBaseUrl: 'https://cors-anywhere.herokuapp.com/',
-
-
-                                    mode: Mode.overlay,
-                                    types: [],
-                                    strictbounds: false,
-                                    logo: const SizedBox.shrink(),
-                                    language: "es",
-                                    components: [Component(Component.country, 'es')],
-                                    onError: (err) {
-                                      print(err);
-                                    }
-                                  );
-                                  if (place != null) {
-                                    setState(() {
-                                      var location = place.description.toString();
-                                    });
-                                    final placeDetails =
-                                      await _placesApiClient.getDetailsByPlaceId(place.placeId!);
-                                    final lat = placeDetails.result.geometry?.location.lat ?? 0;
-                                    final lng = placeDetails.result.geometry?.location.lng ?? 0;
-                                    var newlatlang = LatLng(lat, lng);
-                                    mapController?.animateCamera(
-                                      CameraUpdate.newCameraPosition(
-                                        CameraPosition(
-                                          target: newlatlang,
-                                          zoom: 15
-                                        )
-                                      )
-                                    );
-                                  }
-   
-                            }),
-                            style: ElevatedButton.styleFrom(
-                              shape: const StadiumBorder(
-                                side: BorderSide(
-                                  color: Color.fromARGB(46, 35, 0, 100),
-                                  width: .5,
-                                ),
-                              ),
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 25, vertical: 14),
-                              backgroundColor:
-                                  const Color.fromARGB(255, 255, 255, 255),
-                            ),
-                            child: Row(
-                              children: const [
-                                Icon(
-                               Icons.search,
-                               color: Color.fromARGB(255, 93, 43, 184),
-                               size: 30,
-                             ),
-                                Text(
-                                  " Búsqueda específica",
-                                  style: TextStyle(
-                                      fontSize: 16, color: Colors.black),
-                                )
-                              ],
-                            ),
-                          )
-                        ],
-                      )
-                      ),
-                      
-
-//                   Padding(
-//                       padding: EdgeInsets.only(
-//                           top: 20, left: 10, right: 10, bottom: 10),
-//                       child: Container(
-//                           width: 650,
-//                           padding: EdgeInsets.only(
-//                               top: 2, left: 8, right: 8, bottom: 2),
-//                           decoration: BoxDecoration(
-//                             border: Border.all(
-//                                 width: 1,
-//                                 color: Color.fromARGB(255, 224, 224, 224)),
-//                             borderRadius: BorderRadius.circular(8),
-//                           ),
-//                           child: Row(children: [
-//                             const Icon(
-//                               Icons.search,
-//                             ),
-//                             Expanded(
-//                               child: Button,
-//   // child: Padding(
-//   //   padding: const EdgeInsets.only(left: 5),
-//   //   child: TextField(
-//   //     controller: _controller,
-//   //     onTap: () async {
-//   //       var place = await PlacesAutocomplete.show(
-//   //         context: context,
-//   //         apiKey: "AIzaSyATDrJ5JGDI5lYdILFfSPO2qI311W6mPw0",
-//   //         mode: Mode.overlay,
-//   //         types: [],
-//   //         strictbounds: false,
-//   //         logo: const SizedBox.shrink(),
-//   //         language: "es",
-//   //         components: [Component(Component.country, 'es')],
-//   //         onError: (err) {
-//   //           print(err);
-//   //         }
-//   //       );
-
-//   //       if (place != null) {
-//   //         setState(() {
-//   //           var location = place.description.toString();
-//   //         });
-
-//   //         final placeDetails =
-//   //           await _placesApiClient.getDetailsByPlaceId(place.placeId!);
-
-//   //         final lat = placeDetails.result.geometry?.location.lat ?? 0;
-//   //         final lng = placeDetails.result.geometry?.location.lng ?? 0;
-//   //         var newlatlang = LatLng(lat, lng);
-
-//   //         mapController?.animateCamera(
-//   //           CameraUpdate.newCameraPosition(
-//   //             CameraPosition(
-//   //               target: newlatlang,
-//   //               zoom: 15
-//   //             )
-//   //           )
-//   //         );
-//   //       }
-//   //     },
-//   //     onSubmitted: (value) => {},
-//   //     style: const TextStyle(color: Colors.black),
-//   //     decoration: const InputDecoration(
-//   //       border: InputBorder.none,
-//   //       hintText: "Filtra por ubicación"
-//   //     ),
-//   //     onChanged: (text) {
-//   //       find(text.toLowerCase());
-//   //     }
-//   //   )
-//   // )
-// ),
-
-//                             const Icon(Icons.location_searching_sharp)
-//                           ]))),
-
-//LISTA DE UBICACIONES RESPECTO A MARCADORES DEL CHUNK
-
-                  Expanded(
-                      child:
-                      SingleChildScrollView(
-                          child: Wrap(
-                    children: [
-                      
-                      for (int index = 0; index < banks.length; index++)
-                        SizedBox(
-                          width: 500,
-                            child: InkWell(
-                              onDoubleTap: () {
-                                Navigator.push(
-                                     context,
-                                     MaterialPageRoute(
-                                         builder:
-                                             (context) =>
-                                                 allReviews(
-                                                   bank: banks.elementAt(index)["value"],
-                                                 )),
-                                );
-                              },
-                                onTap: () {
-                                  LatLng newlatlong = LatLng(
-                                      banks.elementAt(index)["value"]
-                                          ["location"]["lat"],
-                                      banks.elementAt(index)["value"]
-                                          ["location"]["lng"]);
-                                  mapController?.animateCamera(
-                                      CameraUpdate.newCameraPosition(
-                                          CameraPosition(
-                                              target: newlatlong, zoom: 18)));
-                                },
-                                child: Container(
-                                    margin: const EdgeInsets.only(
-                                        bottom: 5, left: 10, right: 10),
-                                    decoration: BoxDecoration(
-                                        //color: isBankSelected(index) ? Color.fromARGB(255, 215, 215, 215) : Colors.transparent,
-                                        border: Border.all(
-                                          width: 2,
-                                          color: isBankSelected(index)
-                                              ? const Color.fromARGB(
-                                                  255, 0, 0, 0)
-                                              : const Color.fromARGB(
-                                                  255, 223, 223, 223),
-                                        ),
-                                        borderRadius:
-                                            BorderRadius.circular(12)),
-                                    height: 100,
-                                    padding:
-                                        const EdgeInsets.only(top: 0, left: 12),
-                                    child: Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.center,
-                                          children: [
-                                            Padding(
-                                              padding: const EdgeInsets.only(
-                                                  bottom: 6, top: 8),
-                                              child: banks[index]["value"]["branchName"].length >
-                                                      22
-                                                  ? Text(
-                                                      banks[index]["value"]["branchName"].substring(0, 27) +
-                                                          "...",
-                                                      // ,
-                                                      overflow:
-                                                          TextOverflow.ellipsis,
-                                                      maxLines: 1,
-                                                      textAlign: TextAlign.left,
-                                                      style: const TextStyle(
-                                                          fontSize: 15,
-                                                          color: Color.fromARGB(
-                                                              255, 0, 0, 0),
-                                                          fontWeight:
-                                                              FontWeight.bold))
-                                                  : Text(
-                                                      banks[index]["value"]
-                                                          ["branchName"],
-                                                      // ,
-                                                      overflow:
-                                                          TextOverflow.ellipsis,
-                                                      maxLines: 1,
-                                                      textAlign: TextAlign.left,
-                                                      style: const TextStyle(
-                                                          fontSize: 15,
-                                                          color: Color.fromARGB(255, 0, 0, 0),
-                                                          fontWeight: FontWeight.bold)),
-                                            ),
-                                            Row(
-                                              children: [
-                                                Container(
-                                                  constraints:
-                                                      const BoxConstraints(
-                                                          maxWidth: 250),
-                                                  child: Text(
-                                                      banks.elementAt(
-                                                              index)["value"]
-                                                          ["address"],
-                                                      textAlign: TextAlign.left,
-                                                      style: const TextStyle(
-                                                        fontSize: 11,
-                                                        color: Color.fromARGB(
-                                                            255, 0, 0, 0),
-                                                      )),
-                                                ),
-                                              ],
-                                            ),
-                                            Row(
-                                              children: [
-                                                Container(
-                                                  constraints:
-                                                      const BoxConstraints(
-                                                          maxWidth: 200),
-                                                  child: Text(
-                                                      banks.elementAt(index)[
-                                                                  "value"]
-                                                              ["zipcode"] +
-                                                          ", " +
-                                                          banks.elementAt(
-                                                                  index)[
-                                                              "value"]["city"],
-                                                      textAlign: TextAlign.left,
-                                                      style: const TextStyle(
-                                                        fontSize: 11,
-                                                        color: Color.fromARGB(
-                                                            255, 0, 0, 0),
-                                                      )),
-                                                ),
-                                              ],
-                                            ),
-                                            Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.center,
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.center,
-                                              children: [
-                                                Padding(
-                                                    padding:
-                                                        const EdgeInsets.only(
-                                                            top: 6, bottom: 4),
-                                                    child: Row(
-                                                      children: [
-                                                        StatmentRatings(
-                                                            bank:
-                                                                banks.elementAt(
-                                                                        index)[
-                                                                    "value"]),
-                                                        Text(
-                                                            "(" +
-                                                                banks
-                                                                    .elementAt(index)[
-                                                                        "value"]
-                                                                        [
-                                                                        "branchRating"]
-                                                                    .toString() +
-                                                                ")",
-                                                            style:
-                                                                const TextStyle(
-                                                              fontSize: 11,
-                                                              color: Color
-                                                                  .fromARGB(
-                                                                      255,
-                                                                      66,
-                                                                      66,
-                                                                      66),
-                                                            )),
-                                                      ],
-                                                    ))
-                                              ],
-                                            )
-                                          ],
-                                        ),
-                                        Row(
-                                          children: [
-                                            //BOTÓN FAVORITOS
-                                            Column(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.center,
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.center,
-                                              children: [
-                                                Container(
-                                                    margin:
-                                                        const EdgeInsets.only(
-                                                            right: 3, left: 5),
-                                                    child: SizedBox(
-                                                        width: 47.0,
-                                                        height: 47.0,
-                                                        child:
-                                                            jwt != null &&
-                                                                    jwt != '' &&
-                                                                    userRole !=
-                                                                        'superAdmin'
-                                                                ? ElevatedButton(
-                                                                    onPressed:
-                                                                        () async {
-                                                                      final prefs =
-                                                                          await SharedPreferences
-                                                                              .getInstance();
-                                                                      int foundIndex =
-                                                                          userBranchesFavorites.indexOf(banks.elementAt(index)["value"]
-                                                                              [
-                                                                              "id"]);
-                                                                      setState(
-                                                                          () {
-                                                                        if (foundIndex !=
-                                                                            -1)
-                                                                          userBranchesFavorites
-                                                                              .removeAt(foundIndex);
-                                                                        else
-                                                                          userBranchesFavorites.add(banks.elementAt(index)["value"]
-                                                                              [
-                                                                              "id"]);
-
-                                                                        foundIndex =
-                                                                            userBranchesFavorites.indexOf(banks.elementAt(index)["value"]["id"]);
-                                                                      });
-                                                                      jwt = prefs
-                                                                          .getString(
-                                                                              'jwt');
-                                                                      var favoriteBranch =
-                                                                          Uri.parse('https://bankopinion-backend-development-3vucy.ondigitalocean.app/users/addFavoriteBranch/' +
-                                                                              banks.elementAt(index)["value"]["id"].toString());
-                                                                      var response = await http.put(
-                                                                          favoriteBranch,
-                                                                          headers: {
-                                                                            'Authorization':
-                                                                                '$jwt'
-                                                                          });
-                                                                      var finalResponse =
-                                                                          json.decode(
-                                                                              response.body);
-
-                                                                      if (finalResponse[
-                                                                              "status"] ==
-                                                                          401) {
-                                                                        setState(
-                                                                            () {
-                                                                          if (foundIndex !=
-                                                                              -1)
-                                                                            userBranchesFavorites.removeAt(foundIndex);
-                                                                        });
-                                                                        var refresh =
-                                                                            AuthService();
-                                                                        await refresh
-                                                                            .refreshToken();
-                                                                      }
-
-                                                                      //await getUserProfile();
-                                                                    },
-                                                                    style: ElevatedButton
-                                                                        .styleFrom(
-                                                                      shape:
-                                                                          const CircleBorder(),
-                                                                      padding:
-                                                                          const EdgeInsets.all(
-                                                                              5),
-                                                                      backgroundColor: userRole ==
-                                                                              'superAdmin'
-                                                                          ? Color.fromARGB(
-                                                                              255,
-                                                                              223,
-                                                                              116,
-                                                                              116)
-                                                                          : const Color.fromARGB(255, 153, 116, 223),
-                                                                    ),
-                                                                    child: !userBranchesFavorites.contains(banks.elementAt(index)["value"]
-                                                                            [
-                                                                            "id"])
-                                                                        ? const Icon(Icons
-                                                                            .favorite_border_rounded)
-                                                                        : const Icon(
-                                                                            Icons.favorite))
-                                                                : null))
-                                              ],
-                                            ),
-
-                                            //COLUMNA BOTÓN allReviews
-                                            Column(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.center,
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.center,
-                                              children: [
-                                                Container(
-                                                    margin:
-                                                        const EdgeInsets.only(
-                                                            right: 8, left: 3),
-                                                    child: SizedBox(
-                                                        width: 47.0,
-                                                        height: 47.0,
-                                                        child: ElevatedButton(
-                                                            onPressed: () {
-                                                              //ROUTES
-
-                                                              Navigator.push(
-                                                                context,
-                                                                MaterialPageRoute(
-                                                                    builder:
-                                                                        (context) =>
-                                                                            allReviews(
-                                                                              bank: banks.elementAt(index)["value"],
-                                                                            )),
-                                                              );
-                                                            },
-                                                            style:
-                                                                ElevatedButton
-                                                                    .styleFrom(
-                                                              shape:
-                                                                  const CircleBorder(),
-                                                              padding:
-                                                                  const EdgeInsets
-                                                                      .all(5),
-                                                              backgroundColor: userRole ==
-                                                                      'superAdmin'
-                                                                  ? Color
-                                                                      .fromARGB(
-                                                                          255,
-                                                                          223,
-                                                                          116,
-                                                                          116)
-                                                                  : const Color
-.fromARGB(255, 153, 116, 223),
-                                                            ),
-                                                            child: const Icon(
-                                                              Icons.edit,
-                                                              //color: Color.fromRGBO(255, 255, 255, 255)
-                                                            ))))
-                                              ],
-                                            ),
-                                          ],
-                                        ),
-                                      ],
-                                    ))))
-                    ],
-                  )))
-                ],
-              ),
-            ))
-          : Column(
+      body: Column(
               children: [
                 Container(
                     height: 300,
@@ -828,7 +276,7 @@ Padding(
                       zoomGesturesEnabled: true, //enable Zoom in, out on map
                       initialCameraPosition: CameraPosition(
                         //innital position in map
-                        target: showLocation, //initial position
+                        target:  pos ?? _center, //initial position
                         zoom: 13.5, //initial zoom level
                       ),
                       markers: markers, //markers to show on map
