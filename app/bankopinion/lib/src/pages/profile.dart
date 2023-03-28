@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 
+import 'package:bankopinion/src/pages/homeView.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
@@ -183,7 +184,7 @@ Future<void> getUserProfile() async {
                 Container(
                   color: Color.fromARGB(255, 161, 161, 161),
                   height: 1,
-                  width: 300,
+                  width: 250,
                 ),
                 Row(
                                     mainAxisAlignment: MainAxisAlignment.center,
@@ -217,7 +218,7 @@ Future<void> getUserProfile() async {
                 Container(
                   color: Color.fromARGB(255, 161, 161, 161),
                   height: 1,
-                  width: 300,
+                  width: 250,
                 ),
                 Row(
                                         mainAxisAlignment: MainAxisAlignment.center,
@@ -250,7 +251,7 @@ Future<void> getUserProfile() async {
                         Container(
                   color: Color.fromARGB(255, 161, 161, 161),
                   height: 1,
-                  width: 300,
+                  width: 250,
                 ),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
@@ -282,7 +283,7 @@ Future<void> getUserProfile() async {
                 Container(
                   color: Color.fromARGB(255, 161, 161, 161),
                   height: 1,
-                  width: 300,
+                  width: 250,
                 ),
                 // Padding(
                 //     padding: EdgeInsets.only(left: 10),
@@ -332,9 +333,132 @@ Future<void> getUserProfile() async {
                 Container(
                   color: Color.fromARGB(255, 161, 161, 161),
                   height: 1,
-                  width: 300,
+                  width: 250,
                 ),
+
+                Padding(
+                    padding: EdgeInsets.only(top: 60),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+
+                        ElevatedButton(
+                            onPressed: (() async {
+                                _showAlertDialog();
+                            }),
+                            style: ElevatedButton.styleFrom(
+                              shape: const StadiumBorder(),
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 30, vertical: 14),
+                                  backgroundColor: Colors.red
+                            ),
+                            child: Row(
+                              children: const [
+                                
+                                Text(
+                                  "Eliminar cuenta",
+                                  style: TextStyle(fontSize: 18),
+                                )
+                              ],
+                            ))
+                      ]))
+
+
               ])),
         ])));
+  }
+  void _showAlertDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return Dialog(
+          shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.all(Radius.circular(10.0))),
+          child: Container(
+            decoration: BoxDecoration(
+              color: Color.fromARGB(56, 233, 221, 255),
+              borderRadius: BorderRadius.all(Radius.circular(20.0)),
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                Padding(
+                  padding: EdgeInsets.all(16),
+                  child: Text(
+                    "¿Deseas eliminar tu usuario con todos los datos y comentarios asociados al mismo?",
+                    style: TextStyle(color: Color.fromARGB(255, 0, 0, 0)),
+                  ),
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.only(
+                          left: 16, right: 16, bottom: 8, top: 8),
+                      child: Align(
+                        alignment: Alignment.bottomRight,
+                        child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                              backgroundColor:
+                                  Color.fromARGB(255, 224, 66, 66)),
+                          onPressed: () async {
+                            
+
+                            final prefs = await SharedPreferences.getInstance();
+                          jwt = prefs.getString("jwt");
+                          var deleteUser = Uri.parse(
+                              'https://bankopinion-backend-development-3vucy.ondigitalocean.app/users/deleteUser');
+
+                          var response =
+                              await http.delete(deleteUser, headers: {"Authorization": '$jwt'});
+
+                                print(response.statusCode);
+                                             
+
+                              if(response.statusCode == 200){
+
+                                 setState(() {
+                                  prefs.remove('jwt');
+                                  prefs.remove('refresh_token');
+                                  jwt = null;
+
+                                });
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => PageHomePage()));
+                              }
+
+                          },
+                          child: Text(
+                            "Eliminar",
+                            style: TextStyle(color: Colors.white),
+                          ),
+                        ),
+                        
+                      ),
+                    ),
+                    ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                              backgroundColor:
+                                  Color.fromARGB(255, 153, 116, 223)),
+                          onPressed: () async {
+                            
+                            Navigator.pop(context);
+
+                          },
+                          child: Text(
+                            "Cancelar",
+                            style: TextStyle(color: Colors.white),
+                          ),
+                        ),
+                  ],
+                )
+              ],
+            ),
+          ),
+        );
+      },
+    );
   }
 }
