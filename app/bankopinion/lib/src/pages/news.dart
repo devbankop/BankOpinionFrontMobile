@@ -284,7 +284,7 @@ try {
                                                                 .spaceBetween,
                                                         children: [
 
-                                            ClipRRect(
+                                           ClipRRect(
                                               borderRadius: BorderRadius.only(
                                                 topLeft: Radius.circular(15),
                                                 topRight: Radius.circular(15),
@@ -518,22 +518,22 @@ try {
                                                                   .circular(15),
                                                             ),
                                                             child:
-                                                                CachedNetworkImage(
-                                                              imageUrl: news
-                                                                  .elementAt(index)[
-                                                                      'image']
-                                                                  .toString(),
-                                                              fit: BoxFit.cover,
-                                                              placeholder: (context,
-                                                                      url) =>
-                                                                  CircularProgressIndicator(),
-                                                              errorWidget: (context,
-                                                                      url,
-                                                                      error) =>
-                                                                  Icon(Icons
-                                                                      .error),
-                                                            ),
-                                                          ),
+                                                                ClipRRect(
+                                              borderRadius: BorderRadius.only(
+                                                topLeft: Radius.circular(15),
+                                                topRight: Radius.circular(15),
+                                              ),
+                                              child: CachedNetworkImage(
+                                                imageUrl: news.elementAt(index)['image'].toString(),
+                                                width: double.infinity,
+                                                height: 220,
+                                                fit: BoxFit.cover,
+                                                errorWidget: (BuildContext context, String url, dynamic error) {
+                                                  print('Error al cargar la imagen: $error');
+                                                  return const Center(child: Text('Error al cargar la imagen'));
+                                                },
+                                              ),
+                                                                )),
                                                         ),
                                                         Padding(
                                                           padding:

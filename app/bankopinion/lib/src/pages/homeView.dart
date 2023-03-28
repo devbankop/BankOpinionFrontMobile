@@ -144,7 +144,7 @@ class _StateHomePage extends State<PageHomePage> {
   void _cancelTimer() {
     _timer?.cancel();
     _timer = null as Timer?;
-    ;
+    
   }
 
   Set<Marker> markers = Set(); //markers for google map

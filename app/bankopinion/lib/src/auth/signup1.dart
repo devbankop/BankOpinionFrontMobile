@@ -49,6 +49,33 @@ class _SignUpView1State extends State<SignUpView1> {
         body: Center(
           child: SingleChildScrollView(
             child: Column(children: [
+
+              Padding(
+              padding: EdgeInsets.only(top: 15, left: 15),
+              child: Row(
+                children: [
+                  SizedBox(
+                      width: 70.0,
+                      height: 70.0,
+                      child: Padding(
+                        padding: const EdgeInsets.only(top: 20),
+                        child: ElevatedButton(
+                            onPressed: () {
+                              Navigator.pop(context);
+                            },
+                            style: ElevatedButton.styleFrom(
+                              shape: const CircleBorder(),
+                              padding: const EdgeInsets.all(5),
+                              backgroundColor:
+                                  Color.fromARGB(255, 255, 255, 255),
+                            ),
+                            child: const Icon(
+                              Icons.arrow_back,
+                              color: Color.fromARGB(255, 153, 116, 223),
+                            )),
+                      )),
+                ],
+              )),
               
           Padding(
               padding: const EdgeInsets.only(),

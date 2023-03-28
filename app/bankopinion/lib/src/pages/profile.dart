@@ -27,6 +27,8 @@ var email;
 
 var userData;
 
+bool error = false;
+
   @override
   void initState() {
     super.initState();
@@ -360,9 +362,26 @@ Future<void> getUserProfile() async {
                                   style: TextStyle(fontSize: 18),
                                 )
                               ],
-                            ))
-                      ]))
+                            )),
+                      ])),
 
+
+                      Padding(
+                    padding: EdgeInsets.only(top: 15),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                      error == true
+                  ? RichText(
+                      text: TextSpan(
+                          text: "Se ha producido un error eliminando el usuario",
+                          style: const TextStyle(
+                              fontWeight: FontWeight.bold,
+                              color: Color.fromARGB(128, 255, 0, 0),
+                              fontSize: 14),
+
+                          )): Text("")
+                      ]))
 
               ])),
         ])));
@@ -427,6 +446,14 @@ Future<void> getUserProfile() async {
                                   context,
                                   MaterialPageRoute(
                                       builder: (context) => PageHomePage()));
+                              } else {
+
+                                Navigator.pop(context);
+
+                                setState(() {
+                                  error = true;  
+                                });
+                              
                               }
 
                           },
@@ -442,8 +469,8 @@ Future<void> getUserProfile() async {
                           style: ElevatedButton.styleFrom(
                               backgroundColor:
                                   Color.fromARGB(255, 153, 116, 223)),
-                          onPressed: () async {
-                            
+                          onPressed: () async {                        
+
                             Navigator.pop(context);
 
                           },
