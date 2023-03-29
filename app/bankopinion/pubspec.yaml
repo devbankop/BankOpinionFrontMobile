@@ -53,7 +53,7 @@ dependencies:
   email_validator: ^2.1.17
   persistent_bottom_nav_bar: ^5.0.2
   webview_flutter: ^4.0.2
-  flutter_inappwebview: ^5.7.2+3
+  #flutter_inappwebview: ^5.7.2+3
   url_launcher: ^6.1.8
   pull_to_refresh: ^2.0.0
   dio: ^5.0.0
@@ -92,6 +92,7 @@ flutter:
     #- assets/icons/icon_launcher.png
     #- assets/images/icon_launcher.png
     - assets/images/bankMarker.png
+    - assets/images/iosBankMarker.png
     - assets/images/streetView.jpeg
     - assets/images/imageStartView.png
     - assets/images/loginImage.webp

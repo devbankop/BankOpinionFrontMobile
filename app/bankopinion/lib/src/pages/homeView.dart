@@ -1,5 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:ui';
+
 import 'package:bankopinion/src/Reusable%20Components/bottomBar.dart';
 import 'package:bankopinion/src/Reusable%20Components/ratingStarsBranch.dart';
 import 'package:bankopinion/src/authServices/refreshToken.dart';
@@ -47,6 +49,7 @@ class _StateHomePage extends State<PageHomePage> {
   List filteredList = [];
   var favorite = false;
   String test = '';
+  bool expanded = false;
 
   @override
   void initState() {
@@ -245,7 +248,8 @@ class _StateHomePage extends State<PageHomePage> {
             ),
             icon: await BitmapDescriptor.fromAssetImage(
                 const ImageConfiguration(size: Size(30, 30)),
-                'assets/images/bankMarker.png')));
+                // Platform.isIOS ? 'assets/images/iosBankMarker.png' :
+                 'assets/images/bankMarker.png')));
       }
       });
     });
@@ -275,10 +279,11 @@ class _StateHomePage extends State<PageHomePage> {
       body: Column(
               children: [
                 Container(
-                    height: 380,
-                    child: GoogleMap(
+                    height: expanded == true ? 600 : 380,
+                    child:Stack(
+                        children: [
+                           GoogleMap(
                       //Map widget from google_maps_flutter packages
-
                       zoomGesturesEnabled: true, //enable Zoom in, out on map
                       initialCameraPosition: CameraPosition(
                         //innital position in map
@@ -294,10 +299,28 @@ class _StateHomePage extends State<PageHomePage> {
                           mapController = controller;
                         });
                       },
-                    )),
+                    ),
+                    Positioned(
+                        bottom: 16,
+                        left: 16,
+                        child: FloatingActionButton(
+                          backgroundColor: Colors.white,
+                          onPressed: () {
+                            setState(() {
+                              expanded = !expanded;
+                            });
+                            // Handle button press
+                          },
+                          child: Icon(Icons.expand,
+                          color: Color.fromARGB(255, 158, 54, 244),),
+                        ),
+                      ),
+
+                        ])
+                      ),
                 Padding(
                       padding: EdgeInsets.only(
-                          top: 20, left: 10, right: 10, bottom: 10),
+                          top: 10, left: 10, right: 10, bottom: 10),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
@@ -421,44 +444,42 @@ class _StateHomePage extends State<PageHomePage> {
                                         CrossAxisAlignment.start,
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
-                                      Padding(
+                                      SizedBox(
+                                    width: 230.0,
+                                    child: Padding(
                                         padding: const EdgeInsets.only(
-                                            bottom: 6, top: 8),
-                                        child: 
-                                             Text(
-                                              banks[index]["value"]["branchName"].length > 27
-                                              ? banks[index]["value"]["branchName"].substring(0, 27) + "..."
-                                              : banks[index]["value"]["branchName"],
-                                                // ,
-                                                overflow: TextOverflow.ellipsis,
-                                                maxLines: 1,
-                                                textAlign: TextAlign.left,
-                                                style: const TextStyle(
-                                                    fontSize: 15,
-                                                    color: Color.fromARGB(
-                                                        255, 0, 0, 0),
-                                                    fontWeight:
-                                                        FontWeight.bold))
-                                             
-                                                   
-                                      ),
+                                            bottom: 4, top: 8),
+                                        child: Text(
+                                            banks[index]["value"]["branchName"],
+                                            overflow: TextOverflow.ellipsis,
+                                            maxLines: 1,
+                                            softWrap: false,
+                                            textAlign: TextAlign.left,
+                                            style: const TextStyle(
+                                                fontSize: 15,
+                                                color: Color.fromARGB(
+                                                    255, 0, 0, 0),
+                                                fontWeight: FontWeight.bold))),
+                                  ),
                                       Row(
                                         children: [
-                                          Container(
-                                            constraints: const BoxConstraints(
-                                                maxWidth: 200),
-                                            child: Text(
-                                                banks.elementAt(index)["value"]["address"].length > 30 
-                                                    ? banks.elementAt(index)["value"]
-                                                      ["address"].substring(0, 32) + "..."
-                                                    : banks.elementAt(index)["value"]["address"],
-                                                textAlign: TextAlign.left,
-                                                style: const TextStyle(
-                                                  fontSize: 11,
-                                                  color: Color.fromARGB(
-                                                      255, 0, 0, 0),
-                                                )),
-                                          ),
+                                          SizedBox(
+                                    width: 230.0,
+                                    child: Padding(
+                                        padding: const EdgeInsets.only(
+                                            ),
+                                        child: Text(
+                                            banks[index]["value"]["address"],
+                                            overflow: TextOverflow.ellipsis,
+                                            maxLines: 1,
+                                            softWrap: false,
+                                            textAlign: TextAlign.left,
+                                            style: const TextStyle(
+                                              fontSize: 11,
+                                              color:
+                                                  Color.fromARGB(255, 0, 0, 0),
+                                            ))),
+                                  ),
                                         ],
                                       ),
                                       Row(
