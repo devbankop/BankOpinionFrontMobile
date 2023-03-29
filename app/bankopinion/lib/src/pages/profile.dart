@@ -19,11 +19,8 @@ class ProfileState extends State<Profile> {
   String? jwt;
 
                   
-var userId;
-var name;
-var surname;
-var nickname;
-var email;
+var name = "", userId = "", surname = "", nickname = "", email = "";
+
 
 var userData;
 
@@ -77,10 +74,11 @@ Future<void> getUserProfile() async {
             await http.get(getUser, headers: {"Authorization": '$jwt'});
   print(response.statusCode);
               if (response.statusCode == 200) {
+                setState(() {
           //RECUPERAMOS VALORES DE LA RESPUESTA DE LA PETICIÓN
                 var responseData = json.decode(response.body);
 
-                setState(() {
+                
                    userData = responseData["userProfile"];
                 });
                 print(userData);
@@ -175,7 +173,7 @@ Future<void> getUserProfile() async {
                       mainAxisAlignment: MainAxisAlignment.center,
                         // ignore: prefer_const_literals_to_create_immutables
                         children: [
-                           Text(userData["name"].toString(),
+                           Text(userData != null && userData.containsKey("name") ? userData["name"] : "",
                               style: TextStyle(
                                 fontSize: 16,
                                 color: Color.fromARGB(255, 81, 81, 81),
@@ -211,7 +209,7 @@ Future<void> getUserProfile() async {
                         // ignore: prefer_const_literals_to_create_immutables
                         children: [
                           //Icon(Icons.lock),
-                           Text(userData["surname"].toString(),
+                           Text( userData != null && userData.containsKey("surname") ? userData["surname"] : "",
                               style: TextStyle(
                                 fontSize: 16,
                                 color: Color.fromARGB(255, 81, 81, 81),
@@ -244,7 +242,7 @@ Future<void> getUserProfile() async {
                         // ignore: prefer_const_literals_to_create_immutables
                         children: [
                           //Icon(Icons.lock),
-                           Text(userData["username"].toString(),
+                           Text(userData != null && userData.containsKey("username") ? userData["username"] : "",
                               style: TextStyle(
                                 fontSize: 16,
                                 color: Color.fromARGB(255, 81, 81, 81),
@@ -276,7 +274,7 @@ Future<void> getUserProfile() async {
                         // ignore: prefer_const_literals_to_create_immutables
                         children: [
                           //Icon(Icons.lock),
-                           Text(userData["email"].toString(),
+                           Text(userData != null && userData.containsKey("email") ? userData["email"] : "",
                               style: TextStyle(
                                 fontSize: 16,
                                 color: Color.fromARGB(255, 81, 81, 81),

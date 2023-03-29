@@ -157,6 +157,7 @@ class _StateHomePage extends State<PageHomePage> {
   final Set<Marker> _markers = {};
   LatLng _lastMapPosition = _center;
   var banks = [];
+  var banksResponse = [];
   var banksFound = [];
   var selectedBank = -1;
   late List<dynamic> userBranchesFavorites = [];
@@ -219,16 +220,20 @@ class _StateHomePage extends State<PageHomePage> {
     final response = await http.get(prueba);
 
     setState(() {
-      banks = jsonDecode(response.body);
+      banksResponse = jsonDecode(response.body);
 
-      banks.forEach((element) async {
-        if (element["value"]["location"] == null) ;
+  
+      banksResponse.forEach((element) async {
+        // if (element["value"]["location"] == null) return;
+        if (element["status"] == "fulfilled") {
+          banks.insert(0, element);
 
         LatLng showLocation = LatLng(element["value"]["location"]["lat"],
             element["value"]["location"]["lng"]);
 
         //location to show in map
-        markers.add(Marker(
+        markers.add(
+          Marker(
             onTap: () => {sort(element["id"])},
             //add marker on google map
             markerId: MarkerId(showLocation.toString()),
@@ -241,6 +246,7 @@ class _StateHomePage extends State<PageHomePage> {
             icon: await BitmapDescriptor.fromAssetImage(
                 const ImageConfiguration(size: Size(30, 30)),
                 'assets/images/bankMarker.png')));
+      }
       });
     });
   }
@@ -269,7 +275,7 @@ class _StateHomePage extends State<PageHomePage> {
       body: Column(
               children: [
                 Container(
-                    height: 300,
+                    height: 380,
                     child: GoogleMap(
                       //Map widget from google_maps_flutter packages
 
@@ -290,93 +296,87 @@ class _StateHomePage extends State<PageHomePage> {
                       },
                     )),
                 Padding(
-                    padding: EdgeInsets.only(
-                        top: 20, left: 10, right: 10, bottom: 10),
-                    child: Container(
-                        padding: EdgeInsets.only(
-                            top: 2, left: 8, right: 8, bottom: 2),
-                        decoration: BoxDecoration(
-                          border: Border.all(
-                              width: 1,
-                              color: Color.fromARGB(255, 224, 224, 224)),
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        child: Row(children: [
-                          const Icon(
-                            Icons.search,
-                          ),
-                          Expanded(
-                            child: Padding(
-                              padding: const EdgeInsets.only(left: 5),
-                              child: TextField(
-                                  controller: _controller,
-                                  onTap: () async {
-                                    var place = await PlacesAutocomplete.show(
-                                        context: context,
-                                        apiKey:
-                                            "AIzaSyATDrJ5JGDI5lYdILFfSPO2qI311W6mPw0",
-                                        mode: Mode.overlay,
-                                        //overlayBorderRadius: ,
-                                        types: [],
-                                        strictbounds: false,
-                                        logo: const SizedBox.shrink(),
-                                        language: "es",
-                                        components: [
-                                          Component(Component.country, 'es')
-                                        ],
-                                        //google_map_webservice package
-                                        onError: (err) {
-                                          // ignore: avoid_print
-                                          print(err);
-                                        });
+                      padding: EdgeInsets.only(
+                          top: 20, left: 10, right: 10, bottom: 10),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          ElevatedButton(
+                            onPressed: (() async {
+                              var place = await PlacesAutocomplete.show(
+                                  context: context,
+                                  apiKey:
+                                      "AIzaSyATDrJ5JGDI5lYdILFfSPO2qI311W6mPw0",
+                                  
+                                  mode: Mode.overlay,
+                                  types: [],
+                                  strictbounds: false,
+                                  logo: const SizedBox.shrink(),
+                                  language: "es",
+                                  components: [Component(Component.country, 'es')],
+                                  
+                                  onError: (err) {});
 
-                                    if (place != null) {
-                                      setState(() {
-                                        var location =
-                                            place.description.toString();
-                                      });
 
-                                      //form google_maps_webservice package
-                                      final plist = GoogleMapsPlaces(
-                                        apiKey:
-                                            "AIzaSyATDrJ5JGDI5lYdILFfSPO2qI311W6mPw0",
-                                        apiHeaders:
-                                            await const GoogleApiHeaders()
-                                                .getHeaders(),
-                                        //from google_api_headers package
-                                      );
-                                      String placeid = place.placeId ?? "0";
-                                      final detail = await plist
-                                          .getDetailsByPlaceId(placeid);
-                                      final geometry = detail.result.geometry!;
-                                      final lat = geometry.location.lat;
-                                      final lang = geometry.location.lng;
-                                      var newlatlang = LatLng(lat, lang);
+                                  var location;
+                              if (place != null) {
+                                setState(() {
+                                    location = place;
+                                });
 
-                                      //move map camera to selected place with animation
-                                      mapController?.animateCamera(
-                                          CameraUpdate.newCameraPosition(
-                                              CameraPosition(
-                                                  target: newlatlang,
-                                                  zoom: 15)));
-                                      //  webController.animateCamera(
-                                      //     CameraUpdate.newCameraPosition(
-                                      //         CameraPosition(
-                                      //             target: newlatlang, zoom: 15)));
-                                    }
-                                  },
-                                  onSubmitted: (value) => {},
-                                  style: const TextStyle(color: Colors.black),
-                                  decoration: const InputDecoration(
-                                      border: InputBorder.none,
-                                      hintText: "Filtra por ubicación"),
-                                  onChanged: (text) {
-                                    find(text.toLowerCase());
-                                  }),
+                                //form google_maps_webservice package
+                                final plist = GoogleMapsPlaces(
+                                  apiKey:
+                                      "AIzaSyATDrJ5JGDI5lYdILFfSPO2qI311W6mPw0",
+                                  apiHeaders: await const GoogleApiHeaders()
+                                      .getHeaders(),
+                                  //from google_api_headers package
+                                );
+                                String placeid = place.placeId ?? "0";
+                                final detail =
+                                    await plist.getDetailsByPlaceId(placeid);
+                                final geometry = detail.result.geometry!;
+                                final lat = geometry.location.lat;
+                                final lang = geometry.location.lng;
+                                var newlatlang = LatLng(lat, lang);
+                                
+                                //move map camera to selected place with animation
+                                mapController?.animateCamera(
+                                    CameraUpdate.newCameraPosition(
+                                        CameraPosition(
+                                            target: newlatlang, zoom: 15)));
+                              }
+                            }),
+                            style: ElevatedButton.styleFrom(
+                              shape: const StadiumBorder(
+                                side: BorderSide(
+                                  color: Color.fromARGB(46, 35, 0, 100),
+                                  width: .5,
+                                ),
+                              ),
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 25, vertical: 14),
+                              backgroundColor:
+                                  const Color.fromARGB(255, 255, 255, 255),
                             ),
-                          ),
-                          const Icon(Icons.location_searching_sharp)
-                        ]))),
+                            child: Row(
+                              children: const [
+                                Icon(
+                                  Icons.search,
+                                  color: Color.fromARGB(255, 93, 43, 184),
+                                  size: 30,
+                                ),
+                                Text(
+                                  " Búsqueda específica",
+                                  style: TextStyle(
+                                      fontSize: 16, color: Colors.black),
+                                )
+                              ],
+                            ),
+                          )
+                        ],
+                      )),
+
 
 //LISTA DE UBICACIONES RESPECTO A MARCADORES DEL CHUNK
 
@@ -424,14 +424,11 @@ class _StateHomePage extends State<PageHomePage> {
                                       Padding(
                                         padding: const EdgeInsets.only(
                                             bottom: 6, top: 8),
-                                        child: banks[index]["value"]["branchName"]
-                                                    .length >
-                                                22
-                                            ? Text(
-                                                banks[index]["value"]
-                                                            ["branchName"]
-                                                        .substring(0, 27) +
-                                                    "...",
+                                        child: 
+                                             Text(
+                                              banks[index]["value"]["branchName"].length > 27
+                                              ? banks[index]["value"]["branchName"].substring(0, 27) + "..."
+                                              : banks[index]["value"]["branchName"],
                                                 // ,
                                                 overflow: TextOverflow.ellipsis,
                                                 maxLines: 1,
@@ -442,18 +439,8 @@ class _StateHomePage extends State<PageHomePage> {
                                                         255, 0, 0, 0),
                                                     fontWeight:
                                                         FontWeight.bold))
-                                            : Text(
-                                                banks[index]["value"]
-                                                    ["branchName"],
-                                                // ,
-                                                overflow: TextOverflow.ellipsis,
-                                                maxLines: 1,
-                                                textAlign: TextAlign.left,
-                                                style: const TextStyle(
-                                                    fontSize: 15,
-                                                    color:
-                                                        Color.fromARGB(255, 0, 0, 0),
-                                                    fontWeight: FontWeight.bold)),
+                                             
+                                                   
                                       ),
                                       Row(
                                         children: [
@@ -461,8 +448,10 @@ class _StateHomePage extends State<PageHomePage> {
                                             constraints: const BoxConstraints(
                                                 maxWidth: 200),
                                             child: Text(
-                                                banks.elementAt(index)["value"]
-                                                    ["address"],
+                                                banks.elementAt(index)["value"]["address"].length > 30 
+                                                    ? banks.elementAt(index)["value"]
+                                                      ["address"].substring(0, 32) + "..."
+                                                    : banks.elementAt(index)["value"]["address"],
                                                 textAlign: TextAlign.left,
                                                 style: const TextStyle(
                                                   fontSize: 11,
@@ -549,11 +538,7 @@ class _StateHomePage extends State<PageHomePage> {
                                                             final prefs =
                                                                 await SharedPreferences
                                                                     .getInstance();
-                                                            int foundIndex = userBranchesFavorites
-                                                                .indexOf(banks
-                                                                        .elementAt(
-                                                                            index)[
-                                                                    "value"]["id"]);
+                                                            int foundIndex = userBranchesFavorites.indexOf(banks.elementAt(index)["value"]["id"]);
                                                             setState(() {
                                                               if (foundIndex !=
                                                                   -1)
@@ -623,17 +608,9 @@ class _StateHomePage extends State<PageHomePage> {
                                                             backgroundColor: userRole ==
                                                                     'superAdmin'
                                                                 ? Color
-                                                                    .fromARGB(
-                                                                        255,
-                                                                        223,
-                                                                        116,
-                                                                        116)
+                                                                    .fromARGB( 255, 223, 116, 116)
                                                                 : const Color
-                                                                        .fromARGB(
-                                                                    255,
-                                                                    153,
-                                                                    116,
-                                                                    223),
+                                                                        .fromARGB( 255, 153, 116, 223),
                                                           ),
                                                           child: !userBranchesFavorites
                                                                   .contains(banks
@@ -687,11 +664,7 @@ class _StateHomePage extends State<PageHomePage> {
                                                             userRole ==
                                                                     'superAdmin'
                                                                 ? Color
-                                                                    .fromARGB(
-                                                                        255,
-                                                                        223,
-                                                                        116,
-                                                                        116)
+                                                                    .fromARGB(255, 223, 116, 116)
                                                                 : const Color
                                                                         .fromARGB(
                                                                     255,
