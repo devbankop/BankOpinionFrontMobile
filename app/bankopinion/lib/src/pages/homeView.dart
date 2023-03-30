@@ -271,6 +271,10 @@ class _StateHomePage extends State<PageHomePage> {
 
   @override
   Widget build(BuildContext context) {
+
+        final screenHeight = MediaQuery.of(context).size.height;
+        final containerHeight = screenHeight * 0.75; // 10% menos de la altura de la pantalla
+
     return Scaffold(
       key: _scaffoldKey,
       resizeToAvoidBottomInset: true,
@@ -279,7 +283,7 @@ class _StateHomePage extends State<PageHomePage> {
       body: Column(
               children: [
                 Container(
-                    height: expanded == true ? 600 : 380,
+                    height: expanded == true ? containerHeight : 380,
                     child:Stack(
                         children: [
                            GoogleMap(
