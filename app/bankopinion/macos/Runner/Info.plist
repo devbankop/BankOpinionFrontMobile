@@ -29,4 +29,28 @@
 	<key>NSPrincipalClass</key>
 	<string>NSApplication</string>
 </dict>
+<key>UIAppFonts</key>
+<array>
+    <string>Roboto-Regular.ttf</string>
+</array>
+<key>UIContentSizeCategoryLimits</key>
+<dict>
+    <key>UIContentSizeCategoryAccessibilityXXXL</key>
+    <string>100</string>
+    <key>UIContentSizeCategoryExtraSmall</key>
+    <string>20</string>
+    <key>UIContentSizeCategorySmall</key>
+    <string>40</string>
+    <key>UIContentSizeCategoryMedium</key>
+    <string>60</string>
+    <key>UIContentSizeCategoryLarge</key>
+    <string>80</string>
+    <key>UIContentSizeCategoryExtraLarge</key>
+    <string>100</string>
+    <key>UIContentSizeCategoryExtraExtraLarge</key>
+    <string>120</string>
+    <key>UIContentSizeCategoryExtraExtraExtraLarge</key>
+    <string>140</string>
+</dict>
+
 </plist>

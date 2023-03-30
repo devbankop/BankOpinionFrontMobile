@@ -378,7 +378,7 @@ class _StateHomePage extends State<PageHomePage> {
                                 ),
                               ),
                               padding: const EdgeInsets.symmetric(
-                                  horizontal: 25, vertical: 14),
+                                  horizontal: 20, vertical: 8),
                               backgroundColor:
                                   const Color.fromARGB(255, 255, 255, 255),
                             ),
