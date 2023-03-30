@@ -40,31 +40,6 @@ class _StartViewState extends State<StartView> {
   }
 
 
-// Future<void> _getCurrentLocation() async {
-// // Solicita el permiso de ubicación
-// var status = await Permission.location.request();
-
-// if( await Permission.locationWhenInUse.serviceStatus.isEnabled )
-// {
-// status = PermissionStatus.granted;
-// prefs.setBool('isLocationEnabled', true);
-// } else if( await Permission.locationWhenInUse.isPermanentlyDenied )
-// {
-// status = PermissionStatus.permanentlyDenied;
-// prefs.setBool('isLocationEnabled', false);
-// }
-
-// if (status != PermissionStatus.granted) {
-// print('Permiso de ubicación denegado');
-// prefs.setBool('isLocationEnabled', false);
-// return;
-// }
-
-// // Obtiene la posición actual del usuario
-// var position = await Geolocator.getCurrentPosition();
-// print('Latitud: ${position.latitude}, Longitud: ${position.longitude}');
-// }
-
 
 
 
@@ -72,7 +47,7 @@ class _StartViewState extends State<StartView> {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     setState(() {
       if(jwt == null)
-      prefs.setString('userRole', 'user');
+        prefs.setString('userRole', 'user');
         userRole = 'user';
 
       jwt = prefs.getString('jwt');
@@ -104,7 +79,8 @@ class _StartViewState extends State<StartView> {
       key: _scaffoldKey,
       resizeToAvoidBottomInset: true,
       backgroundColor: Color.fromARGB(255, 255, 255, 255),
-      body: Center(
+      body: SingleChildScrollView(child: 
+      Center(
         child: Column(children: [
 
         Padding(padding: EdgeInsets.only(top: 50),
@@ -231,7 +207,7 @@ class _StartViewState extends State<StartView> {
           ],
         )
       ])
-      )
+      ),)
     );
   }
 }

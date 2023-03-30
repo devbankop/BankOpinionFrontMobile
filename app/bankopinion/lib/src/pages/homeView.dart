@@ -403,7 +403,7 @@ class _StateHomePage extends State<PageHomePage> {
 
 //LISTA DE UBICACIONES RESPECTO A MARCADORES DEL CHUNK
 
-                Expanded(
+               Expanded(
                   child: ListView.builder(
                     padding: const EdgeInsets.symmetric(vertical: 10),
                     itemCount: banks.length,
@@ -420,9 +420,12 @@ class _StateHomePage extends State<PageHomePage> {
                                 CameraUpdate.newCameraPosition(CameraPosition(
                                     target: newlatlong, zoom: 18)));
                           },
-                          child: Container(
-                              margin: const EdgeInsets.only(
-                                  bottom: 5, left: 10, right: 10),
+                          child: 
+                          Padding(padding: EdgeInsets.only(bottom: 5, left: 10, right: 10),
+                          child:   
+                          Expanded(child: 
+                          Container(
+                              padding: EdgeInsets.only(left: 14, bottom: 14, top: 14),
                               decoration: BoxDecoration(
                                   //color: isBankSelected(index) ? Color.fromARGB(255, 215, 215, 215) : Colors.transparent,
                                   border: Border.all(
@@ -433,8 +436,6 @@ class _StateHomePage extends State<PageHomePage> {
                                             255, 223, 223, 223),
                                   ),
                                   borderRadius: BorderRadius.circular(12)),
-                              height: 100,
-                              padding: const EdgeInsets.only(top: 0, left: 12),
                               child: Row(
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceBetween,
@@ -696,17 +697,24 @@ class _StateHomePage extends State<PageHomePage> {
                                                       child: const Icon(
                                                         Icons.edit,
                                                         //color: Color.fromRGBO(255, 255, 255, 255)
-                                                      ))))
-                                        ],
+                                                      ),
+                                        ),
                                       ),
-                                    ],
-                                  ),
-                                ],
-                              )));
-                    },
+                                    )
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
                   ),
-                )
-              ],
+                );
+              },
+            ),
+          ),
+        ],
             ),
     );
   }
