@@ -22,11 +22,11 @@
 		</data>
 		<key>Modules/path_provider_foundation.swiftmodule/Project/arm64-apple-ios-simulator.swiftsourceinfo</key>
 		<data>
-		fPvCJ6d8v772Vl1fFfWNqlxxgkM=
+		GzGZzltP4vZvNRZe6xMt9n0OYsU=
 		</data>
 		<key>Modules/path_provider_foundation.swiftmodule/Project/x86_64-apple-ios-simulator.swiftsourceinfo</key>
 		<data>
-		qxCf7sZwlfLS+BJyse1e6sKNpRM=
+		oZhgBT6d58X2DuBj7ezgZ0Gfrtw=
 		</data>
 		<key>Modules/path_provider_foundation.swiftmodule/arm64-apple-ios-simulator.abi.json</key>
 		<data>
@@ -38,7 +38,7 @@
 		</data>
 		<key>Modules/path_provider_foundation.swiftmodule/arm64-apple-ios-simulator.swiftmodule</key>
 		<data>
-		kmcgp5yAaxmrLq4BJhLA/k5kifo=
+		le3s7BU1RnimuYYy+bfWwF1uuxc=
 		</data>
 		<key>Modules/path_provider_foundation.swiftmodule/x86_64-apple-ios-simulator.abi.json</key>
 		<data>
@@ -50,7 +50,7 @@
 		</data>
 		<key>Modules/path_provider_foundation.swiftmodule/x86_64-apple-ios-simulator.swiftmodule</key>
 		<data>
-		cCm6cHCK1+O9vl5fDW0VoKllubs=
+		O//5Iv3dQUuCDjjZTjKlzr3Ur74=
 		</data>
 	</dict>
 	<key>files2</key>
@@ -80,14 +80,14 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			NJypmJ6HyVOy2Xbv0RreI6RdGVEIBuYGFxqIug1yJ34=
+			kzGOBafLrBQ3X64MujP3+2JpHPn3Hh2yP0yli3eV5iI=
 			</data>
 		</dict>
 		<key>Modules/path_provider_foundation.swiftmodule/Project/x86_64-apple-ios-simulator.swiftsourceinfo</key>
 		<dict>
 			<key>hash2</key>
 			<data>
-			xEWblaYsUT8tbLCDrJ29tI4X2XifoPoMqP/5PNA4JPU=
+			qA0LD/OxAXapOBdi3CSGxySWxs/5eo23Vrt/lXZZBUw=
 			</data>
 		</dict>
 		<key>Modules/path_provider_foundation.swiftmodule/arm64-apple-ios-simulator.abi.json</key>
@@ -108,7 +108,7 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			bU94s6PHDfrXTJgHkC/NIvG1MioL7eWjW92DgDs05Qc=
+			phXlA6ak/E7NgmD8/gMPpnxYoHD7cBdWwlIywB6C3ns=
 			</data>
 		</dict>
 		<key>Modules/path_provider_foundation.swiftmodule/x86_64-apple-ios-simulator.abi.json</key>
@@ -129,7 +129,7 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			wNQcr99LL86CE2PqmnY7QeEZ7yzJrSIsFWLCQ+dZ6A8=
+			SfQReFdUFPIEGePZxMBamSgpEOunl91MUkjCoep+IPw=
 			</data>
 		</dict>
 	</dict>

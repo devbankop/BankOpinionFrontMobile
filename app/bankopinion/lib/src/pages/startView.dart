@@ -26,7 +26,7 @@ class _StartViewState extends State<StartView> {
 
   @override
   void initState() {
-    _getCurrentLocation();
+    // _getCurrentLocation();
     super.initState();
     _getJWT();
     _getRole();
@@ -40,30 +40,30 @@ class _StartViewState extends State<StartView> {
   }
 
 
-Future<void> _getCurrentLocation() async {
-// Solicita el permiso de ubicación
-var status = await Permission.location.request();
+// Future<void> _getCurrentLocation() async {
+// // Solicita el permiso de ubicación
+// var status = await Permission.location.request();
 
-if( await Permission.locationWhenInUse.serviceStatus.isEnabled )
-{
-status = PermissionStatus.granted;
-prefs.setBool('isLocationEnabled', true);
-} else if( await Permission.locationWhenInUse.isPermanentlyDenied )
-{
-status = PermissionStatus.permanentlyDenied;
-prefs.setBool('isLocationEnabled', false);
-}
+// if( await Permission.locationWhenInUse.serviceStatus.isEnabled )
+// {
+// status = PermissionStatus.granted;
+// prefs.setBool('isLocationEnabled', true);
+// } else if( await Permission.locationWhenInUse.isPermanentlyDenied )
+// {
+// status = PermissionStatus.permanentlyDenied;
+// prefs.setBool('isLocationEnabled', false);
+// }
 
-if (status != PermissionStatus.granted) {
-print('Permiso de ubicación denegado');
-prefs.setBool('isLocationEnabled', false);
-return;
-}
+// if (status != PermissionStatus.granted) {
+// print('Permiso de ubicación denegado');
+// prefs.setBool('isLocationEnabled', false);
+// return;
+// }
 
-// Obtiene la posición actual del usuario
-var position = await Geolocator.getCurrentPosition();
-print('Latitud: ${position.latitude}, Longitud: ${position.longitude}');
-}
+// // Obtiene la posición actual del usuario
+// var position = await Geolocator.getCurrentPosition();
+// print('Latitud: ${position.latitude}, Longitud: ${position.longitude}');
+// }
 
 
 

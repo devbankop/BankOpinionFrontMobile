@@ -95,13 +95,43 @@ class _SignUpView3State extends State<SignUpView3> {
 
   @override
   Widget build(BuildContext context) {
+    
     return Scaffold(
+      	floatingActionButtonLocation: FloatingActionButtonLocation.startTop,
         key: _scaffoldKey,
         resizeToAvoidBottomInset: true,
         backgroundColor: const Color.fromARGB(255, 255, 255, 255),
         body: Center(
           child: SingleChildScrollView(
             child: Column(children: [
+          Padding(
+              padding: EdgeInsets.only(top: 15, left: 15),
+              child: Row(
+                children: [
+                  SizedBox(
+                      width: 70.0,
+                      height: 70.0,
+                      child: Padding(
+                        padding: const EdgeInsets.only(top: 20),
+                        child: ElevatedButton(
+                            onPressed: () {
+                              Navigator.pop(context);
+                            },
+                            style: ElevatedButton.styleFrom(
+                              shape: const CircleBorder(),
+                              padding: const EdgeInsets.all(5),
+                              backgroundColor:
+                                  Color.fromARGB(255, 255, 255, 255),
+                            ),
+                            child: const Icon(
+                              Icons.arrow_back,
+                              color: Color.fromARGB(255, 153, 116, 223),
+                            )),
+                      )),
+                ],
+              )),
+      
+   
           
           Row(
             mainAxisAlignment: MainAxisAlignment.center, children: [
@@ -249,6 +279,7 @@ class _SignUpView3State extends State<SignUpView3> {
                       itemBuilder: (BuildContext context) =>
                           <PopupMenuEntry<String>>[
                         const PopupMenuItem<String>(
+                          
                           value: 'Info',
                           child: Text(
                               'Saldrá como predetermindado para proteger tu identidad, sin embargo, posteriormente podrás elegir en tu perfil si prefieres que se muestre tu nombre real o el nombre de usuario en las preferencias de tu perfil.'),
@@ -370,22 +401,23 @@ class _SignUpView3State extends State<SignUpView3> {
 
                                 print("statusCode: ${response.statusCode}");
                                 print("response.body: ${response.body}");
+                                var responseErr = json.decode(response.body);
 
-                                if (response.statusCode == 200) {
+
+                                var responseError = responseErr["status"];
+                               
+
+                                if (response.statusCode == 200 && responseError != 400) {
                                    Map<String, dynamic> responseData =
                                       json.decode(response.body);
-                                      print("hola");
                                   var token = responseData["session"]["access_token"];
                                   var refresh_token = responseData["session"]["refresh_token"];
 
                                   var prefs =
                                       await SharedPreferences.getInstance();
-                                      print(token);
 
                                   prefs.setString('jwt', token);
                                   prefs.setString('refresh_token', refresh_token);
-
-
 
 
                                   // ignore: use_build_context_synchronously
@@ -395,7 +427,7 @@ class _SignUpView3State extends State<SignUpView3> {
                                           builder: (context) =>
                                               PageHomePage()));
                                 } else {
-                                  if(response.statusCode != 200)
+                                  
                                  setState(() {
                                     
                                     errorRegistro = true;
