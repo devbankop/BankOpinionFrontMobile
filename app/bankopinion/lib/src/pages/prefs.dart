@@ -44,6 +44,17 @@ void _toggleLocation(bool? value) async {
     }
   }
 }
+
+
+void getLocation() async {
+    bool locationEnabled = await Geolocator.isLocationServiceEnabled();
+
+    var permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+    }
+  }
+
   void _deleteLocationPermissions() async {
 
   await Permission.locationWhenInUse.serviceStatus.isDisabled;
@@ -58,9 +69,14 @@ void _toggleLocation(bool? value) async {
     var status = await Permission.location.request();
 
     if (await Permission.locationWhenInUse.serviceStatus.isEnabled) {
+      var permission = await Geolocator.checkPermission();
+            permission = await Geolocator.requestPermission();
+
       status = PermissionStatus.granted;
       _prefs.setBool('isLocationEnabled', true);
     } else if (await Permission.locationWhenInUse.isPermanentlyDenied) {
+      var permission = await Geolocator.checkPermission();
+            permission = await Geolocator.requestPermission();
       status = PermissionStatus.permanentlyDenied;
       _prefs.setBool('isLocationEnabled', false);
     }
@@ -125,6 +141,7 @@ void _toggleLocation(bool? value) async {
                   value: true,
                   groupValue: _isLocationEnabled,
                   onChanged: (value) {
+                    getLocation();
                     setState(() {
                       _prefs.setBool('isLocationEnabled', true);
                     });

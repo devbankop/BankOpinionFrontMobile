@@ -29,8 +29,6 @@ class _NewsViewState extends State<NewsView> {
   String formattedDate = '';
   var news = [];
   var enlaceNew = '';
-  bool _showWebView = false;
-  String _selectedUrl = '';
 
   Future<void> _getRole() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -240,186 +238,88 @@ class _NewsViewState extends State<NewsView> {
             ),
           ),
           Expanded(
-              child: ListView.builder(
-                  controller: _scrollController,
-                  padding:
-                      const EdgeInsets.only(left: 20, right: 20, bottom: 30),
-                  itemCount: news.length,
-                  itemBuilder: (context, index) {
-                    return Padding(
-                      padding: EdgeInsets.only(bottom: 10),
-                      child: InkWell(
-                        onLongPress: () {
-                          if (userRole == 'superAdmin') {
-                            _showAlertDialog(
-                                news.elementAt(index)["id"].toString());
-                          }
-                        },
-                        onTap: () async {
-                          setState(() {
-                            enlaceNew = news.elementAt(index)['url'];
-                          });
-                          _launchURL();
-                        },
-                        child: Padding(
-                          padding: EdgeInsets.only(top: 8),
-                          child: Container(
-                            decoration: BoxDecoration(
-                                color: userRole == 'superAdmin'
-                                    ? Color.fromARGB(59, 223, 116, 116)
-                                    : Color.fromARGB(29, 154, 116, 223),
-                                borderRadius: BorderRadius.circular(15),
-                                border: Border.all(
-                                    width: .6, // ancho del borde
-                                    color: Color.fromARGB(255, 154, 116, 223))),
-                            height: news.elementAt(index)['image'] == null
-                                ? 105
-                                : 300,
-                            width: double.infinity,
-                            child: Expanded(
-                              child: SizedBox(
-                                height: double.infinity,
-                                child: news.elementAt(index)['image'] != null
-                                    ? Padding(
-                                        padding: EdgeInsets.only(),
-                                        child: Column(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceBetween,
-                                          children: [
-                                            Expanded(
-                                              child: ClipRRect(
-                                                borderRadius: BorderRadius.only(
-                                                  topLeft: Radius.circular(15),
-                                                  topRight: Radius.circular(15),
-                                                ),
-                                                child: ClipRRect(
-                                                  borderRadius:
-                                                      BorderRadius.only(
-                                                    topLeft:
-                                                        Radius.circular(15),
-                                                    topRight:
-                                                        Radius.circular(15),
-                                                  ),
-                                                  child: CachedNetworkImage(
-                                                    imageUrl: news
-                                                        .elementAt(
-                                                            index)['image']
-                                                        .toString(),
-                                                    width: double.infinity,
-                                                    height: 220,
-                                                    fit: BoxFit.cover,
-                                                    errorWidget:
-                                                        (BuildContext context,
-                                                            String url,
-                                                            dynamic error) {
-                                                      print(
-                                                          'Error al cargar la imagen: $error');
-                                                      return const Center(
-                                                          child: Text(
-                                                              'Error al cargar la imagen'));
-                                                    },
-                                                  ),
-                                                ),
-                                              ),
+            child: ListView.builder(
+              controller: _scrollController,
+              padding: const EdgeInsets.only(left: 20, right: 20, bottom: 30),
+              itemCount: news.length,
+              itemBuilder: (context, index) {
+                return Padding(
+                  padding: EdgeInsets.only(bottom: 10),
+                  child: InkWell(
+                    onLongPress: () {
+                      if (userRole == 'superAdmin') {
+                        _showAlertDialog(
+                            news.elementAt(index)["id"].toString());
+                      }
+                    },
+                    onTap: () async {
+                      setState(() {
+                        enlaceNew = news.elementAt(index)['url'];
+                      });
+                      _launchURL();
+                    },
+                    child: Padding(
+                      padding: EdgeInsets.only(top: 8),
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: userRole == 'superAdmin'
+                              ? Color.fromARGB(59, 223, 116, 116)
+                              : Color.fromARGB(29, 154, 116, 223),
+                          borderRadius: BorderRadius.circular(15),
+                          border: Border.all(
+                              width: .6, // ancho del borde
+                              color: Color.fromARGB(255, 154, 116, 223)),
+                        ),
+                        height:
+                            news.elementAt(index)['image'] == null ? 105 : 300,
+                        width: double.infinity,
+                        child: SizedBox(
+                          height: double.infinity,
+                          child: news.elementAt(index)['image'] != null
+                              ? Padding(
+                                  padding: EdgeInsets.only(),
+                                  child: Column(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Expanded(
+                                        child: ClipRRect(
+                                          borderRadius: BorderRadius.only(
+                                            topLeft: Radius.circular(15),
+                                            topRight: Radius.circular(15),
+                                          ),
+                                          child: ClipRRect(
+                                            borderRadius: BorderRadius.only(
+                                              topLeft: Radius.circular(15),
+                                              topRight: Radius.circular(15),
                                             ),
-                                            Padding(
-                                              padding: EdgeInsets.only(
-                                                  left: 5, bottom: 4),
-                                              child: Column(
-                                                children: [
-                                                  Container(
-                                                    decoration: BoxDecoration(
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              10),
-                                                      // color: Color.fromARGB(147, 255, 255, 255)
-                                                    ),
-                                                    child: Padding(
-                                                      padding:
-                                                          EdgeInsets.all(5),
-                                                      child: Column(
-                                                        crossAxisAlignment:
-                                                            CrossAxisAlignment
-                                                                .center,
-                                                        children: [
-                                                          Text(
-                                                            news.elementAt(
-                                                                index)['title'],
-                                                            style: TextStyle(
-                                                              fontSize: 15,
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .bold,
-                                                            ),
-                                                          ),
-                                                        ],
-                                                      ),
-                                                    ),
+                                            child: CachedNetworkImage(
+                                              imageUrl: news
+                                                  .elementAt(index)['image']
+                                                  .toString(),
+                                              width: double.infinity,
+                                              height: 220,
+                                              fit: BoxFit.cover,
+                                              errorWidget:
+                                                  (BuildContext context,
+                                                      String url,
+                                                      dynamic error) {
+                                                print(
+                                                    'Error al cargar la imagen: $error');
+                                                return const Center(
+                                                  child: Text(
+                                                    'Error al cargar la imagen',
                                                   ),
-                                                  Padding(
-                                                    padding:
-                                                        EdgeInsets.only(top: 6),
-                                                    child: Row(
-                                                      mainAxisAlignment:
-                                                          MainAxisAlignment
-                                                              .center,
-                                                      children: [
-                                                        Text(
-                                                          news.elementAt(index)[
-                                                              'publishDate'],
-                                                          style:
-                                                              const TextStyle(
-                                                            color:
-                                                                Color.fromARGB(
-                                                                    255,
-                                                                    90,
-                                                                    90,
-                                                                    90),
-                                                            fontSize: 12,
-                                                          ),
-                                                        ),
-                                                        Text('    ·    '),
-                                                        Text(
-                                                          news.elementAt(
-                                                              index)['source'],
-                                                          style: TextStyle(
-                                                            color:
-                                                                Color.fromARGB(
-                                                                    255,
-                                                                    90,
-                                                                    90,
-                                                                    90),
-                                                            fontSize: 12,
-                                                          ),
-                                                        ),
-                                                        Text('    ·    '),
-                                                        Text(
-                                                          news.elementAt(index)[
-                                                              'publishTime'],
-                                                          style: TextStyle(
-                                                            color:
-                                                                Color.fromARGB(
-                                                                    255,
-                                                                    90,
-                                                                    90,
-                                                                    90),
-                                                            fontSize: 12,
-                                                          ),
-                                                        ),
-                                                      ],
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
+                                                );
+                                              },
                                             ),
-                                          ],
+                                          ),
                                         ),
-                                      )
-                                    : Padding(
-                                        padding: EdgeInsets.all(6),
+                                      ),
+                                      Padding(
+                                        padding:
+                                            EdgeInsets.only(left: 5, bottom: 4),
                                         child: Column(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceBetween,
                                           children: [
                                             Container(
                                               decoration: BoxDecoration(
@@ -434,59 +334,56 @@ class _NewsViewState extends State<NewsView> {
                                                       CrossAxisAlignment.center,
                                                   children: [
                                                     Text(
-                                                        news.elementAt(
-                                                            index)["title"],
-                                                        style: TextStyle(
-                                                            fontSize: 15,
-                                                            fontWeight:
-                                                                FontWeight
-                                                                    .bold))
+                                                      news.elementAt(
+                                                          index)['title'],
+                                                      style: TextStyle(
+                                                        fontSize: 15,
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                      ),
+                                                    ),
                                                   ],
                                                 ),
                                               ),
                                             ),
                                             Padding(
-                                              padding: EdgeInsets.only(top: 0),
+                                              padding:
+                                                  const EdgeInsets.only(top: 6),
                                               child: Row(
                                                 mainAxisAlignment:
-                                                    MainAxisAlignment.center,
+                                                    MainAxisAlignment
+                                                        .spaceEvenly,
                                                 children: [
                                                   Text(
+                                                    news.elementAt(
+                                                        index)['publishDate'],
+                                                    style: const TextStyle(
+                                                      color: Color.fromARGB(
+                                                          255, 90, 90, 90),
+                                                      fontSize: 12,
+                                                    ),
+                                                  ),
+                                                  const Text('·'),
+                                                  SizedBox(
+                                                    width: 100.0,
+                                                    child: Text(
                                                       news.elementAt(
-                                                          index)["publishDate"],
+                                                          index)['source'],
+                                                      overflow:
+                                                          TextOverflow.ellipsis,
+                                                      maxLines: 1,
+                                                      softWrap: false,
                                                       style: const TextStyle(
                                                         color: Color.fromARGB(
                                                             255, 90, 90, 90),
                                                         fontSize: 12,
-                                                      )),
-                                                  Text("    ·    "),
-                                                  Text(
-                                                      news
-                                                                  .elementAt(index)[
-                                                                      "source"]
-                                                                  .toString()
-                                                                  .length >
-                                                              20
-                                                          ? news
-                                                                  .elementAt(index)[
-                                                                      "source"]
-                                                                  .toString()
-                                                                  .substring(
-                                                                      0, 18) +
-                                                              "..."
-                                                          : news
-                                                              .elementAt(index)[
-                                                                  "source"]
-                                                              .toString(),
-                                                      style: TextStyle(
-                                                        color: Color.fromARGB(
-                                                            255, 90, 90, 90),
-                                                        fontSize: 12,
-                                                      )),
-                                                  Text("    ·    "),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                  const Text('·'),
                                                   Text(
                                                     news.elementAt(
-                                                        index)["publishTime"],
+                                                        index)['publishTime'],
                                                     style: TextStyle(
                                                       color: Color.fromARGB(
                                                           255, 90, 90, 90),
@@ -495,17 +392,100 @@ class _NewsViewState extends State<NewsView> {
                                                   ),
                                                 ],
                                               ),
-                                            )
+                                            ),
                                           ],
                                         ),
                                       ),
-                              ),
-                            ),
-                          ),
+                                    ],
+                                  ),
+                                )
+                              : Padding(
+                                  padding: const EdgeInsets.all(6),
+                                  child: Column(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Container(
+                                        decoration: BoxDecoration(
+                                          borderRadius:
+                                              BorderRadius.circular(10),
+                                          // color: Color.fromARGB(147, 255, 255, 255)
+                                        ),
+                                        child: Padding(
+                                          padding: const EdgeInsets.all(5),
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.center,
+                                            children: [
+                                              Text(
+                                                news.elementAt(index)["title"],
+                                                style: const TextStyle(
+                                                  fontSize: 15,
+                                                  fontWeight: FontWeight.bold,
+                                                ),
+                                              )
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                      Padding(
+                                        padding: EdgeInsets.only(top: 0),
+                                        child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: [
+                                            Text(
+                                              news.elementAt(
+                                                  index)["publishDate"],
+                                              style: const TextStyle(
+                                                color: Color.fromARGB(
+                                                    255, 90, 90, 90),
+                                                fontSize: 12,
+                                              ),
+                                            ),
+                                            const Text("    ·    "),
+                                            Text(
+                                              news
+                                                          .elementAt(
+                                                              index)["source"]
+                                                          .toString()
+                                                          .length >
+                                                      20
+                                                  ? "${news.elementAt(index)["source"].toString().substring(0, 18)}..."
+                                                  : news
+                                                      .elementAt(
+                                                          index)["source"]
+                                                      .toString(),
+                                              style: const TextStyle(
+                                                color: Color.fromARGB(
+                                                    255, 90, 90, 90),
+                                                fontSize: 12,
+                                              ),
+                                            ),
+                                            const Text("    ·    "),
+                                            Text(
+                                              news.elementAt(
+                                                  index)["publishTime"],
+                                              style: const TextStyle(
+                                                color: Color.fromARGB(
+                                                    255, 90, 90, 90),
+                                                fontSize: 12,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      )
+                                    ],
+                                  ),
+                                ),
                         ),
                       ),
-                    );
-                  }))
+                    ),
+                  ),
+                );
+              },
+            ),
+          )
         ],
       ),
     );

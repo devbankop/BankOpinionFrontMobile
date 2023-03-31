@@ -265,6 +265,9 @@ class _StateHomePage extends State<PageHomePage> {
 
   @override
   Widget build(BuildContext context) {
+    final screenHeight = MediaQuery.of(context).size.height;
+    final containerHeight =
+        screenHeight * 0.75; // 10% menos de la altura de la pantalla
     return Scaffold(
       key: _scaffoldKey,
       resizeToAvoidBottomInset: true,
@@ -273,7 +276,7 @@ class _StateHomePage extends State<PageHomePage> {
       body: Column(
         children: [
           Container(
-              height: expanded == true ? 600 : 380,
+              height: expanded == true ? containerHeight : 380,
               child: Stack(children: [
                 GoogleMap(
                   //Map widget from google_maps_flutter packages
@@ -312,81 +315,81 @@ class _StateHomePage extends State<PageHomePage> {
                 ),
               ])),
           Padding(
-              padding: const EdgeInsets.only(
-                top: 10,
-                left: 10,
-                right: 10,
-                bottom: 0,
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  ElevatedButton(
-                    onPressed: (() async {
-                      var place = await PlacesAutocomplete.show(
-                          context: context,
-                          apiKey: "AIzaSyATDrJ5JGDI5lYdILFfSPO2qI311W6mPw0",
-                          mode: Mode.overlay,
-                          types: [],
-                          strictbounds: false,
-                          logo: const SizedBox.shrink(),
-                          language: "es",
-                          components: [Component(Component.country, 'es')],
-                          onError: (err) {});
+            padding: const EdgeInsets.only(
+              top: 10,
+              left: 10,
+              right: 10,
+              bottom: 0,
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                ElevatedButton(
+                  onPressed: (() async {
+                    var place = await PlacesAutocomplete.show(
+                        context: context,
+                        apiKey: "AIzaSyATDrJ5JGDI5lYdILFfSPO2qI311W6mPw0",
+                        mode: Mode.overlay,
+                        types: [],
+                        strictbounds: false,
+                        logo: const SizedBox.shrink(),
+                        language: "es",
+                        components: [Component(Component.country, 'es')],
+                        onError: (err) {});
 
-                      var location;
-                      if (place != null) {
-                        setState(() {
-                          location = place;
-                        });
+                    var location;
+                    if (place != null) {
+                      setState(() {
+                        location = place;
+                      });
 
-                        //form google_maps_webservice package
-                        final plist = GoogleMapsPlaces(
-                          apiKey: "AIzaSyATDrJ5JGDI5lYdILFfSPO2qI311W6mPw0",
-                          apiHeaders:
-                              await const GoogleApiHeaders().getHeaders(),
-                          //from google_api_headers package
-                        );
-                        String placeid = place.placeId ?? "0";
-                        final detail = await plist.getDetailsByPlaceId(placeid);
-                        final geometry = detail.result.geometry!;
-                        final lat = geometry.location.lat;
-                        final lang = geometry.location.lng;
-                        var newlatlang = LatLng(lat, lang);
+                      //form google_maps_webservice package
+                      final plist = GoogleMapsPlaces(
+                        apiKey: "AIzaSyATDrJ5JGDI5lYdILFfSPO2qI311W6mPw0",
+                        apiHeaders: await const GoogleApiHeaders().getHeaders(),
+                        //from google_api_headers package
+                      );
+                      String placeid = place.placeId ?? "0";
+                      final detail = await plist.getDetailsByPlaceId(placeid);
+                      final geometry = detail.result.geometry!;
+                      final lat = geometry.location.lat;
+                      final lang = geometry.location.lng;
+                      var newlatlang = LatLng(lat, lang);
 
-                        //move map camera to selected place with animation
-                        mapController?.animateCamera(
-                            CameraUpdate.newCameraPosition(
-                                CameraPosition(target: newlatlang, zoom: 15)));
-                      }
-                    }),
-                    style: ElevatedButton.styleFrom(
-                      shape: const StadiumBorder(
-                        side: BorderSide(
-                          color: Color.fromARGB(46, 35, 0, 100),
-                          width: .5,
-                        ),
+                      //move map camera to selected place with animation
+                      mapController?.animateCamera(
+                          CameraUpdate.newCameraPosition(
+                              CameraPosition(target: newlatlang, zoom: 15)));
+                    }
+                  }),
+                  style: ElevatedButton.styleFrom(
+                    shape: const StadiumBorder(
+                      side: BorderSide(
+                        color: Color.fromARGB(46, 35, 0, 100),
+                        width: .5,
                       ),
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 25, vertical: 8),
-                      backgroundColor: const Color.fromARGB(255, 255, 255, 255),
                     ),
-                    child: Row(
-                      children: const [
-                        Icon(
-                          Icons.search,
-                          color: Color.fromARGB(255, 93, 43, 184),
-                          size: 30,
-                        ),
-                        Text(
-                          " Búsqueda específica",
-                          style: TextStyle(fontSize: 16, color: Colors.black),
-                        )
-                      ],
-                    ),
-                  )
-                ],
-              )),
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 25, vertical: 8),
+                    backgroundColor: const Color.fromARGB(255, 255, 255, 255),
+                  ),
+                  child: Row(
+                    children: const [
+                      Icon(
+                        Icons.search,
+                        color: Color.fromARGB(255, 93, 43, 184),
+                        size: 30,
+                      ),
+                      Text(
+                        " Búsqueda específica",
+                        style: TextStyle(fontSize: 16, color: Colors.black),
+                      )
+                    ],
+                  ),
+                )
+              ],
+            ),
+          ),
 
 //LISTA DE UBICACIONES RESPECTO A MARCADORES DEL CHUNK
 
@@ -407,7 +410,10 @@ class _StateHomePage extends State<PageHomePage> {
                     },
                     child: Container(
                         margin: const EdgeInsets.only(
-                            bottom: 5, left: 10, right: 10),
+                          bottom: 5,
+                          left: 10,
+                          right: 10,
+                        ),
                         decoration: BoxDecoration(
                             //color: isBankSelected(index) ? Color.fromARGB(255, 215, 215, 215) : Colors.transparent,
                             border: Border.all(
