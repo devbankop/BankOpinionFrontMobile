@@ -197,8 +197,7 @@ Future<void> _deleteJWT() async {
                             )),
 
                         //APARTADO DE PREFERENCIAS
-jwt != null && jwt != ''
-                             ?
+
                         Padding(
                         padding: const EdgeInsets.only(top: 30),
                         child: InkWell(
@@ -235,42 +234,8 @@ jwt != null && jwt != ''
                                 ],
                               )),
                               ),
-                        ))
-                        : Padding(
-                        padding: const EdgeInsets.only(top: 30),
-                        child: InkWell(
-                          onTap: () {
-                            _showAlertDialog();    
-                          },
-                          child: Container(
-                              height: 80,
-                              width: double.infinity,
-                              decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(6),
-
-                                color: Color.fromARGB(29, 122, 122, 122),
-                                border: Border.all(
-                                  color: Color.fromARGB(168, 132, 132, 132),
-                                  width: .6,
-                                ),
-                              ),
-                              child: Padding(
-                              padding: EdgeInsets.all(10),
-                              child: Row(
-                                // ignore: prefer_const_literals_to_create_immutables
-                                children: [
-                                  Icon(Icons.settings_accessibility,
-                                  color: Color.fromARGB(168, 122, 122, 122)),
-                                  Padding(padding: EdgeInsets.symmetric(horizontal: 10),
-                                  child: Text("Preferencias",
-                                  style: TextStyle(
-                                    fontSize: 20,
-                                    color: Color.fromARGB(255, 132, 132, 132)
-                                    )))
-                                ],
-                              )),
-                              ),
                         )),
+                        
 
                         Padding(
                             padding: const EdgeInsets.only(top: 70),

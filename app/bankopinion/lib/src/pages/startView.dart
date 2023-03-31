@@ -11,7 +11,6 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-
 class StartView extends StatefulWidget {
   const StartView({super.key});
 
@@ -23,36 +22,29 @@ class _StartViewState extends State<StartView> {
   String? jwt;
   String? userRole;
 
-
   @override
   void initState() {
     // _getCurrentLocation();
     super.initState();
     _getJWT();
     _getRole();
-     SharedPreferences.getInstance().then((value) {
-    prefs = value;
-  }
-  );
+    SharedPreferences.getInstance().then((value) {
+      prefs = value;
+    });
     // var refresh = AuthService();
     // refresh.refreshToken();
-     
   }
-
-
-
-
 
   Future<void> _getRole() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     setState(() {
-      if(jwt == null)
-        prefs.setString('userRole', 'user');
-        userRole = 'user';
+      if (jwt == null) prefs.setString('userRole', 'user');
+      userRole = 'user';
 
       jwt = prefs.getString('jwt');
     });
   }
+
   Future<void> _getJWT() async {
     final prefs = await SharedPreferences.getInstance();
     setState(() {
@@ -60,13 +52,12 @@ class _StartViewState extends State<StartView> {
     });
   }
 
-
   var banks = [];
   var prefs;
 
   Future<void> fetchData() async {}
 
-  @override 
+  @override
   void dispose() {
     super.dispose();
   }
@@ -79,135 +70,154 @@ class _StartViewState extends State<StartView> {
       key: _scaffoldKey,
       resizeToAvoidBottomInset: true,
       backgroundColor: Color.fromARGB(255, 255, 255, 255),
-      body: SingleChildScrollView(child: 
-      Center(
-        child: Column(children: [
-
-        Padding(padding: EdgeInsets.only(top: 50),
-        child: Text("BankOpinion",
-        style: TextStyle(
-          fontSize: 45,
-          fontWeight: FontWeight.w900,
-          color: Color.fromARGB(255, 122, 93, 178)
-        ))),
-        Padding(
-            padding: EdgeInsets.only(top: 20, left: 20, right: 20, bottom: 40),
-            child: Container(
-              child: Image.asset(
-                'assets/images/imageStartView.png',
-                width: double.infinity,
-                height: 300.0,
-                //fit: BoxFit.cover,
-              ),
-            )),
-        Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-
-          // ignore: prefer_const_literals_to_create_immutables
-          children: [
-            Padding(padding: EdgeInsets.only(top: 5),
-            child: Text("¿PROBLEMAS CON TU BANCO?",
-            softWrap: true,
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                  color: Color.fromARGB(255, 55, 18, 125),
-                  fontSize: 22,
-                  fontWeight: FontWeight.bold))),
-            const Padding(
-              padding: EdgeInsets.only(left: 25, right: 25, top: 10),
-              child: Text(
-                  "Haz que tu opinión cuente y mantente al día sobre el mundo financiero",
-                  softWrap: true,
-                  textAlign: TextAlign.center,
-                  style: TextStyle(fontSize: 18.5)),
-            )
-          ],
-        ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Padding(
-                padding: EdgeInsets.only(top: 60, left: 20, right: 20),
-                child: Container(
-                    child: ElevatedButton(
-                  onPressed: (() {
-                  
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => PageHomePage()));
-                    
-                  }),
-                  style: ElevatedButton.styleFrom(
-                    shape: const StadiumBorder(),
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 100, vertical: 14),
-                    backgroundColor: const Color.fromARGB(255, 153, 116, 223),
-                  ),
+      body: SingleChildScrollView(
+        child: Center(
+          child: Padding(
+            padding: EdgeInsets.only(bottom: 50),
+            child: Column(
+              children: [
+                const Padding(
+                  padding: EdgeInsets.only(top: 50),
                   child: Text(
-                          "Acceder",
-                      style: TextStyle(fontSize: 16)),
-                )))
-          ],
+                    "BankOpinion",
+                    style: TextStyle(
+                        fontSize: 45,
+                        fontWeight: FontWeight.w900,
+                        color: Color.fromARGB(255, 122, 93, 178)),
+                  ),
+                ),
+                Padding(
+                  padding:
+                      EdgeInsets.only(top: 20, left: 20, right: 20, bottom: 40),
+                  child: Container(
+                    child: Image.asset(
+                      'assets/images/imageStartView.png',
+                      width: double.infinity,
+                      height: 300.0,
+                      //fit: BoxFit.cover,
+                    ),
+                  ),
+                ),
+                Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+          
+                  // ignore: prefer_const_literals_to_create_immutables
+                  children: [
+                    Padding(
+                        padding: EdgeInsets.only(top: 5),
+                        child: Text("¿PROBLEMAS CON TU BANCO?",
+                            softWrap: true,
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                                color: Color.fromARGB(255, 55, 18, 125),
+                                fontSize: 22,
+                                fontWeight: FontWeight.bold))),
+                    const Padding(
+                      padding: EdgeInsets.only(left: 25, right: 25, top: 10),
+                      child: Text(
+                          "Haz que tu opinión cuente y mantente al día sobre el mundo financiero",
+                          softWrap: true,
+                          textAlign: TextAlign.center,
+                          style: TextStyle(fontSize: 18.5)),
+                    )
+                  ],
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Padding(
+                      padding: EdgeInsets.only(top: 60, left: 20, right: 20),
+                      child: Container(
+                        child: ElevatedButton(
+                          onPressed: (() {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => PageHomePage()));
+                          }),
+                          style: ElevatedButton.styleFrom(
+                            shape: const StadiumBorder(),
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 100, vertical: 14),
+                            backgroundColor:
+                                const Color.fromARGB(255, 153, 116, 223),
+                          ),
+                          child: Text("Acceder", style: TextStyle(fontSize: 16)),
+                        ),
+                      ),
+                    )
+                  ],
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  // ignore: prefer_const_literals_to_create_immutables
+                  children: [
+                    // ignore: prefer_const_constructors
+                    Padding(
+                      padding: const EdgeInsets.only(top: kIsWeb ? 20 : 60),
+                      child:
+                          // ignore: prefer_const_constructors
+                          InkWell(
+                        onTap: () {
+                          if (jwt == null) {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => LoginView(),
+                              ),
+                            );
+                          }
+                        },
+                        // ignore: prefer_const_constructors
+                        child: Text(
+                          "Inicia sesión",
+                          style: const TextStyle(
+                              color: Color.fromARGB(255, 153, 116, 223),
+                              decoration: TextDecoration.underline),
+                        ),
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(top: kIsWeb ? 20 : 60),
+                      child: Text(
+                        "    ó    ",
+                        style: const TextStyle(
+                            color: Color.fromARGB(255, 153, 116, 223)),
+                      ),
+                    ),
+          
+                    Padding(
+                      padding: const EdgeInsets.only(top: kIsWeb ? 20 : 60),
+                      child:
+                          // ignore: prefer_const_constructors
+                          InkWell(
+                        onTap: () {
+                          if (jwt == null) {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => SignUpView1(),
+                              ),
+                            );
+                          }
+                        },
+                        // ignore: prefer_const_constructors
+                        child: Text(
+                          "Regístrate",
+                          style: const TextStyle(
+                              color: Color.fromARGB(255, 153, 116, 223),
+                              decoration: TextDecoration.underline),
+                        ),
+                      ),
+                    )
+                  ],
+                )
+              ],
+            ),
+          ),
         ),
-     
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          // ignore: prefer_const_literals_to_create_immutables
-          children: [
-            // ignore: prefer_const_constructors
-            Padding(
-                padding: const EdgeInsets.only(top: kIsWeb ? 20 : 60),
-                child:
-                    // ignore: prefer_const_constructors
-                    InkWell(
-                        onTap: () {
-
-                           if (jwt == null) {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) =>
-                                  LoginView()));
-                    }
-                        },
-                        // ignore: prefer_const_constructors
-                        child: Text("Inicia sesión",
-                            style: const TextStyle(
-                                color: Color.fromARGB(255, 153, 116, 223),
-                                decoration: TextDecoration.underline)))),
-            Padding(
-                padding: const EdgeInsets.only(top: kIsWeb ? 20 : 60),
-                child:
-            Text("    ó    ",
-            style: const TextStyle(
-            color: Color.fromARGB(255, 153, 116, 223)))),
-
-            Padding(
-                padding: const EdgeInsets.only(top: kIsWeb ? 20 : 60),
-                child:
-                    // ignore: prefer_const_constructors
-                    InkWell(
-                        onTap: () {
-
-                           if (jwt == null) {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) =>
-                                  SignUpView1()));
-                    }
-                        },
-                        // ignore: prefer_const_constructors
-                        child: Text("Regístrate",
-                            style: const TextStyle(
-                                color: Color.fromARGB(255, 153, 116, 223),
-                                decoration: TextDecoration.underline))))
-          ],
-        )
-      ])
-      ),)
+      ),
     );
   }
 }

@@ -103,104 +103,32 @@ void getLocation() async {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      
+    return Scaffold( 
       body: 
-      kIsWeb
-      ? Center(
-        child: Container(
-          width: 600,
-          child: Padding(
-        padding: const EdgeInsets.all(20.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Padding(padding: EdgeInsets.all(30),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
+        Padding(
+            padding: const EdgeInsets.all(20.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text("PREFERENCIAS",
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 30
-                ))
-              ],
-            )),
-            const Text(
-              'Permisos de localización',
-              style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 8.0),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                const Text('Activado'),
-                Radio(
-                  activeColor: Color.fromARGB(255, 153, 116, 223),
-                  focusColor: Color.fromARGB(255, 153, 116, 223),
-                  value: true,
-                  groupValue: _isLocationEnabled,
-                  onChanged: (value) {
-                    getLocation();
-                    setState(() {
-                      _prefs.setBool('isLocationEnabled', true);
-                    });
-                    _toggleLocation(value);
-                    
-                  }
-                ),
-              ],
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                const Text('Desactivado'),
-                Radio(
-                  activeColor: Color.fromARGB(255, 153, 116, 223),
-                  focusColor: Color.fromARGB(255, 153, 116, 223),
-                  value: false,
-                  groupValue: _isLocationEnabled,
-                  onChanged: (value) {
-                    setState(() {
-                      _prefs.setBool('isLocationEnabled', false);
-                    });
-                                        _toggleLocation(value);
-
-                  },
-                ),
-              ],
-            ),
-
-           
-          ],
-        ),
-      ),
-        )
-      )
-      : Padding(
-        padding: const EdgeInsets.all(20.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Padding(
-              padding: EdgeInsets.only(bottom: 30),
-              child: Row(
-                children: [
-                  SizedBox(
-                      width: 70.0,
-                      height: 70.0,
-                      child: Padding(
-                        padding: const EdgeInsets.only(top: 20),
-                        child: ElevatedButton(
-                            onPressed: () {
-                              Navigator.pop(context);
-                            },
-                            style: ElevatedButton.styleFrom(
-                              shape: const CircleBorder(),
-                              padding: const EdgeInsets.all(5),
-                              backgroundColor:
-                                  Color.fromARGB(255, 255, 255, 255),
-                            ),
+                Padding(
+                  padding: EdgeInsets.only(bottom: 30),
+                  child: Row(
+                    children: [
+                      SizedBox(
+                          width: 70.0,
+                          height: 70.0,
+                          child: Padding(
+                            padding: const EdgeInsets.only(top: 20),
+                            child: ElevatedButton(
+                                onPressed: () {
+                                  Navigator.pop(context);
+                                },
+                                style: ElevatedButton.styleFrom(
+                                  shape: const CircleBorder(),
+                                  padding: const EdgeInsets.all(5),
+                                  backgroundColor:
+                                      Color.fromARGB(255, 255, 255, 255),
+                                ),
                             child: const Icon(
                               Icons.arrow_back,
                               color: Color.fromARGB(255, 153, 116, 223),
@@ -208,54 +136,66 @@ void getLocation() async {
                       )),
                 ],
               )),
-            const Text(
-              'Permisos de localización',
-              style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 8.0),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                const Text('Activado'),
-                Radio(
-                  activeColor: Color.fromARGB(255, 153, 116, 223),
-                  focusColor: Color.fromARGB(255, 153, 116, 223),
-                  value: true,
-                  groupValue: _isLocationEnabled,
-                  onChanged: (value) {
-                    setState(() {
-                      _prefs.setBool('isLocationEnabled', true);
-                    });
-                    _toggleLocation(value);
-                    
-                  }
-                ),
-              ],
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                const Text('Desactivado'),
-                Radio(
-                  activeColor: Color.fromARGB(255, 153, 116, 223),
-                  focusColor: Color.fromARGB(255, 153, 116, 223),
-                  value: false,
-                  groupValue: _isLocationEnabled,
-                  onChanged: (value) {
-                    setState(() {
-                       SnackBar(
-    content: Text('Permisos de localización desactivados'),
-    duration: Duration(seconds: 2), // Tiempo que permanece visible
-  );
-                      _prefs.setBool('isLocationEnabled', false);
-                    });
-                                        _toggleLocation(value);
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text("PREFERENCIAS",
+                                  style: TextStyle(
+                                    fontSize: 24,
+                                    fontWeight: FontWeight.bold,
+                                    color: Color.fromARGB(255, 55, 11, 137)
+                                    )),
+                ],
+              ),
+            Padding(
+                        padding: const EdgeInsets.only(top: 30),
+                        child: InkWell(
+                          onTap: () {
+                            openAppSettings();
+                              //Geolocator.openLocationSettings();
+                          },
+                          child: Container(
+                              height: 80,
+                              width: double.infinity,
+                              decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(6),
 
-                  },
-                ),
-              ],
-            ),
-
+                                color: Color.fromARGB(10, 55, 11, 137),
+                                border: Border.all(
+                                  color: Color.fromARGB(67, 55, 11, 137),
+                                  width: .6,
+                                ),
+                              ),
+                              child: Padding(
+                              padding: EdgeInsets.all(10),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    children: const [
+                                       Icon(Icons.location_on,
+                                  color: Color.fromARGB(168, 55, 11, 137),
+                                  ),
+                                  Padding(padding: EdgeInsets.symmetric(horizontal: 2),
+                                  child: Text("Gestionar permisos de ubicación",
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    color: Color.fromARGB(255, 43, 11, 104)
+                                    ))),
+                                    ],
+                                  ),
+                                    Row(
+                                      mainAxisAlignment: MainAxisAlignment.end,
+                                      children: const [
+                                        Icon(Icons.arrow_right,
+                                        color: Color.fromARGB(109, 55, 11, 137),),
+                                      ],
+                                    )
+                                ],
+                              )),
+                              ),
+                        )),
            
           ],
         ),

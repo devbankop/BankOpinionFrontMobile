@@ -7,9 +7,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
   runApp(MyAppView());
-
-
 }
+
 class MyAppView extends StatefulWidget {
   const MyAppView({super.key});
 
@@ -39,6 +38,15 @@ class _MyAppViewState extends State<MyAppView> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      builder: (context, child) {
+        // Obtain the current media query information.
+        final mediaQueryData = MediaQuery.of(context);
+
+        return MediaQuery(
+          data: mediaQueryData.copyWith(textScaleFactor: 1.0),
+          child: child!,
+        );
+      },
       debugShowCheckedModeBanner: false,
       title: 'BankOpinion',
       theme: ThemeData(
@@ -59,9 +67,7 @@ class _MyAppViewState extends State<MyAppView> {
 }
 
 class MyHomePage extends StatefulWidget {
-  
   const MyHomePage({super.key, required this.title});
-  
 
   // This widget is the home page of your application. It is stateful, meaning
   // that it has a State object (defined below) that contains fields that affect
@@ -176,7 +182,6 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      
       body: Center(
         child: Text('Welcome Screen'),
       ),
