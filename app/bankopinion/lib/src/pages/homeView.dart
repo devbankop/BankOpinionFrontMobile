@@ -222,6 +222,7 @@ class _StateHomePage extends State<PageHomePage> {
     final response = await http.get(prueba);
 
     setState(() {
+      
       banksResponse = jsonDecode(response.body);
 
       banksResponse.forEach((element) async {
@@ -244,7 +245,7 @@ class _StateHomePage extends State<PageHomePage> {
                       context,
                       MaterialPageRoute(
                           builder: (context) => allReviews(
-                                bank: int.parse(banks.elementAt(element)['id']),
+                                bank: (element),
                               )),
                     );
                   },
