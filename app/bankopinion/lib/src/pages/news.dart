@@ -60,15 +60,21 @@ class _NewsViewState extends State<NewsView> {
     }
   }
 
-  _launchURL() async {
-    var url = enlaceNew;
-    final uri = Uri.parse(url);
+
+  _launchURL(String enlaceNew) async {
+        print(enlaceNew);
+        print("holaaaaasasda");
+
+    final uri = Uri.parse(enlaceNew);
     if (await canLaunchUrl(uri)) {
       await launchUrl(uri);
     } else {
-      throw 'Could not launch $url';
+      throw 'Could not launch $enlaceNew';
+      String err = '';
+      print(ErrorDescription(err));
     }
   }
+
 
   @override
   void dispose() {
@@ -254,9 +260,11 @@ class _NewsViewState extends State<NewsView> {
                     },
                     onTap: () async {
                       setState(() {
-                        enlaceNew = news.elementAt(index)['url'];
+                        enlaceNew = news.elementAt(index)['url'].toString();
                       });
-                      _launchURL();
+                          print(enlaceNew);
+
+                      _launchURL(enlaceNew);
                     },
                     child: Padding(
                       padding: EdgeInsets.only(top: 8),
@@ -371,6 +379,7 @@ class _NewsViewState extends State<NewsView> {
                                                           index)['source'],
                                                       overflow:
                                                           TextOverflow.ellipsis,
+                                                      textAlign: TextAlign.center,
                                                       maxLines: 1,
                                                       softWrap: false,
                                                       style: const TextStyle(
@@ -444,24 +453,23 @@ class _NewsViewState extends State<NewsView> {
                                               ),
                                             ),
                                             const Text("    ·    "),
-                                            Text(
-                                              news
-                                                          .elementAt(
-                                                              index)["source"]
-                                                          .toString()
-                                                          .length >
-                                                      20
-                                                  ? "${news.elementAt(index)["source"].toString().substring(0, 18)}..."
-                                                  : news
-                                                      .elementAt(
-                                                          index)["source"]
-                                                      .toString(),
-                                              style: const TextStyle(
-                                                color: Color.fromARGB(
-                                                    255, 90, 90, 90),
-                                                fontSize: 12,
-                                              ),
-                                            ),
+                                            SizedBox(
+                                                    width: 100.0,
+                                                    child: Text(
+                                                      news.elementAt(
+                                                          index)['source'],
+                                                      overflow:
+                                                          TextOverflow.ellipsis,
+                                                      textAlign: TextAlign.center,
+                                                      maxLines: 1,
+                                                      softWrap: false,
+                                                      style: const TextStyle(
+                                                        color: Color.fromARGB(
+                                                            255, 90, 90, 90),
+                                                        fontSize: 12,
+                                                      ),
+                                                    ),
+                                                  ),
                                             const Text("    ·    "),
                                             Text(
                                               news.elementAt(

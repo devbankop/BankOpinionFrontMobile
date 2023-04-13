@@ -6,6 +6,7 @@ import 'package:bankopinion/src/Reusable%20Components/bottomBar.dart';
 import 'package:bankopinion/src/Reusable%20Components/ratingStarsBranch.dart';
 import 'package:bankopinion/src/authServices/refreshToken.dart';
 import 'package:bankopinion/src/pages/allReviewsView.dart';
+import 'package:bankopinion/src/pages/topBranches.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 // import 'package:google_maps_flutter_web/google_maps_flutter_web.dart' as web;
@@ -53,6 +54,7 @@ class _StateHomePage extends State<PageHomePage> {
   void initState() {
     super.initState();
     getLocation();
+    fetchData();
 
     filteredList = bankList;
     Jiffy.locale('es');
@@ -116,7 +118,7 @@ class _StateHomePage extends State<PageHomePage> {
     setState(() {
       var index = -1;
       for (var i = 0; i < banks.length; ++i)
-        if (banks[i]["value"]["id"].toString() == id.toString()) index = i;
+        if (banks[i]["id"].toString() == id.toString()) index = i;
 
       var bank = banks[index];
       banks.removeAt(index);
@@ -223,12 +225,12 @@ class _StateHomePage extends State<PageHomePage> {
       banksResponse = jsonDecode(response.body);
 
       banksResponse.forEach((element) async {
-        // if (element["value"]["location"] == null) return;
-        if (element["status"] == "fulfilled") {
+        // if (element["location"] == null) return;
+        
           banks.insert(0, element);
 
-          LatLng showLocation = LatLng(element["value"]["location"]["lat"],
-              element["value"]["location"]["lng"]);
+          LatLng showLocation = LatLng(element["location"]["lat"],
+              element["location"]["lng"]);
 
           //location to show in map
           markers.add(Marker(
@@ -237,16 +239,27 @@ class _StateHomePage extends State<PageHomePage> {
               markerId: MarkerId(showLocation.toString()),
               position: showLocation, //position of marker
               infoWindow: InfoWindow(
+                onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => allReviews(
+                                bank: int.parse(banks.elementAt(element)['id']),
+                              )),
+                    );
+                  },
                 //popup info
-                title: element["value"]["branchName"],
-                snippet: element["value"]["address"],
+                title: element["branchName"],
+                snippet: element["address"] + '      Ver más'
+
+                //element["address"],
               ),
               icon: await BitmapDescriptor.fromAssetImage(
                   const ImageConfiguration(size: Size(30, 30)),
                   Platform.isIOS
                       ? 'assets/images/iosBankMarker.png'
                       : 'assets/images/bankMarker.png')));
-        }
+        
       });
     });
   }
@@ -309,7 +322,7 @@ class _StateHomePage extends State<PageHomePage> {
                     },
                     child: const Icon(
                       Icons.expand,
-                      color: Color.fromARGB(255, 158, 54, 244),
+                      color: Color.fromARGB(255, 147, 97, 241),
                     ),
                   ),
                 ),
@@ -322,7 +335,11 @@ class _StateHomePage extends State<PageHomePage> {
               bottom: 0,
             ),
             child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                Text("                "),
+                Row(
+              mainAxisAlignment: MainAxisAlignment.end,
               children: [
                 ElevatedButton(
                   onPressed: (() async {
@@ -370,7 +387,7 @@ class _StateHomePage extends State<PageHomePage> {
                       ),
                     ),
                     padding:
-                        const EdgeInsets.symmetric(horizontal: 25, vertical: 8),
+                        const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
                     backgroundColor: const Color.fromARGB(255, 255, 255, 255),
                   ),
                   child: Row(
@@ -389,304 +406,358 @@ class _StateHomePage extends State<PageHomePage> {
                 )
               ],
             ),
-          ),
-
-//LISTA DE UBICACIONES RESPECTO A MARCADORES DEL CHUNK
-
-          Expanded(
-            child: ListView.builder(
-              padding: const EdgeInsets.symmetric(vertical: 10),
-              itemCount: banks.length,
-              itemBuilder: (context, index) {
-                // ignore: dead_code
-                return InkWell(
-                    onTap: () {
-                      LatLng newlatlong = LatLng(
-                          banks.elementAt(index)["value"]["location"]["lat"],
-                          banks.elementAt(index)["value"]["location"]["lng"]);
-                      mapController?.animateCamera(
-                          CameraUpdate.newCameraPosition(
-                              CameraPosition(target: newlatlong, zoom: 18)));
-                    },
-                    child: Container(
-                        margin: const EdgeInsets.only(
-                          bottom: 5,
-                          left: 10,
-                          right: 10,
-                        ),
-                        decoration: BoxDecoration(
-                            //color: isBankSelected(index) ? Color.fromARGB(255, 215, 215, 215) : Colors.transparent,
-                            border: Border.all(
-                              width: 2,
-                              color: isBankSelected(index)
-                                  ? const Color.fromARGB(255, 0, 0, 0)
-                                  : const Color.fromARGB(255, 223, 223, 223),
-                            ),
-                            borderRadius: BorderRadius.circular(12)),
-                        height: 100,
-                        padding: const EdgeInsets.only(top: 0, left: 12),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                SizedBox(
-                                  width: 230.0,
-                                  child: Padding(
-                                      padding: const EdgeInsets.only(
-                                          bottom: 4, top: 8),
-                                      child: Text(
-                                          banks[index]["value"]["branchName"],
-                                          overflow: TextOverflow.ellipsis,
-                                          maxLines: 1,
-                                          softWrap: false,
-                                          textAlign: TextAlign.left,
-                                          style: const TextStyle(
-                                              fontSize: 15,
-                                              color:
-                                                  Color.fromARGB(255, 0, 0, 0),
-                                              fontWeight: FontWeight.bold))),
-                                ),
-                                Row(
-                                  children: [
-                                    SizedBox(
-                                      width: 230.0,
-                                      child: Padding(
-                                          padding: const EdgeInsets.only(),
-                                          child: Text(
-                                              banks[index]["value"]["address"],
-                                              overflow: TextOverflow.ellipsis,
-                                              maxLines: 1,
-                                              softWrap: false,
-                                              textAlign: TextAlign.left,
-                                              style: const TextStyle(
-                                                fontSize: 11,
-                                                color: Color.fromARGB(
-                                                    255, 0, 0, 0),
-                                              ))),
-                                    ),
-                                  ],
-                                ),
-                                Row(
-                                  children: [
-                                    Container(
-                                      constraints:
-                                          const BoxConstraints(maxWidth: 200),
-                                      child: Text(
-                                          banks.elementAt(index)["value"]
-                                                  ["zipcode"] +
-                                              ", " +
-                                              banks.elementAt(index)["value"]
-                                                  ["city"],
-                                          textAlign: TextAlign.left,
-                                          style: const TextStyle(
-                                            fontSize: 11,
-                                            color: Color.fromARGB(255, 0, 0, 0),
-                                          )),
-                                    ),
-                                  ],
-                                ),
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: [
-                                    Padding(
-                                        padding: const EdgeInsets.only(
-                                            top: 6, bottom: 4),
-                                        child: Row(
-                                          children: [
-                                            StatmentRatings(
-                                                bank: banks
-                                                    .elementAt(index)["value"]),
-                                            Text(
-                                                "(" +
-                                                    banks
-                                                        .elementAt(index)[
-                                                            "value"]
-                                                            ["branchRating"]
-                                                        .toString() +
-                                                    ")",
-                                                style: const TextStyle(
-                                                  fontSize: 11,
-                                                  color: Color.fromARGB(
-                                                      255, 66, 66, 66),
-                                                )),
-                                          ],
-                                        ))
-                                  ],
-                                )
-                              ],
-                            ),
-                            Row(
-                              children: [
-                                //BOTÓN FAVORITOS
-                                Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: [
-                                    Container(
-                                        margin: const EdgeInsets.only(
-                                            right: 3, left: 5),
-                                        child: SizedBox(
-                                            width: 47.0,
-                                            height: 47.0,
-                                            child: jwt != null &&
-                                                    jwt != '' &&
-                                                    userRole != 'superAdmin'
-                                                ? ElevatedButton(
-                                                    onPressed: () async {
-                                                      final prefs =
-                                                          await SharedPreferences
-                                                              .getInstance();
-                                                      int foundIndex =
-                                                          userBranchesFavorites
-                                                              .indexOf(banks
-                                                                      .elementAt(
-                                                                          index)[
-                                                                  "value"]["id"]);
-                                                      setState(() {
-                                                        if (foundIndex != -1)
-                                                          userBranchesFavorites
-                                                              .removeAt(
-                                                                  foundIndex);
-                                                        else
-                                                          userBranchesFavorites
-                                                              .add(banks.elementAt(
-                                                                          index)[
-                                                                      "value"]
-                                                                  ["id"]);
-
-                                                        foundIndex = userBranchesFavorites
-                                                            .indexOf(banks
-                                                                    .elementAt(
-                                                                        index)[
-                                                                "value"]["id"]);
-                                                      });
-                                                      jwt = prefs
-                                                          .getString('jwt');
-                                                      var favoriteBranch = Uri.parse(
-                                                          'https://bankopinion-backend-development-3vucy.ondigitalocean.app/users/addFavoriteBranch/' +
-                                                              banks
-                                                                  .elementAt(index)[
-                                                                      "value"]
-                                                                      ["id"]
-                                                                  .toString());
-                                                      var response = await http
-                                                          .put(
-                                                              favoriteBranch,
-                                                              headers: {
-                                                            'Authorization':
-                                                                '$jwt'
-                                                          });
-                                                      var finalResponse =
-                                                          json.decode(
-                                                              response.body);
-
-                                                      if (finalResponse[
-                                                              "status"] ==
-                                                          401) {
-                                                        setState(() {
-                                                          if (foundIndex != -1)
-                                                            userBranchesFavorites
-                                                                .removeAt(
-                                                                    foundIndex);
-                                                        });
-                                                        var refresh =
-                                                            AuthService();
-                                                        await refresh
-                                                            .refreshToken();
-                                                      }
-
-                                                      //await getUserProfile();
-                                                    },
-                                                    style: ElevatedButton
-                                                        .styleFrom(
-                                                      shape:
-                                                          const CircleBorder(),
-                                                      padding:
-                                                          const EdgeInsets.all(
-                                                              5),
-                                                      backgroundColor:
-                                                          userRole ==
-                                                                  'superAdmin'
-                                                              ? Color.fromARGB(
-                                                                  255,
-                                                                  223,
-                                                                  116,
-                                                                  116)
-                                                              : const Color
-                                                                      .fromARGB(
-                                                                  255,
-                                                                  153,
-                                                                  116,
-                                                                  223),
-                                                    ),
-                                                    child: !userBranchesFavorites
-                                                            .contains(banks
-                                                                    .elementAt(
-                                                                        index)[
-                                                                "value"]["id"])
-                                                        ? const Icon(Icons
-                                                            .favorite_border_rounded)
-                                                        : const Icon(
-                                                            Icons.favorite))
-                                                : null))
-                                  ],
-                                ),
-
-                                //COLUMNA BOTÓN allReviews
-                                Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: [
-                                    Container(
-                                        margin: const EdgeInsets.only(
-                                            right: 8, left: 3),
-                                        child: SizedBox(
-                                            width: 47.0,
-                                            height: 47.0,
-                                            child: ElevatedButton(
-                                                onPressed: () {
-                                                  //ROUTES
-
-                                                  Navigator.push(
+            ElevatedButton(
+               style: ElevatedButton.styleFrom(
+                    shape:  StadiumBorder(
+                      side: BorderSide(
+                        color: Color.fromARGB(46, 35, 0, 100),
+                        width: .5,
+                      ),
+                    ),
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 0, vertical: 8),
+                    backgroundColor: const Color.fromARGB(255, 255, 255, 255),
+                  ),
+              onPressed:() {
+                Navigator.push(
                                                     context,
                                                     MaterialPageRoute(
                                                         builder:
                                                             (context) =>
-                                                                allReviews(
-                                                                  bank: banks.elementAt(
-                                                                          index)[
-                                                                      "value"],
-                                                                )),
+                                                                topBranchesView()),
                                                   );
-                                                },
-                                                style: ElevatedButton.styleFrom(
-                                                  shape: const CircleBorder(),
-                                                  padding:
-                                                      const EdgeInsets.all(5),
-                                                  backgroundColor: userRole ==
-                                                          'superAdmin'
-                                                      ? Color.fromARGB(
-                                                          255, 223, 116, 116)
-                                                      : const Color.fromARGB(
-                                                          255, 153, 116, 223),
-                                                ),
-                                                child: const Icon(
-                                                  Icons.edit,
-                                                  //color: Color.fromRGBO(255, 255, 255, 255)
-                                                ))))
+              
+            }, child: Icon(Icons.emoji_events,
+                color: Color.fromARGB(255, 203, 152, 0),),)
+              // InkWell(
+              //   child: Icon(Icons.star,
+              //   color: Color.fromARGB(255, 94, 29, 214),),
+              // )
+              ],
+            ),
+          ),
+
+
+
+
+//LISTA DE UBICACIONES RESPECTO A MARCADORES DEL CHUNK
+
+            Expanded(
+                
+
+                  child: ListView.builder(
+                    padding: const EdgeInsets.symmetric(vertical: 10),
+                    itemCount: banks.length,
+                    itemBuilder: (context, index) {
+                      // ignore: dead_code
+                      return InkWell(
+                          onTap: () {
+                            LatLng newlatlong = LatLng(
+                                banks.elementAt(index)["location"]
+                                    ["lat"],
+                                banks.elementAt(index)["location"]
+                                    ["lng"]);
+                            mapController?.animateCamera(
+                                CameraUpdate.newCameraPosition(CameraPosition(
+                                    target: newlatlong, zoom: 18)));
+                          },
+                          child: 
+                          Padding(padding: EdgeInsets.only(bottom: 5, left: 10, right: 10),
+                          child:   
+                          
+                          Container(
+                              padding: EdgeInsets.only(left: 14, bottom: 12, top: 12),
+                              decoration: BoxDecoration(
+                                  //color: isBankSelected(index) ? Color.fromARGB(255, 215, 215, 215) : Colors.transparent,
+                                  border: Border.all(
+                                    width: 2,
+                                    color: isBankSelected(index)
+                                        ? const Color.fromARGB(255, 0, 0, 0)
+                                        : const Color.fromARGB(
+                                            255, 223, 223, 223),
+                                  ),
+                                  borderRadius: BorderRadius.circular(12)),
+                              child:
+                              SizedBox(child: 
+                              Column(
+                                children: [
+                                banks[index]["isTopBranch"] == true
+                                      ? Row(
+                                        mainAxisAlignment: MainAxisAlignment.center,
+                                        children: [
+                                          Icon(Icons.emoji_events,
+                                           color: Color.fromARGB(255, 203, 152, 0),
+                                           ),
+                                          Text(" Top 1 de " + banks[index]["branchMerit"] + '',
+                                          style: TextStyle(
+                                            color: Color.fromARGB(150, 0, 0, 0),
+                                            fontStyle: FontStyle.italic
+                                          ),),
+                                          Icon(Icons.emoji_events,
+                                          color: Color.fromARGB(255, 203, 152, 0)),
+                                        ],
+                                      )
+                                      : SizedBox.shrink(),
+                               Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  
+                                  Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      
+                                      SizedBox(
+                                    width: 230.0,
+                                    child: Padding(
+                                        padding: const EdgeInsets.only(
+                                            bottom: 4, top: 8),
+                                        child: Text(
+                                            banks[index]["branchName"],
+                                            overflow: TextOverflow.ellipsis,
+                                            maxLines: 1,
+                                            softWrap: false,
+                                            textAlign: TextAlign.left,
+                                            style: const TextStyle(
+                                                fontSize: 15,
+                                                color: Color.fromARGB(
+                                                    255, 0, 0, 0),
+                                                fontWeight: FontWeight.bold))),
+                                  ),
+                                      Row(
+                                        children: [
+                                          SizedBox(
+                                            width: 230.0,
+                                            child: Padding(
+                                                padding: const EdgeInsets.only(
+                                                    ),
+                                                child: Text(
+                                                    banks[index]["address"],
+                                                    overflow: TextOverflow.ellipsis,
+                                                    maxLines: 1,
+                                                    softWrap: false,
+                                                    textAlign: TextAlign.left,
+                                                    style: const TextStyle(
+                                                      fontSize: 11,
+                                                      color:
+                                                          Color.fromARGB(255, 0, 0, 0),
+                                                    ))),
+                                  ),
+                                        ],
+                                      ),
+                                      Row(
+                                        children: [
+                                          Container(
+                                            constraints: const BoxConstraints(
+                                                maxWidth: 200),
+                                            child: Text(
+                                                banks.elementAt(index)
+                                                        ["zipcode"] +
+                                                    ", " +
+                                                    banks.elementAt(
+                                                        index)["city"],
+                                                textAlign: TextAlign.left,
+                                                style: const TextStyle(
+                                                  fontSize: 11,
+                                                  color: Color.fromARGB(
+                                                      255, 0, 0, 0),
+                                                )),
+                                          ),
+                                        ],
+                                      ),
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.center,
+                                        children: [
+                                          Padding(
+                                              padding: const EdgeInsets.only(
+                                                  top: 6, bottom: 4),
+                                              child: Row(
+                                                children: [
+                                                  StatmentRatings(
+                                                      bank: banks.elementAt(
+                                                          index)),
+                                                  Text(
+                                                      "(" +
+                                                          banks
+                                                              .elementAt(index)["branchRating"]
+                                                              .toString() +
+                                                          ")",
+                                                      style: const TextStyle(
+                                                        fontSize: 11,
+                                                        color: Color.fromARGB(
+                                                            255, 66, 66, 66),
+                                                      )),
+                                                ],
+                                              ))
+                                        ],
+                                      )
+                                    ],
+                                  ),
+                                  Row(
+                                    children: [
+                                      //BOTÓN FAVORITOS
+                                      Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.center,
+                                        children: [
+                                          Container(
+                                              margin: const EdgeInsets.only(
+                                                  right: 3, left: 5),
+                                              child: SizedBox(
+                                                  width: 47.0,
+                                                  height: 47.0,
+                                                  child: jwt != null &&
+                                                          jwt != '' &&
+                                                          userRole !=
+                                                              'superAdmin'
+                                                      ? ElevatedButton(
+                                                          onPressed: () async {
+                                                            final prefs =
+                                                                await SharedPreferences.getInstance();
+                                                            int foundIndex = userBranchesFavorites.indexOf(banks.elementAt(index)["id"]);
+                                                            setState(() {
+                                                              if (foundIndex !=
+                                                                  -1)
+                                                                userBranchesFavorites
+                                                                    .removeAt(
+                                                                        foundIndex);
+                                                              else
+                                                                userBranchesFavorites.add(banks.elementAt(index)["id"]);
+
+                                                              foundIndex = userBranchesFavorites.indexOf(banks.elementAt(index)["id"]);
+                                                            });
+                                                            jwt =
+                                                                prefs.getString('jwt');
+                                                            var favoriteBranch =
+                                                                Uri.parse('https://bankopinion-backend-development-3vucy.ondigitalocean.app/users/addFavoriteBranch/' +
+                                                                    banks.elementAt(index)["id"].toString());
+                                                            var response =
+                                                                await http.put(
+                                                                    favoriteBranch,
+                                                                    headers: {
+                                                                  'Authorization':
+                                                                      '$jwt'
+                                                                });
+                                                            var finalResponse =
+                                                                json.decode(
+                                                                    response
+                                                                        .body);
+
+                                                            if (finalResponse[
+                                                                    "status"] ==
+                                                                401) {
+                                                              setState(() {
+                                                                if (foundIndex != -1)userBranchesFavorites.removeAt(foundIndex);
+                                                              });
+                                                              var refresh =
+                                                                  AuthService();
+                                                              await refresh
+                                                                  .refreshToken();
+                                                            }
+
+                                                            //await getUserProfile();
+                                                          },
+                                                          style: ElevatedButton
+                                                              .styleFrom(
+                                                            shape:
+                                                                const CircleBorder(),
+                                                            padding:
+                                                                const EdgeInsets
+                                                                    .all(5),
+                                                            backgroundColor: userRole ==
+                                                                    'superAdmin'
+                                                                ? Color
+                                                                    .fromARGB( 255, 223, 116, 116)
+                                                                : const Color
+                                                                        .fromARGB( 255, 153, 116, 223),
+                                                          ),
+                                                          child: !userBranchesFavorites
+                                                                  .contains(banks
+                                                                          .elementAt(
+                                                                              index)
+                                                                      ["id"])
+                                                              ? const Icon(Icons
+                                                                  .favorite_border_rounded)
+                                                              : const Icon(Icons
+                                                                  .favorite))
+                                                      : null))
+                                        ],
+                                      ),
+
+                                      //COLUMNA BOTÓN allReviews
+                                      Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.center,
+                                        children: [
+                                          Container(
+                                              margin: const EdgeInsets.only(
+                                                  right: 8, left: 3),
+                                              child: SizedBox(
+                                                  width: 47.0,
+                                                  height: 47.0,
+                                                  child: ElevatedButton(
+                                                      onPressed: () {
+                                                        //ROUTES
+
+                                                        Navigator.push(
+                                                          context,
+                                                          MaterialPageRoute(
+                                                              builder:
+                                                                  (context) =>
+                                                                      allReviews(
+                                                                        bank: banks.elementAt(index),
+                                                                      )),
+                                                        );
+                                                      },
+                                                      style: ElevatedButton
+                                                          .styleFrom(
+                                                        shape:
+                                                            const CircleBorder(),
+                                                        padding:
+                                                            const EdgeInsets
+                                                                .all(5),
+                                                        backgroundColor:
+                                                            userRole ==
+                                                                    'superAdmin'
+                                                                ? Color
+                                                                    .fromARGB(255, 223, 116, 116)
+                                                                : const Color
+                                                                        .fromARGB(
+                                                                    255,
+                                                                    153,
+                                                                    116,
+                                                                    223),
+                                                      ),
+                                                      child: const Icon(
+                                                        Icons.edit,
+                                                        //color: Color.fromRGBO(255, 255, 255, 255)
+                                                      ),
+                                        ),
+                                      ),
+                                    )
                                   ],
                                 ),
                               ],
                             ),
                           ],
-                        )));
+                        ),
+                      
+                              ],)),
+                    ),
+                  ),
+                );
               },
             ),
-          )
+          ),
         ],
       ),
     );

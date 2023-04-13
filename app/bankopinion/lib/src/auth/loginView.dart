@@ -22,7 +22,7 @@ class _LoginViewState extends State<LoginView> {
   var passwd;
   var _isObscure = true;
   var error404 = false;
-  
+  var lostPasswd;
 
 
   Future<void> fetchData() async {}
@@ -77,7 +77,7 @@ class _LoginViewState extends State<LoginView> {
                 ],
               )),
           Padding(
-              padding: const EdgeInsets.only(),
+              padding: const EdgeInsets.only(top: 5),
               child: Container(
                 child: Image.asset(
                   'assets/images/loginImage.webp',
@@ -180,6 +180,25 @@ class _LoginViewState extends State<LoginView> {
                     )
                   ],
                 ),
+                Padding(
+                      padding: const EdgeInsets.only(top: kIsWeb ? 20 : 20),
+                      child:
+                          // ignore: prefer_const_constructors
+                          InkWell(
+                        onTap: () {
+                          
+                            _showAlertDialog();
+                          
+                        },
+                        // ignore: prefer_const_constructors
+                        child: Text(
+                          "Recuperar contraseña",
+                          style: const TextStyle(
+                              color: Color.fromARGB(255, 153, 116, 223),
+                              decoration: TextDecoration.underline),
+                        ),
+                      ),
+                    ),
                 error404 == true
                 ? 
                     RichText(
@@ -362,5 +381,97 @@ class _LoginViewState extends State<LoginView> {
         ]))
         )
         );
+  }
+
+   void _showAlertDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return Dialog(
+          shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.all(Radius.circular(10.0))),
+          child: Container(
+            width: 500,
+            decoration: BoxDecoration(
+              color: Color.fromARGB(56, 233, 221, 255),
+              borderRadius: BorderRadius.all(Radius.circular(20.0)),
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                Padding(
+                  padding: EdgeInsets.all(16),
+                  child: Text(
+                    "Por favor, indícanos un correo existente al que enviar los pasos de restablecimiento de contraseña.",
+                    style: TextStyle(color: Color.fromARGB(255, 0, 0, 0)),
+                  ),
+                ),
+                Padding(padding: EdgeInsets.symmetric(horizontal: 15),
+                child: Row(
+                  // ignore: prefer_const_literals_to_create_immutables
+                  children: [
+                    // ignore: prefer_const_constructors
+                    Expanded(
+                      child: TextField(
+                        onChanged: (value) {
+                          setState(() {
+                            lostPasswd = value;
+                          });
+                        },
+                        decoration: InputDecoration(
+                            border: OutlineInputBorder(),
+                            hintText: 'ejemplo@correo.com'),
+                        maxLines: 1,
+                        minLines: 1,
+                      ),
+                    )
+                  ],
+                ),),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.only(
+                          left: 16, right: 16, bottom: 8, top: 8),
+                      child: Align(
+                        alignment: Alignment.bottomRight,
+                        child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                              backgroundColor:
+                                  Color.fromARGB(255, 153, 116, 223)),
+                          onPressed: () async {
+
+                             var body = jsonEncode({ "email": lostPasswd });
+
+                        var getNewPasswd = Uri.parse(
+                            'https://bankopinion-backend-development-3vucy.ondigitalocean.app/users/resetPassword');
+                        final response = await http.post(getNewPasswd,
+                            body: body, 
+                            headers: {
+                              "Content-Type": "application/json"
+                              });
+
+                            if(response.statusCode == 200)
+                            {
+                              Navigator.of(context).pop();
+                            } else {
+                              print(response.statusCode);
+                            }
+                          },
+                          child: Text(
+                            "Enviar",
+                            style: TextStyle(color: Color.fromARGB(255, 255, 255, 255)),
+                          ),
+                        ),
+                      ),
+                    )
+                  ],
+                )
+              ],
+            ),
+          ),
+        );
+      },
+    );
   }
 }

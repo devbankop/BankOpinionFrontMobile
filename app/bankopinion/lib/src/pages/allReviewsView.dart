@@ -195,10 +195,11 @@ class _allReviewsState extends State<allReviews> {
                                                 fontWeight: FontWeight.bold,
                                                 color: Color.fromARGB(
                                                     255, 66, 66, 66),
-                                              )),
-                                        )
+                                              ),
+                                            ),
+                                        ),
                                       ],
-                                    )
+                                    ),
                                   ],
                                 ),
                               )
@@ -451,7 +452,7 @@ class _allReviewsState extends State<allReviews> {
                                         children: [
                                           InkWell(
                                             onTap: () async {
-                                              if (jwt != '') {
+                                              if (jwt != null) {
                                                 final prefs =
                                                     await SharedPreferences
                                                         .getInstance();
@@ -551,10 +552,7 @@ class _allReviewsState extends State<allReviews> {
                                                                       109,
                                                                       161)),
                                                       Text(
-                                                          widget.bank["reviews"]
-                                                              .elementAt(
-                                                                  i)["likes"]
-                                                              .toString(),
+                                                          widget.bank["reviews"].elementAt(i)["likes"].toString(),
                                                           style: const TextStyle(
                                                               fontWeight:
                                                                   FontWeight

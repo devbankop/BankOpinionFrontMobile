@@ -217,7 +217,9 @@ class userCommentViewState extends State<userCommentView> {
                           )
                         ],
                       ),
-                      Padding(
+                      Column(
+                        children: [
+                          Padding(
                           padding: const EdgeInsets.only(top: 25),
                           child: Row(
                               mainAxisAlignment: MainAxisAlignment.center,
@@ -372,6 +374,8 @@ class userCommentViewState extends State<userCommentView> {
                                               style: TextStyle(fontSize: 16))))
                             ],
                           ))
+                        ],
+                      )
                             ],
                           )
                         )
@@ -505,7 +509,12 @@ class userCommentViewState extends State<userCommentView> {
                           )
                         ],
                       ),
-                      Padding(
+
+                      jwt != null
+                      
+                      ? Column(
+                        children: [
+                          Padding(
                           padding: const EdgeInsets.only(top: 25),
                           child: Row(
                               mainAxisAlignment: MainAxisAlignment.center,
@@ -660,6 +669,32 @@ class userCommentViewState extends State<userCommentView> {
                                               style: TextStyle(fontSize: 16))))
                             ],
                           ))
+                        ],
+                      )
+                      : Padding(padding: EdgeInsets.only( top: 30 ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          ElevatedButton(
+                                          onPressed: (() async {
+                                            Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      const LoginView()),
+                                            );
+                                          }),
+                                          style: ElevatedButton.styleFrom(
+                                            shape: const StadiumBorder(),
+                                            padding: const EdgeInsets.all(12),
+                                            backgroundColor: Color.fromARGB(
+                                                127, 154, 116, 223),
+                                          ),
+                                          child: const Text(
+                                              "Primero debes iniciar sesión",
+                                              style: TextStyle(fontSize: 16)))
+                        ],
+                      ))
                     ]))
           ])
         ])));
