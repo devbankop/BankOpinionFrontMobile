@@ -6,6 +6,7 @@ import 'package:bankopinion/src/Reusable%20Components/bottomBar.dart';
 import 'package:bankopinion/src/Reusable%20Components/ratingStarsBranch.dart';
 import 'package:bankopinion/src/authServices/refreshToken.dart';
 import 'package:bankopinion/src/pages/allReviewsView.dart';
+import 'package:bankopinion/src/pages/topBranches.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 // import 'package:google_maps_flutter_web/google_maps_flutter_web.dart' as web;
@@ -116,7 +117,7 @@ class _StateHomePage extends State<PageHomePage> {
     setState(() {
       var index = -1;
       for (var i = 0; i < banks.length; ++i)
-        if (banks[i]["value"]["id"].toString() == id.toString()) index = i;
+        if (banks[i]["id"].toString() == id.toString()) index = i;
 
       var bank = banks[index];
       banks.removeAt(index);
@@ -223,30 +224,39 @@ class _StateHomePage extends State<PageHomePage> {
       banksResponse = jsonDecode(response.body);
 
       banksResponse.forEach((element) async {
-        // if (element["value"]["location"] == null) return;
-        if (element["status"] == "fulfilled") {
-          banks.insert(0, element);
+        // if (element["location"] == null) return;
+        banks.insert(0, element);
 
-          LatLng showLocation = LatLng(element["value"]["location"]["lat"],
-              element["value"]["location"]["lng"]);
+        LatLng showLocation =
+            LatLng(element["location"]["lat"], element["location"]["lng"]);
 
-          //location to show in map
-          markers.add(Marker(
-              onTap: () => {sort(element["id"])},
-              //add marker on google map
-              markerId: MarkerId(showLocation.toString()),
-              position: showLocation, //position of marker
-              infoWindow: InfoWindow(
+        //location to show in map
+        markers.add(Marker(
+            onTap: () => {sort(element["id"])},
+            //add marker on google map
+            markerId: MarkerId(showLocation.toString()),
+            position: showLocation, //position of marker
+            infoWindow: InfoWindow(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => allReviews(
+                              bank: (element),
+                            )),
+                  );
+                },
                 //popup info
-                title: element["value"]["branchName"],
-                snippet: element["value"]["address"],
-              ),
-              icon: await BitmapDescriptor.fromAssetImage(
-                  const ImageConfiguration(size: Size(30, 30)),
-                  Platform.isIOS
-                      ? 'assets/images/iosBankMarker.png'
-                      : 'assets/images/bankMarker.png')));
-        }
+                title: element["branchName"],
+                snippet: element["address"] + '      Ver más'
+
+                //element["address"],
+                ),
+            icon: await BitmapDescriptor.fromAssetImage(
+                const ImageConfiguration(size: Size(30, 30)),
+                Platform.isIOS
+                    ? 'assets/images/iosBankMarker.png'
+                    : 'assets/images/bankMarker.png')));
       });
     });
   }
@@ -276,8 +286,9 @@ class _StateHomePage extends State<PageHomePage> {
       body: Column(
         children: [
           Container(
-              height: expanded == true ? containerHeight : 380,
-              child: Stack(children: [
+            height: expanded == true ? containerHeight : 380,
+            child: Stack(
+              children: [
                 GoogleMap(
                   //Map widget from google_maps_flutter packages
                   zoomGesturesEnabled: true, //enable Zoom in, out on map
@@ -309,11 +320,13 @@ class _StateHomePage extends State<PageHomePage> {
                     },
                     child: const Icon(
                       Icons.expand,
-                      color: Color.fromARGB(255, 158, 54, 244),
+                      color: Color.fromARGB(255, 147, 97, 241),
                     ),
                   ),
                 ),
-              ])),
+              ],
+            ),
+          ),
           Padding(
             padding: const EdgeInsets.only(
               top: 10,
@@ -322,7 +335,7 @@ class _StateHomePage extends State<PageHomePage> {
               bottom: 0,
             ),
             child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
                 ElevatedButton(
                   onPressed: (() async {
@@ -370,7 +383,7 @@ class _StateHomePage extends State<PageHomePage> {
                       ),
                     ),
                     padding:
-                        const EdgeInsets.symmetric(horizontal: 25, vertical: 8),
+                        const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                     backgroundColor: const Color.fromARGB(255, 255, 255, 255),
                   ),
                   child: Row(
@@ -381,10 +394,33 @@ class _StateHomePage extends State<PageHomePage> {
                         size: 30,
                       ),
                       Text(
-                        " Búsqueda específica",
+                        "Búsqueda específica",
                         style: TextStyle(fontSize: 16, color: Colors.black),
                       )
                     ],
+                  ),
+                ),
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    shape: const CircleBorder(
+                      side: BorderSide(
+                        color: Color.fromARGB(46, 35, 0, 100),
+                        width: .5,
+                      ),
+                    ),
+                    padding: const EdgeInsets.all(11),
+                    backgroundColor: const Color.fromARGB(255, 255, 255, 255),
+                  ),
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => const topBranchesView()),
+                    );
+                  },
+                  child: const Icon(
+                    Icons.emoji_events,
+                    color: Color.fromARGB(255, 203, 152, 0),
                   ),
                 )
               ],
@@ -402,8 +438,8 @@ class _StateHomePage extends State<PageHomePage> {
                 return InkWell(
                     onTap: () {
                       LatLng newlatlong = LatLng(
-                          banks.elementAt(index)["value"]["location"]["lat"],
-                          banks.elementAt(index)["value"]["location"]["lng"]);
+                          banks.elementAt(index)["location"]["lat"],
+                          banks.elementAt(index)["location"]["lng"]);
                       mapController?.animateCamera(
                           CameraUpdate.newCameraPosition(
                               CameraPosition(target: newlatlong, zoom: 18)));
@@ -437,8 +473,7 @@ class _StateHomePage extends State<PageHomePage> {
                                   child: Padding(
                                       padding: const EdgeInsets.only(
                                           bottom: 4, top: 8),
-                                      child: Text(
-                                          banks[index]["value"]["branchName"],
+                                      child: Text(banks[index]["branchName"],
                                           overflow: TextOverflow.ellipsis,
                                           maxLines: 1,
                                           softWrap: false,
@@ -455,8 +490,7 @@ class _StateHomePage extends State<PageHomePage> {
                                       width: 230.0,
                                       child: Padding(
                                           padding: const EdgeInsets.only(),
-                                          child: Text(
-                                              banks[index]["value"]["address"],
+                                          child: Text(banks[index]["address"],
                                               overflow: TextOverflow.ellipsis,
                                               maxLines: 1,
                                               softWrap: false,
@@ -475,11 +509,9 @@ class _StateHomePage extends State<PageHomePage> {
                                       constraints:
                                           const BoxConstraints(maxWidth: 200),
                                       child: Text(
-                                          banks.elementAt(index)["value"]
-                                                  ["zipcode"] +
+                                          banks.elementAt(index)["zipcode"] +
                                               ", " +
-                                              banks.elementAt(index)["value"]
-                                                  ["city"],
+                                              banks.elementAt(index)["city"],
                                           textAlign: TextAlign.left,
                                           style: const TextStyle(
                                             fontSize: 11,
@@ -498,16 +530,9 @@ class _StateHomePage extends State<PageHomePage> {
                                         child: Row(
                                           children: [
                                             StatmentRatings(
-                                                bank: banks
-                                                    .elementAt(index)["value"]),
+                                                bank: banks.elementAt(index)),
                                             Text(
-                                                "(" +
-                                                    banks
-                                                        .elementAt(index)[
-                                                            "value"]
-                                                            ["branchRating"]
-                                                        .toString() +
-                                                    ")",
+                                                "(${banks.elementAt(index)["branchRating"]})",
                                                 style: const TextStyle(
                                                   fontSize: 11,
                                                   color: Color.fromARGB(
@@ -545,33 +570,33 @@ class _StateHomePage extends State<PageHomePage> {
                                                               .indexOf(banks
                                                                       .elementAt(
                                                                           index)[
-                                                                  "value"]["id"]);
+                                                                  "id"]);
                                                       setState(() {
-                                                        if (foundIndex != -1)
+                                                        if (foundIndex != -1) {
                                                           userBranchesFavorites
                                                               .removeAt(
                                                                   foundIndex);
-                                                        else
+                                                        } else {
                                                           userBranchesFavorites
-                                                              .add(banks.elementAt(
+                                                              .add(banks
+                                                                      .elementAt(
                                                                           index)[
-                                                                      "value"]
-                                                                  ["id"]);
+                                                                  "id"]);
+                                                        }
 
-                                                        foundIndex = userBranchesFavorites
-                                                            .indexOf(banks
+                                                        foundIndex =
+                                                            userBranchesFavorites
+                                                                .indexOf(banks
                                                                     .elementAt(
-                                                                        index)[
-                                                                "value"]["id"]);
+                                                                        index)["id"]);
                                                       });
                                                       jwt = prefs
                                                           .getString('jwt');
                                                       var favoriteBranch = Uri.parse(
                                                           'https://bankopinion-backend-development-3vucy.ondigitalocean.app/users/addFavoriteBranch/' +
                                                               banks
-                                                                  .elementAt(index)[
-                                                                      "value"]
-                                                                      ["id"]
+                                                                  .elementAt(
+                                                                      index)["id"]
                                                                   .toString());
                                                       var response = await http
                                                           .put(
@@ -624,10 +649,10 @@ class _StateHomePage extends State<PageHomePage> {
                                                                   223),
                                                     ),
                                                     child: !userBranchesFavorites
-                                                            .contains(banks
-                                                                    .elementAt(
+                                                            .contains(
+                                                                banks.elementAt(
                                                                         index)[
-                                                                "value"]["id"])
+                                                                    "id"])
                                                         ? const Icon(Icons
                                                             .favorite_border_rounded)
                                                         : const Icon(
@@ -654,13 +679,12 @@ class _StateHomePage extends State<PageHomePage> {
                                                   Navigator.push(
                                                     context,
                                                     MaterialPageRoute(
-                                                        builder:
-                                                            (context) =>
-                                                                allReviews(
-                                                                  bank: banks.elementAt(
-                                                                          index)[
-                                                                      "value"],
-                                                                )),
+                                                        builder: (context) =>
+                                                            allReviews(
+                                                              bank: banks
+                                                                  .elementAt(
+                                                                      index),
+                                                            )),
                                                   );
                                                 },
                                                 style: ElevatedButton.styleFrom(

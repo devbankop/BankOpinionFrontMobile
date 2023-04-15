@@ -94,7 +94,7 @@ class _SignUpView1State extends State<SignUpView1> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 // ignore: prefer_const_literals_to_create_immutables
                 children: [
-                  const Text("REGÍSTRATE PARA NO PERDERTE NADA",
+                  const Text("Regístrate para no perderte nada",
                       softWrap: true,
                       textAlign: TextAlign.center,
                       style: TextStyle(
