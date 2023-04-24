@@ -1,8 +1,11 @@
 import 'dart:async';
+import 'dart:convert';
 import 'package:bankopinion/src/auth/signup2.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:email_validator/email_validator.dart';
+import 'package:http/http.dart' as http;
+
 
 class SignUpView1 extends StatefulWidget {
   SignUpView1({super.key});
@@ -19,6 +22,7 @@ class _SignUpView1State extends State<SignUpView1> {
   bool showError = false;
   String email = "";
   bool isValid = false;
+  var emailExists;
 
   bool emailValid = false;
 
@@ -32,6 +36,8 @@ class _SignUpView1State extends State<SignUpView1> {
     fetchData();
   }
 
+
+ 
   @override
   void dispose() {
     _controller.dispose();
@@ -150,7 +156,7 @@ class _SignUpView1State extends State<SignUpView1> {
                       ],
                     )
                 ),
-                !emailValid
+                emailValid == true
                     ? Row(
                         children: [
                           Text(
@@ -163,35 +169,61 @@ class _SignUpView1State extends State<SignUpView1> {
                         ],
                       )
                     : Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
                         // ignore: prefer_const_literals_to_create_immutables
                         children: [
-                          const Text(
-                            "Email incorrecto",
-                            style: TextStyle(
-                              fontSize: 14,
-                              color: Colors.red,
-                            ),
-                          ),
+                          Padding(
+                            padding: const EdgeInsets.only(top: 5),
+                                child: const Text(
+                                  "Email ya existente",
+                                  style: TextStyle(
+                                    fontSize: 14,
+                                    color: Colors.red,
+                                  ),
+                          ),)
                         ],
                       ),
                 Column(
                   children: [
                     Padding(
-                      padding: const EdgeInsets.only(top: 15),
+                      padding: const EdgeInsets.only(top: 10),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                         isValid
                               ? ElevatedButton(
-                                  onPressed: (() {
-                                      setState(() {
-                                        emailValid == true;
-                                      });
-                                    Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                            builder: (context) =>
-                                                SignUpView2(email: email)));
+                                  onPressed: (() async {
+
+
+                                      var responseCheckEmail = Uri.parse(
+                                            'https://bankopinion-backend-development-3vucy.ondigitalocean.app/users/verifyUserExist/' + email );
+                                        try {
+                                          final response = await http.get(responseCheckEmail);
+                                          setState(() {
+                                            emailExists = jsonDecode(response.body);
+                                          });
+                                          print('User Exists:' + emailExists['userExists']);
+                                        } catch (error) {
+                                          print(error.toString());
+                                        }
+
+
+                                      if(emailExists['userExists'] == false)
+                                      {
+                                        setState(() {
+                                          emailValid = true;
+                                        });
+
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  SignUpView2(email: email)));
+                                      } else {
+                                        setState(() {
+                                          emailValid = false;
+                                        });
+                                      }
                                   }),
                                   style: ElevatedButton.styleFrom(
                                     shape: const StadiumBorder(),

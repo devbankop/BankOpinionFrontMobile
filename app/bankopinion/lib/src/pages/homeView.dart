@@ -430,10 +430,7 @@ class _StateHomePage extends State<PageHomePage> {
               
             }, child: Icon(Icons.emoji_events,
                 color: Color.fromARGB(255, 203, 152, 0),),)
-              // InkWell(
-              //   child: Icon(Icons.star,
-              //   color: Color.fromARGB(255, 94, 29, 214),),
-              // )
+              
               ],
             ),
           ),

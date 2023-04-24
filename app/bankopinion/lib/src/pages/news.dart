@@ -6,6 +6,8 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import '../Reusable Components/bottomBar.dart';
+import 'package:flutter_webview_plugin/flutter_webview_plugin.dart';
+
 
 // Import for iOS features.
 // import 'package:webview_flutter_wkwebview/webview_flutter_wkwebview.dart';
@@ -67,7 +69,7 @@ class _NewsViewState extends State<NewsView> {
 
     final uri = Uri.parse(enlaceNew);
     if (await canLaunchUrl(uri)) {
-      await launchUrl(uri);
+       await launch(enlaceNew, forceWebView: true);
     } else {
       throw 'Could not launch $enlaceNew';
       String err = '';
@@ -264,7 +266,19 @@ class _NewsViewState extends State<NewsView> {
                       });
                           print(enlaceNew);
 
-                      _launchURL(enlaceNew);
+                       _launchURL(enlaceNew);
+
+                      // await Navigator.push(
+                      //     context,
+                      //     MaterialPageRoute(
+                      //       builder: (BuildContext context) => WebviewScaffold(
+                      //         url: enlaceNew,
+                      //         appBar: AppBar(
+                      //           title: Text("Mi WebView"),
+                      //         ),
+                      //       ),
+                      //     ),
+                      //   );
                     },
                     child: Padding(
                       padding: EdgeInsets.only(top: 8),

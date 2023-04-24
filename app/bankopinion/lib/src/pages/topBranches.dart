@@ -243,10 +243,7 @@ class topBranchesViewState extends State<topBranchesView> {
                                                 maxWidth: 200),
                                             child: Text(
                                                 top.elementAt(index)
-                                                        ["zipcode"] +
-                                                    ", " +
-                                                    top.elementAt(
-                                                        index)["city"],
+                                                        ["zipcode"] + ", " + top.elementAt(index)["city"],
                                                 textAlign: TextAlign.left,
                                                 style: const TextStyle(
                                                   fontSize: 11,
