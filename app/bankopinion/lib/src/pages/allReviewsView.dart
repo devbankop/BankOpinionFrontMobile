@@ -101,51 +101,69 @@ class _allReviewsState extends State<allReviews> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
-                            Stack(children: <Widget>[
-                              //branchPhoto = bank["googleMapsUrl"],
-
-                              Image.network(
-                                'https://maps.googleapis.com/maps/api/streetview?location=${widget.bank["location"]["lat"]},${widget.bank["location"]["lng"]}&size=1200x800&key=AIzaSyCQctW3M3O3TUSj5oDr9BLYNEwm0Vxm4Ak',
-                                fit: BoxFit.cover,
-                                width: screenWidth,
-                                height: 265.0,
-                                //fit: BoxFit.cover,
-                              ),
-                              Padding(
-                                  padding: EdgeInsets.only(top: 15, left: 15),
+                            Stack(
+                              children: <Widget>[
+                                Image.network(
+                                  widget.bank["hasLogo"] == null
+                                  ? 'https://qcoidwnulxozvujystau.supabase.co/storage/v1/object/public/images/BankOpinion_branch_image.jpg'
+                                  : widget.bank["imageLink"].toString(),
+                                  fit: BoxFit.cover,
+                                  width: screenWidth,
+                                  height: 265.0,
+                                ),
+                                Padding(
+                                  padding:
+                                      const EdgeInsets.only(top: 15, left: 15),
                                   child: Row(
                                     children: [
                                       SizedBox(
-                                          width: 70.0,
-                                          height: 70.0,
-                                          child: Padding(
-                                            padding:
-                                                const EdgeInsets.only(top: 20),
-                                            child: ElevatedButton(
-                                                onPressed: () {
-                                                  Navigator.pop(context);
-                                                },
-                                                style: ElevatedButton.styleFrom(
-                                                  shape: const CircleBorder(),
-                                                  padding:
-                                                      const EdgeInsets.all(5),
-                                                  backgroundColor:
-                                                      Color.fromARGB(
-                                                          255, 255, 255, 255),
-                                                ),
-                                                child: Icon(
-                                                  Icons.arrow_back,
-                                                  color: userRole ==
-                                                          'superAdmin'
-                                                      ? Color.fromARGB(
-                                                          255, 223, 116, 116)
-                                                      : const Color.fromARGB(
-                                                          255, 153, 116, 223),
-                                                )),
-                                          )),
+                                        width: 70.0,
+                                        height: 70.0,
+                                        child: Padding(
+                                          padding:
+                                              const EdgeInsets.only(top: 20),
+                                          child: ElevatedButton(
+                                            onPressed: () {
+                                              Navigator.pop(context);
+                                            },
+                                            style: ElevatedButton.styleFrom(
+                                              shape: const CircleBorder(),
+                                              padding: const EdgeInsets.all(5),
+                                              backgroundColor: Color.fromARGB(
+                                                  255, 255, 255, 255),
+                                            ),
+                                            child: Icon(
+                                              Icons.arrow_back,
+                                              color: userRole == 'superAdmin'
+                                                  ? Color.fromARGB(
+                                                      255, 223, 116, 116)
+                                                  : const Color.fromARGB(
+                                                      255, 153, 116, 223),
+                                            ),
+                                          ),
+                                        ),
+                                      ),
                                     ],
-                                  )),
-                            ])
+                                  ),
+                                ),
+                                widget.bank["hasLogo"] == null
+                                ? SizedBox(
+                                  width: screenWidth,
+                                  height: 265.0,
+                                  child: Center(
+                                    child: Text(
+                                      widget.bank["branchName"],
+                                      style: const TextStyle(
+                                          fontSize: 28,
+                                          fontWeight: FontWeight.w800,
+                                          color: Colors.white),
+                                      softWrap: true,
+                                    ),
+                                  ),
+                                )
+                                : SizedBox.shrink(),
+                              ],
+                            )
                           ],
                         ),
                         Padding(
