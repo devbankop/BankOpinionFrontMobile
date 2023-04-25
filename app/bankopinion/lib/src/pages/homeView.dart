@@ -271,9 +271,9 @@ class _StateHomePage extends State<PageHomePage> {
     super.dispose();
   }
 
-  bool isBankSelected(index) {
-    return selectedBank.toString() == banks.elementAt(index)["id"].toString();
-  }
+  // bool isBankSelected(index) {
+  //   return selectedBank.toString() == banks.elementAt(index)["id"].toString();
+  // }
 
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
@@ -469,10 +469,11 @@ class _StateHomePage extends State<PageHomePage> {
                                   //color: isBankSelected(index) ? Color.fromARGB(255, 215, 215, 215) : Colors.transparent,
                                   border: Border.all(
                                     width: 2,
-                                    color: isBankSelected(index)
-                                        ? const Color.fromARGB(255, 0, 0, 0)
-                                        : const Color.fromARGB(
-                                            255, 223, 223, 223),
+                                     color: const Color.fromARGB(255, 223, 223, 223)
+                                    // isBankSelected(index)
+                                    //     ? const Color.fromARGB(255, 0, 0, 0)
+                                    //     : const Color.fromARGB(
+                                           // 255, 223, 223, 223),
                                   ),
                                   borderRadius: BorderRadius.circular(12)),
                               child:
