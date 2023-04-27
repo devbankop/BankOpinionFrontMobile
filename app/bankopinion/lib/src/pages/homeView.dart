@@ -610,7 +610,7 @@ class _StateHomePage extends State<PageHomePage> {
                                               margin: const EdgeInsets.only(
                                                   right: 3, left: 5),
                                               child: SizedBox(
-                                                  width: 47.0,
+                                                  
                                                   height: 47.0,
                                                   child: jwt != null &&
                                                           jwt != '' &&
@@ -699,9 +699,9 @@ class _StateHomePage extends State<PageHomePage> {
                                         children: [
                                           Container(
                                               margin: const EdgeInsets.only(
-                                                  right: 8, left: 3),
+                                                  right: 3, left: 3),
                                               child: SizedBox(
-                                                  width: 47.0,
+                                                  
                                                   height: 47.0,
                                                   child: ElevatedButton(
                                                       onPressed: () {

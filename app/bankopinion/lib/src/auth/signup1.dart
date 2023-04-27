@@ -33,6 +33,10 @@ class _SignUpView1State extends State<SignUpView1> {
   @override
   void initState() {
     super.initState();
+    print(emailValid);
+    setState(() {
+      emailValid = false;
+    });
     fetchData();
   }
 
@@ -139,10 +143,7 @@ class _SignUpView1State extends State<SignUpView1> {
                             email = value;  
 
                             isValid = EmailValidator.validate(email);
-                    
-                        });
-                        
-                        
+                        });                        
                       },
                      
                       decoration: InputDecoration(
@@ -156,7 +157,7 @@ class _SignUpView1State extends State<SignUpView1> {
                       ],
                     )
                 ),
-                emailValid == true
+                emailValid != true
                     ? Row(
                         children: [
                           Text(
@@ -211,7 +212,7 @@ class _SignUpView1State extends State<SignUpView1> {
                                       if(emailExists['userExists'] == false)
                                       {
                                         setState(() {
-                                          emailValid = true;
+                                          emailValid = false;
                                         });
 
                                         Navigator.push(
@@ -221,7 +222,7 @@ class _SignUpView1State extends State<SignUpView1> {
                                                   SignUpView2(email: email)));
                                       } else {
                                         setState(() {
-                                          emailValid = false;
+                                          emailValid = true;
                                         });
                                       }
                                   }),
