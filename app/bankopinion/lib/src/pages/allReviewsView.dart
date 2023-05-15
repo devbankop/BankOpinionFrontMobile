@@ -47,6 +47,28 @@ class _allReviewsState extends State<allReviews> {
     _getRole();
   }
 
+
+   Future<void> addLog() async {
+
+    var body = jsonEncode({
+      "type": "Screen Leave Opinion"
+      
+    });
+
+    var newView = Uri.parse(
+        'https://bankopinion-backend-development-3vucy.ondigitalocean.app/logs/addlog');
+    final response = await http.post(newView,
+        body: body, 
+        headers: {
+          "Content-Type": "application/json"
+          });
+
+    // var addNews = jsonDecode(response.body);
+        print(response.statusCode);
+        print(response.body);
+
+  }
+
   Future<void> _getRole() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     userRole = prefs.getString('userRole');
@@ -269,6 +291,9 @@ class _allReviewsState extends State<allReviews> {
                           const BoxConstraints(minWidth: 300, maxWidth: 350),
                       child: ElevatedButton(
                           onPressed: (() {
+
+                            addLog();
+                            
                             MaterialApp(
                               title: 'Named Routes',
                               // Start the app with the "/" named route. In this case, the app starts

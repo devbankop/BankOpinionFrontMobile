@@ -33,6 +33,28 @@ class _LoginViewState extends State<LoginView> {
     fetchData();
   }
 
+Future<void> addLog() async {
+
+    var body = jsonEncode({
+      "type": "SignIn"
+      
+    });
+
+    var newView = Uri.parse(
+        'https://bankopinion-backend-development-3vucy.ondigitalocean.app/logs/addlog');
+    final response = await http.post(newView,
+        body: body, 
+        headers: {
+          "Content-Type": "application/json"
+          });
+
+    // var addNews = jsonDecode(response.body);
+        print(response.statusCode);
+        print(response.body);
+
+  }
+
+
   @override
   void dispose() {
     _controller.dispose();
@@ -240,6 +262,7 @@ class _LoginViewState extends State<LoginView> {
                                 print("statusCode: ${response.statusCode}");
 
                                 if (response.statusCode == 200) {
+                                  addLog();
                                   Map<String, dynamic> responseData =
                                       json.decode(response.body);
                                   var token =

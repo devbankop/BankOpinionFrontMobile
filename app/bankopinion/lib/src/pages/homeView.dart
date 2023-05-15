@@ -86,6 +86,27 @@ class _StateHomePage extends State<PageHomePage> {
     });
   }
 
+  Future<void> addLog() async {
+
+    var body = jsonEncode({
+      "type": "See Opinions"
+      
+    });
+
+    var newView = Uri.parse(
+        'https://bankopinion-backend-development-3vucy.ondigitalocean.app/logs/addlog');
+    final response = await http.post(newView,
+        body: body, 
+        headers: {
+          "Content-Type": "application/json"
+          });
+
+    // var addNews = jsonDecode(response.body);
+        print(response.statusCode);
+        print(response.body);
+
+  }
+
   Future<void> getUserProfile() async {
     final prefs = await SharedPreferences.getInstance();
     jwt = prefs.getString("jwt");
@@ -499,7 +520,7 @@ class _StateHomePage extends State<PageHomePage> {
                                       : SizedBox.shrink(),
                                Row(
                                 mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
+                                    MainAxisAlignment.spaceAround,
                                 children: [
                                   
                                   Column(
@@ -509,7 +530,7 @@ class _StateHomePage extends State<PageHomePage> {
                                     children: [
                                       
                                       SizedBox(
-                                    width: 230.0,
+                                    width: 210.0,
                                     child: Padding(
                                         padding: const EdgeInsets.only(
                                             bottom: 4, top: 8),
@@ -528,7 +549,7 @@ class _StateHomePage extends State<PageHomePage> {
                                       Row(
                                         children: [
                                           SizedBox(
-                                            width: 230.0,
+                                            width: 210.0,
                                             child: Padding(
                                                 padding: const EdgeInsets.only(
                                                     ),
@@ -608,10 +629,10 @@ class _StateHomePage extends State<PageHomePage> {
                                         children: [
                                           Container(
                                               margin: const EdgeInsets.only(
-                                                  right: 3, left: 5),
+                                                  right: 0, left: 0),
                                               child: SizedBox(
                                                   
-                                                  height: 47.0,
+                                                  height: 50.0,
                                                   child: jwt != null &&
                                                           jwt != '' &&
                                                           userRole !=
@@ -693,20 +714,21 @@ class _StateHomePage extends State<PageHomePage> {
                                       //COLUMNA BOTÓN allReviews
                                       Column(
                                         mainAxisAlignment:
-                                            MainAxisAlignment.center,
+                                            MainAxisAlignment.start,
                                         crossAxisAlignment:
-                                            CrossAxisAlignment.center,
+                                            CrossAxisAlignment.start,
                                         children: [
                                           Container(
                                               margin: const EdgeInsets.only(
-                                                  right: 3, left: 3),
+                                                  right: 10, left: 0),
                                               child: SizedBox(
                                                   
-                                                  height: 47.0,
+                                                  height: 50.0,
                                                   child: ElevatedButton(
                                                       onPressed: () {
-                                                        //ROUTES
-
+                                                        
+                                                        addLog();
+                                                        
                                                         Navigator.push(
                                                           context,
                                                           MaterialPageRoute(

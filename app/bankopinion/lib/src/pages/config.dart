@@ -1,16 +1,19 @@
 import 'dart:async';
+import 'dart:convert';
 import 'package:bankopinion/src/about/terms.dart';
 import 'package:bankopinion/src/pages/profile.dart';
 import 'package:bankopinion/src/pages/startView.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../Reusable Components/bottomBar.dart';
+import 'package:http/http.dart' as http;
+
 
 import '../about/aboutus.dart';
 import '../about/privacyPolicy.dart';
 import '../auth/loginView.dart';
 import '../authServices/refreshToken.dart';
+import 'contactFormView.dart';
 import 'prefs.dart';
 
 class ConfigView extends StatefulWidget {
@@ -53,6 +56,29 @@ class _ConfigViewState extends State<ConfigView> {
 
     });
   }
+
+
+    Future<void> addLog() async {
+
+    var body = jsonEncode({
+      "type": "SignOut"
+      
+    });
+
+    var newView = Uri.parse(
+        'https://bankopinion-backend-development-3vucy.ondigitalocean.app/logs/addlog');
+    final response = await http.post(newView,
+        body: body, 
+        headers: {
+          "Content-Type": "application/json"
+          });
+
+    // var addNews = jsonDecode(response.body);
+        print(response.statusCode);
+        print(response.body);
+
+  }
+  
 Future<void> _deleteJWT() async {
     final prefs = await SharedPreferences.getInstance();
     setState(() {
@@ -157,49 +183,50 @@ Future<void> _deleteJWT() async {
                               
                             ))
                             : Padding(
-                            padding: const EdgeInsets.only(top: 30),
-                            child: InkWell(
-                              onTap: () {
-                                _showAlertDialog();         
-                              },
-                              child: 
-                               Container(
-                                height: 80,
-                                width: double.infinity,
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(6),
-                                  color: Color.fromARGB(29, 122, 122, 122),
-                                  border: Border.all(
-                                    color: Color.fromARGB(168, 122, 122, 122),
-                                    width: .6,
-                                  ),
-                                ),
-                                child: Padding(
-                                    padding: EdgeInsets.all(10),
-                                    child: Row(
-                                      children: [
-                                        Icon(
-                                          Icons.person,
-                                          color:
-                                              Color.fromARGB(168, 132, 132, 132),
+                                padding: const EdgeInsets.only(top: 30),
+                                child: InkWell(
+                                  onTap: () {
+                                    _showAlertDialog();         
+                                  },
+                                    child: 
+                                    Container(
+                                      height: 80,
+                                      width: double.infinity,
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(6),
+                                        color: Color.fromARGB(29, 122, 122, 122),
+                                        border: Border.all(
+                                          color: Color.fromARGB(168, 122, 122, 122),
+                                          width: .6,
                                         ),
-                                        Padding(
-                                            padding: EdgeInsets.symmetric(
-                                                horizontal: 10),
-                                            child: Text("Información personal",
-                                                style: TextStyle(
-                                                    fontSize: 20,
-                                                    color: Color.fromARGB(255, 132, 132, 132))))
-                                      ],
-                                    )),
-                              )
-                              
-                            )),
+                                      ),
+                                      child: Padding(
+                                          padding: EdgeInsets.all(10),
+                                          child: Row(
+                                            children: [
+                                              Icon(
+                                                Icons.person,
+                                                color:
+                                                    Color.fromARGB(168, 132, 132, 132),
+                                              ),
+                                              Padding(
+                                                  padding: EdgeInsets.symmetric(
+                                                      horizontal: 10),
+                                                  child: Text("Información personal",
+                                                      style: TextStyle(
+                                                          fontSize: 20,
+                                                          color: Color.fromARGB(255, 132, 132, 132))))
+                                            ],
+                                          ),),
+                                    ),
+                                    
+                                  ),
+                          ),
 
                         //APARTADO DE PREFERENCIAS
 
                         Padding(
-                        padding: const EdgeInsets.only(top: 30),
+                        padding: const EdgeInsets.only(top: 10),
                         child: InkWell(
                           onTap: () {
                             Navigator.push(
@@ -235,10 +262,51 @@ Future<void> _deleteJWT() async {
                               )),
                               ),
                         )),
+
+
+                        //APARTADO DE CONTACTO
+
+                        Padding(
+                        padding: const EdgeInsets.only(top: 10),
+                        child: InkWell(
+                          onTap: () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => contactFormView()));
+                          },
+                          child: Container(
+                              height: 80,
+                              width: double.infinity,
+                              decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(6),
+
+                                color: Color.fromARGB(25, 55, 11, 137),
+                                border: Border.all(
+                                  color: Color.fromARGB(168, 55, 11, 137),
+                                  width: .6,
+                                ),
+                              ),
+                              child: Padding(
+                              padding: EdgeInsets.all(10),
+                              child: Row(
+                                children: [
+                                  Icon(Icons.email,
+                                  color: Color.fromARGB(168, 55, 11, 137),),
+                                  Padding(padding: EdgeInsets.symmetric(horizontal: 10),
+                                  child: Text("Contacto",
+                                  style: TextStyle(
+                                    fontSize: 20,
+                                    color: Color.fromARGB(255, 55, 11, 137)
+                                    )))
+                                ],
+                              )),
+                              ),
+                        )),
                         
 
                         Padding(
-                            padding: const EdgeInsets.only(top: 70),
+                            padding: const EdgeInsets.only(top: 55),
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               // ignore: prefer_const_literals_to_create_immutables
@@ -251,10 +319,10 @@ Future<void> _deleteJWT() async {
                               ],
                             )),
                         Padding(
-                            padding: const EdgeInsets.only(top: 20, left: 10),
+                            padding: const EdgeInsets.only(top: 10, left: 10),
                             child: Column(children: [
                               Padding(
-                                  padding: const EdgeInsets.only(top: 30),
+                                  padding: const EdgeInsets.only(top: 20),
                                   child: Row(children: [
                                     InkWell(
                                       onTap: () {
@@ -273,7 +341,7 @@ Future<void> _deleteJWT() async {
                                             )))
                                   ])),
                               Padding(
-                                  padding: const EdgeInsets.only(top: 30),
+                                  padding: const EdgeInsets.only(top: 20),
                                   child: Row(children: [
                                     InkWell(
                                       onTap: () {
@@ -294,7 +362,7 @@ Future<void> _deleteJWT() async {
                                   ])),
                               Padding(
                                   padding: const EdgeInsets.only(
-                                      top: 30, bottom: 80),
+                                      top: 20, bottom: 50),
                                   child: Row(children: [
                                     InkWell(
                                       onTap: () {

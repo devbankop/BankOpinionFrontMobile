@@ -1,7 +1,11 @@
+import 'dart:convert';
+
 import 'package:bankopinion/src/pages/homeView.dart';
 import 'package:bankopinion/src/pages/startView.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:http/http.dart' as http;
+
 
 //ACTUALIZADO
 
@@ -24,7 +28,28 @@ class _MyAppViewState extends State<MyAppView> {
   void initState() {
     super.initState();
     _getRole();
+    addLog();
   }
+
+  Future<void> addLog() async {
+
+    var body = jsonEncode({
+      "type": "New Session"
+    });
+
+    var newView = Uri.parse(
+        'https://bankopinion-backend-development-3vucy.ondigitalocean.app/logs/addlog');
+    final response = await http.post(newView,
+        body: body, 
+        headers: {
+          "Content-Type": "application/json"
+          });
+
+    // var addNews = jsonDecode(response.body);
+        print(response.statusCode);
+        print(response.body);
+  }
+
 
   Future<void> _getRole() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();

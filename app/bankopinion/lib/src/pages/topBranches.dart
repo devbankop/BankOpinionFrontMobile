@@ -46,6 +46,50 @@ class topBranchesViewState extends State<topBranchesView> {
 
   }
 
+
+  Future<void> addLog() async {
+
+    var body = jsonEncode({
+      "type": "TopBranches"
+      
+    });
+
+    var newView = Uri.parse(
+        'https://bankopinion-backend-development-3vucy.ondigitalocean.app/logs/addlog');
+    final response = await http.post(newView,
+        body: body, 
+        headers: {
+          "Content-Type": "application/json"
+          });
+
+    // var addNews = jsonDecode(response.body);
+        print(response.statusCode);
+        print(response.body);
+
+  }
+
+  Future<void> addLog1() async {
+
+    var body = jsonEncode({
+      "type": "See Opinions"
+      
+    });
+
+    var newView = Uri.parse(
+        'https://bankopinion-backend-development-3vucy.ondigitalocean.app/logs/addlog');
+    final response = await http.post(newView,
+        body: body, 
+        headers: {
+          "Content-Type": "application/json"
+          });
+
+    // var addNews = jsonDecode(response.body);
+        print(response.statusCode);
+        print(response.body);
+
+  }
+
+
     Future<void> getUserProfile() async {
     final prefs = await SharedPreferences.getInstance();
     jwt = prefs.getString("jwt");
@@ -79,6 +123,7 @@ class topBranchesViewState extends State<topBranchesView> {
     super.initState();
     getBestBranches();
     getUserProfile();
+    addLog();
   }
 
 
@@ -386,6 +431,7 @@ class topBranchesViewState extends State<topBranchesView> {
                                                   child: ElevatedButton(
                                                       onPressed: () {
                                                         //ROUTES
+                                                        addLog1();
 
                                                         Navigator.push(
                                                           context,

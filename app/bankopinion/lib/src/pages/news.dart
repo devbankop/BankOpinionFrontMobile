@@ -37,10 +37,54 @@ class _NewsViewState extends State<NewsView> {
     userRole = prefs.getString('userRole');
   }
 
+  Future<void> addLog() async {
+
+    var body = jsonEncode({
+      "type": "News"
+      
+    });
+
+    var newView = Uri.parse(
+        'https://bankopinion-backend-development-3vucy.ondigitalocean.app/logs/addlog');
+    final response = await http.post(newView,
+        body: body, 
+        headers: {
+          "Content-Type": "application/json"
+          });
+
+    // var addNews = jsonDecode(response.body);
+        print(response.statusCode);
+        print(response.body);
+
+  }
+
+   Future<void> addLog1() async {
+
+    var body = jsonEncode({
+      "type": "Clicked New"
+      
+    });
+
+    var newView = Uri.parse(
+        'https://bankopinion-backend-development-3vucy.ondigitalocean.app/logs/addlog');
+    final response = await http.post(newView,
+        body: body, 
+        headers: {
+          "Content-Type": "application/json"
+          });
+
+    // var addNews = jsonDecode(response.body);
+        print(response.statusCode);
+        print(response.body);
+
+  }
+
+
   @override
   void initState() {
     super.initState();
     _getRole();
+    addLog();
     fetchData();
   }
 
@@ -69,6 +113,7 @@ class _NewsViewState extends State<NewsView> {
 
     final uri = Uri.parse(enlaceNew);
     if (await canLaunchUrl(uri)) {
+      addLog1();
        await launch(enlaceNew, forceWebView: true);
     } else {
       throw 'Could not launch $enlaceNew';
