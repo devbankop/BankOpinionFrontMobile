@@ -6,6 +6,8 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import '../Reusable Components/bottomBar.dart';
+import 'package:flutter_webview_plugin/flutter_webview_plugin.dart';
+
 
 // Import for iOS features.
 // import 'package:webview_flutter_wkwebview/webview_flutter_wkwebview.dart';
@@ -35,10 +37,54 @@ class _NewsViewState extends State<NewsView> {
     userRole = prefs.getString('userRole');
   }
 
+  Future<void> addLog() async {
+
+     var body = jsonEncode({
+       "type": "News"
+
+     });
+
+     var newView = Uri.parse(
+         'https://bankopinion-backend-development-3vucy.ondigitalocean.app/logs/addlog');
+     final response = await http.post(newView,
+         body: body, 
+         headers: {
+           "Content-Type": "application/json"
+           });
+
+     // var addNews = jsonDecode(response.body);
+         print(response.statusCode);
+         print(response.body);
+
+   }
+
+    Future<void> addLog1() async {
+
+     var body = jsonEncode({
+       "type": "Clicked New"
+
+     });
+
+     var newView = Uri.parse(
+         'https://bankopinion-backend-development-3vucy.ondigitalocean.app/logs/addlog');
+     final response = await http.post(newView,
+         body: body, 
+         headers: {
+           "Content-Type": "application/json"
+           });
+
+     // var addNews = jsonDecode(response.body);
+         print(response.statusCode);
+         print(response.body);
+
+   }
+
+
   @override
   void initState() {
     super.initState();
     _getRole();
+    addLog();
     fetchData();
   }
 
@@ -60,15 +106,22 @@ class _NewsViewState extends State<NewsView> {
     }
   }
 
-  _launchURL() async {
-    var url = enlaceNew;
-    final uri = Uri.parse(url);
+
+  _launchURL(String enlaceNew) async {
+        print(enlaceNew);
+        print("holaaaaasasda");
+
+    final uri = Uri.parse(enlaceNew);
     if (await canLaunchUrl(uri)) {
-      await launchUrl(uri);
+      addLog1();
+       await launch(enlaceNew, forceWebView: true);
     } else {
-      throw 'Could not launch $url';
+      throw 'Could not launch $enlaceNew';
+      String err = '';
+      print(ErrorDescription(err));
     }
   }
+
 
   @override
   void dispose() {
@@ -254,9 +307,23 @@ class _NewsViewState extends State<NewsView> {
                     },
                     onTap: () async {
                       setState(() {
-                        enlaceNew = news.elementAt(index)['url'];
+                        enlaceNew = news.elementAt(index)['url'].toString();
                       });
-                      _launchURL();
+                          print(enlaceNew);
+
+                       _launchURL(enlaceNew);
+
+                      // await Navigator.push(
+                      //     context,
+                      //     MaterialPageRoute(
+                      //       builder: (BuildContext context) => WebviewScaffold(
+                      //         url: enlaceNew,
+                      //         appBar: AppBar(
+                      //           title: Text("Mi WebView"),
+                      //         ),
+                      //       ),
+                      //     ),
+                      //   );
                     },
                     child: Padding(
                       padding: EdgeInsets.only(top: 8),
@@ -371,6 +438,7 @@ class _NewsViewState extends State<NewsView> {
                                                           index)['source'],
                                                       overflow:
                                                           TextOverflow.ellipsis,
+                                                      textAlign: TextAlign.center,
                                                       maxLines: 1,
                                                       softWrap: false,
                                                       style: const TextStyle(
@@ -444,24 +512,23 @@ class _NewsViewState extends State<NewsView> {
                                               ),
                                             ),
                                             const Text("    ·    "),
-                                            Text(
-                                              news
-                                                          .elementAt(
-                                                              index)["source"]
-                                                          .toString()
-                                                          .length >
-                                                      20
-                                                  ? "${news.elementAt(index)["source"].toString().substring(0, 18)}..."
-                                                  : news
-                                                      .elementAt(
-                                                          index)["source"]
-                                                      .toString(),
-                                              style: const TextStyle(
-                                                color: Color.fromARGB(
-                                                    255, 90, 90, 90),
-                                                fontSize: 12,
-                                              ),
-                                            ),
+                                            SizedBox(
+                                                    width: 100.0,
+                                                    child: Text(
+                                                      news.elementAt(
+                                                          index)['source'],
+                                                      overflow:
+                                                          TextOverflow.ellipsis,
+                                                      textAlign: TextAlign.center,
+                                                      maxLines: 1,
+                                                      softWrap: false,
+                                                      style: const TextStyle(
+                                                        color: Color.fromARGB(
+                                                            255, 90, 90, 90),
+                                                        fontSize: 12,
+                                                      ),
+                                                    ),
+                                                  ),
                                             const Text("    ·    "),
                                             Text(
                                               news.elementAt(

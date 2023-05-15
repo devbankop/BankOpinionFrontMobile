@@ -83,6 +83,29 @@ class userCommentViewState extends State<userCommentView> {
     super.dispose();
   }
 
+
+  Future<void> addLog() async {
+
+     var body = jsonEncode({
+       "type": "Created New Opinion"
+
+     });
+
+     var newView = Uri.parse(
+         'https://bankopinion-backend-development-3vucy.ondigitalocean.app/logs/addlog');
+     final response = await http.post(newView,
+         body: body, 
+         headers: {
+           "Content-Type": "application/json"
+           });
+
+     // var addNews = jsonDecode(response.body);
+         print(response.statusCode);
+         print(response.body);
+
+   }
+
+
   void _onChanged(bool? value) {
     setState(() {
       checkShowUser = value ?? false;
@@ -385,6 +408,7 @@ class userCommentViewState extends State<userCommentView> {
                                                                   .statusCode ==
                                                               200) {
                                                             _showAlertDialog();
+                                                            addLog();
                                                           }
                                                           // } else {
                                                           //   print("jwt es null");

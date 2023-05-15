@@ -3,19 +3,19 @@ const MANIFEST = 'flutter-app-manifest';
 const TEMP = 'flutter-temp-cache';
 const CACHE_NAME = 'flutter-app-cache';
 const RESOURCES = {
-  "version.json": "e82945aca89c7aafbcbb067559bed1bd",
-"index.html": "57ce47e07f2d95d839a3ce363e43a473",
-"/": "57ce47e07f2d95d839a3ce363e43a473",
-"main.dart.js": "1b291d111f9ed77771f3eb9be9e50247",
-"flutter.js": "f85e6fb278b0fd20c349186fb46ae36d",
+  "version.json": "d2f993a29aa2e0569bde7defceb5b846",
+"index.html": "a3d31ebe3064319af7d3fb39f918c028",
+"/": "a3d31ebe3064319af7d3fb39f918c028",
+"main.dart.js": "fe59b72e46647105c81f8285e5680658",
+"flutter.js": "a85fcf6324d3c4d3ae3be1ae4931e9c5",
 "favicon.png": "d635d4f2b0311324d45047c965c408ec",
 "icons/Icon-192.png": "ac9a721a12bbc803b44f645561ecb1e1",
 "icons/Icon-maskable-192.png": "c457ef57daa1d16f64b27b786ec2ea3c",
 "icons/Icon-maskable-512.png": "301a7604d45b3e739efc881eb04896ea",
 "icons/Icon-512.png": "96e752610906ba2a93c65f8abe1645f1",
 "manifest.json": "981339626daeb6314acb2f2e1dc60a86",
-"assets/AssetManifest.json": "2b6a0377d26f8d2721a6b3c7482cf1d0",
-"assets/NOTICES": "912c60074fa3ce4e412c0404e100b80a",
+"assets/AssetManifest.json": "8db06ce9a57a8e72791f0ff72c6463fd",
+"assets/NOTICES": "e5102b3690fd73b7de68868e43d64d41",
 "assets/FontManifest.json": "5a32d4310a6f5d9a6b651e75ba0d7372",
 "assets/packages/flutter_google_places_web/assets/google_white.png": "40bc3ae5444eae0b9228d83bfd865158",
 "assets/packages/flutter_google_places_web/assets/google_black.png": "97f2acfb6e993a0c4134d9d04dff21e2",
@@ -28,15 +28,16 @@ const RESOURCES = {
 "assets/packages/flutter_inappwebview/assets/t_rex_runner/t-rex.css": "5a8d0222407e388155d7d1395a75d5b9",
 "assets/packages/flutter_inappwebview/assets/t_rex_runner/t-rex.html": "16911fcc170c8af1c5457940bd0bf055",
 "assets/shaders/ink_sparkle.frag": "552645a9fefd4ef88adb3f546c702dd9",
-"assets/fonts/MaterialIcons-Regular.otf": "95db9098c58fd6db106f1116bae85a0b",
+"assets/fonts/MaterialIcons-Regular.otf": "e7069dfd19b331be16bed984668fe080",
+"assets/assets/images/iosBankMarker.png": "8cf5c21e467e6b94e414996be5bd3b5e",
 "assets/assets/images/bankMarker.png": "2f28d0d0e028977d1fa679fde0efe166",
 "assets/assets/images/imageStartView.png": "410554afe677b7b6bdf75b671c64aaee",
 "assets/assets/images/loginImage.webp": "2450baf8905523fdd0189a91b31b8aa0",
 "assets/assets/images/streetView.jpeg": "842dd2efd14bca3f423ddd63b458e6ad",
-"canvaskit/canvaskit.js": "2bc454a691c631b07a9307ac4ca47797",
-"canvaskit/profiling/canvaskit.js": "38164e5a72bdad0faa4ce740c9b8e564",
-"canvaskit/profiling/canvaskit.wasm": "95a45378b69e77af5ed2bc72b2209b94",
-"canvaskit/canvaskit.wasm": "bf50631470eb967688cca13ee181af62"
+"canvaskit/canvaskit.js": "97937cb4c2c2073c968525a3e08c86a3",
+"canvaskit/profiling/canvaskit.js": "c21852696bc1cc82e8894d851c01921a",
+"canvaskit/profiling/canvaskit.wasm": "371bc4e204443b0d5e774d64a046eb99",
+"canvaskit/canvaskit.wasm": "3de12d898ec208a5f31362cc00f09b9e"
 };
 
 // The application shell files that are downloaded before a service worker can

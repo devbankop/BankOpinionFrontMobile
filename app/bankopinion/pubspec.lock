@@ -230,6 +230,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "3.3.0"
+  flutter_email_sender:
+    dependency: "direct main"
+    description:
+      name: flutter_email_sender
+      sha256: "9e253c69617f43d4cb5de672e93a7a19c12a21fb6a75e66c6ce7626336c4c1bc"
+      url: "https://pub.dev"
+    source: hosted
+    version: "5.2.0"
   flutter_google_places_hoc081098:
     dependency: "direct main"
     description:
@@ -304,6 +312,14 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
+  flutter_webview_plugin:
+    dependency: "direct main"
+    description:
+      name: flutter_webview_plugin
+      sha256: ec410b10822b06432e11f9680b319609d6f34bcdabb31fcc4990ac8a2aaf9ff0
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.4.0"
   font_awesome_flutter:
     dependency: "direct main"
     description:

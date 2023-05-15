@@ -41,6 +41,19 @@ class _SignUpView3State extends State<SignUpView3> {
     }
   }
 
+  Future<void> addLog() async {
+    var body = jsonEncode({"type": "SignUp"});
+
+    var newView = Uri.parse(
+        'https://bankopinion-backend-development-3vucy.ondigitalocean.app/logs/addlog');
+    final response = await http.post(newView,
+        body: body, headers: {"Content-Type": "application/json"});
+
+    // var addNews = jsonDecode(response.body);
+    print(response.statusCode);
+    print(response.body);
+  }
+
   Future<void> _selectDate() async {
     final DateTime? picked = await showCupertinoModalPopup<DateTime>(
         context: context,
@@ -63,7 +76,8 @@ class _SignUpView3State extends State<SignUpView3> {
                   use24hFormat: true,
                   // This is called when the user changes the date.
                   onDateTimeChanged: (DateTime value) {
-                    _dateController.text = DateFormat('dd/MM/yyyy').format(value);
+                    _dateController.text =
+                        DateFormat('dd/MM/yyyy').format(value);
                   },
                 ),
               ),
@@ -426,6 +440,7 @@ class _SignUpView3State extends State<SignUpView3> {
 
                                         if (response.statusCode == 200 &&
                                             responseError != 400) {
+                                          addLog();
                                           Map<String, dynamic> responseData =
                                               json.decode(response.body);
                                           var token = responseData["session"]

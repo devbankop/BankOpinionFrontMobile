@@ -1,6 +1,9 @@
+import 'dart:convert';
+
 import 'package:bankopinion/src/pages/config.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:http/http.dart' as http;
 
 import '../pages/homeView.dart';
 import '../pages/news.dart';
@@ -21,6 +24,27 @@ class _BottomBarState extends State<BottomBar> {
     });
   }
 
+Future<void> addLog() async {
+
+    var body = jsonEncode({
+      "type": "Branches"
+      
+    });
+
+    var newView = Uri.parse(
+        'https://bankopinion-backend-development-3vucy.ondigitalocean.app/logs/addlog');
+    final response = await http.post(newView,
+        body: body, 
+        headers: {
+          "Content-Type": "application/json"
+          });
+
+    // var addNews = jsonDecode(response.body);
+        print(response.statusCode);
+        print(response.body);
+
+  }
+
   @override
   void initState() {
     super.initState();
@@ -31,6 +55,7 @@ class _BottomBarState extends State<BottomBar> {
     setState(() {
       _currentIndex = index;
       if (index == 0) {
+        addLog();
         Navigator.push(
           context,
           MaterialPageRoute(
