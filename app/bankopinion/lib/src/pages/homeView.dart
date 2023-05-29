@@ -18,7 +18,6 @@ import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:flutter_google_places_hoc081098/flutter_google_places_hoc081098.dart';
 import 'package:google_maps_webservice/places.dart';
-import 'package:flutter_google_places_web/flutter_google_places_web.dart';
 
 import 'package:google_api_headers/google_api_headers.dart';
 
@@ -55,16 +54,13 @@ class _StateHomePage extends State<PageHomePage> {
 
 
 
-
-  
-
   @override
   void initState() {
     super.initState();
     getLocation();
     fetchData();
     showRatingDialog(context);
-    openGooglePlayStore();
+    //openGooglePlayStore();
 
     
 
@@ -82,20 +78,9 @@ class _StateHomePage extends State<PageHomePage> {
   }
 
 
-void openGooglePlayStore() async {
-  String packageName = 'es.bankopinion.BankOpinion'; // Reemplaza con el nombre de paquete de tu aplicación
-  String url = 'market://details?id=$packageName';
-  if (await canLaunch(url)) {
-    await launch(url);
-  } else {
-    print("Erro abriendo app");
-  }
-}
 
-  Future<void> showRatingDialog(BuildContext context) async {
+Future<void> showRatingDialog(BuildContext context) async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
-                      prefs.setBool('ratingDialogShown', false);
-
 
   // Verificar si ya se mostró el diálogo
   bool dialogShown = prefs.getBool('ratingDialogShown') ?? false;
@@ -104,19 +89,9 @@ void openGooglePlayStore() async {
     return;
   }
 
-  // Verificar si ha pasado el tiempo suficiente
-    int? lastDialogTimeMillis = prefs.getInt('lastDialogTime');
-    DateTime lastDialogTime = lastDialogTimeMillis != null
-    ? DateTime.fromMillisecondsSinceEpoch(lastDialogTimeMillis)
-    : DateTime(2000);
-  DateTime now = DateTime.now();
-  if (now.difference(lastDialogTime).inMinutes < .2) {
-    return;
-  }
+  await Future.delayed(Duration(minutes: 3)); // Esperar 3 minutos
 
-  
-  
-showDialog(
+  showDialog(
     context: context,
     barrierDismissible: true,
     builder: (context) {
@@ -124,71 +99,65 @@ showDialog(
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(40),
         ),
-        child:  AlertDialog(
-          
-        title: Text(
-          'Valóranos',
-          textAlign: TextAlign.center,
-          style: TextStyle(
-            fontSize: 25,
-            fontWeight: FontWeight.bold,
+        child: AlertDialog(
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              SizedBox(height: 10),
+              Image.asset(
+                'assets/icons/icon_launcher.png',
+                height: 70,
+                width: 70,
+              ),
+              SizedBox(height: 20),
+              Text(
+                '¿Te gusta la aplicación?',
+                textAlign: TextAlign.center,
+                style: TextStyle(fontSize: 16),
+              ),
+              SizedBox(height: 15),
+              Text(
+                '¡Califícala en Google Play!',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+              SizedBox(height: 10),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  TextButton(
+                    onPressed: () {
+                      prefs.setBool('ratingDialogShown', true);
+                      Navigator.pop(context); // Cerrar el diálogo
+                    },
+                    child: Text('Abstenerse'),
+                  ),
+                  TextButton(
+                    onPressed: () {
+                      launchGooglePlay();
+                      prefs.setBool('ratingDialogShown', true);
+                      Navigator.pop(context); // Cerrar el diálogo
+                    },
+                    child: Text('¡Valorar!'),
+                  ),
+                ],
+              )
+            ],
           ),
         ),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Image.asset(
-              'assets/icons/icon_launcher.png',
-              height: 100,
-              width: 100,
-            ),
-            SizedBox(height: 20),
-            Text(
-              '¿Te gusta la aplicación? Tu opinión nos ayuda mucho a crecer.',
-              textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 16),
-            ),
-            SizedBox(height: 25),
-            Text(
-              '¡Califícala en Google Play!',
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.w600
-              ),
-            ),
-
-
-            SizedBox(height: 25),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: [
-                TextButton(
-                  onPressed: () {
-                    prefs.setBool('ratingDialogShown', true);
-                    Navigator.pop(context); // Cerrar el diálogo
-                  },
-                  child: Text('Abstenerse'),
-                ),
-                TextButton(
-                  onPressed: () {
-                    launchGooglePlay();
-                    prefs.setBool('ratingDialogShown', true);
-                    Navigator.pop(context); // Cerrar el diálogo
-                  },
-                  child: Text('¡Valorar!'),
-                ),
-              ],
-            )
-            
-          ],
-        ),
-        
-      ),
       );
     },
-  );
+  ).then((_) {
+    // Guardar la marca de diálogo mostrado y la hora actual
+    prefs.setBool('ratingDialogShown', true);
+    prefs.setInt('lastDialogTime', DateTime.now().millisecondsSinceEpoch);
+  });
 }
+
+
 void launchGooglePlay() async {
   String packageName = 'es.bankopinion.BankOpinion';
   final String googlePlayUrl = 'market://details?id=$packageName';

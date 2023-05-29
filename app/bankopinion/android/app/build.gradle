@@ -57,7 +57,7 @@ apply from: "$flutterRoot/packages/flutter_tools/gradle/flutter.gradle"
         // For more information, see: https://docs.flutter.dev/deployment/android#reviewing-the-build-configuration.
         minSdkVersion 20
         targetSdkVersion 33
-        versionCode 36
+        versionCode 37
         versionName flutterVersionName
     }
    signingConfigs {
