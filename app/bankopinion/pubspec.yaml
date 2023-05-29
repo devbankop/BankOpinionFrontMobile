@@ -65,6 +65,8 @@ dependencies:
   flutter_google_places_web: ^1.0.1
   flutter_webview_plugin: ^0.4.0
   flutter_email_sender: ^5.2.0
+  # rating_dialog: ^2.0.4
+  # rate_my_app: ^1.1.4
 
 
 dev_dependencies:
@@ -98,6 +100,8 @@ flutter:
     - assets/images/streetView.jpeg
     - assets/images/imageStartView.png
     - assets/images/loginImage.webp
+    - assets/icons/icon_launcher.png
+
   
 
   # An image asset can refer to one or more resolution-specific "variants", see

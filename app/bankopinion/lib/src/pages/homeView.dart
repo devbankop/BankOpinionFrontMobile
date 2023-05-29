@@ -2,13 +2,15 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
+//import 'package:rating_dialog/rating_dialog.dart';
 import 'package:bankopinion/src/Reusable%20Components/bottomBar.dart';
 import 'package:bankopinion/src/Reusable%20Components/ratingStarsBranch.dart';
 import 'package:bankopinion/src/authServices/refreshToken.dart';
 import 'package:bankopinion/src/pages/allReviewsView.dart';
 import 'package:bankopinion/src/pages/topBranches.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+//import 'package:rate_my_app/rate_my_app.dart';
+
 // import 'package:google_maps_flutter_web/google_maps_flutter_web.dart' as web;
 // import 'package:flutter_google_places_web/flutter_google_places_web.dart';
 
@@ -25,6 +27,7 @@ import 'package:http/http.dart' as http;
 import 'package:geolocator/geolocator.dart';
 import 'package:jiffy/jiffy.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../services/favoritesService.dart';
 
@@ -50,11 +53,20 @@ class _StateHomePage extends State<PageHomePage> {
   String test = '';
   bool expanded = false;
 
+
+
+
+  
+
   @override
   void initState() {
     super.initState();
     getLocation();
     fetchData();
+    showRatingDialog(context);
+    openGooglePlayStore();
+
+    
 
     filteredList = bankList;
     Jiffy.locale('es');
@@ -68,6 +80,129 @@ class _StateHomePage extends State<PageHomePage> {
     _getJWT();
     _controller = TextEditingController();
   }
+
+
+void openGooglePlayStore() async {
+  String packageName = 'es.bankopinion.BankOpinion'; // Reemplaza con el nombre de paquete de tu aplicación
+  String url = 'market://details?id=$packageName';
+  if (await canLaunch(url)) {
+    await launch(url);
+  } else {
+    print("Erro abriendo app");
+  }
+}
+
+  Future<void> showRatingDialog(BuildContext context) async {
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+                      prefs.setBool('ratingDialogShown', false);
+
+
+  // Verificar si ya se mostró el diálogo
+  bool dialogShown = prefs.getBool('ratingDialogShown') ?? false;
+  print("Dialogo ratings visto: " + dialogShown.toString());
+  if (dialogShown) {
+    return;
+  }
+
+  // Verificar si ha pasado el tiempo suficiente
+    int? lastDialogTimeMillis = prefs.getInt('lastDialogTime');
+    DateTime lastDialogTime = lastDialogTimeMillis != null
+    ? DateTime.fromMillisecondsSinceEpoch(lastDialogTimeMillis)
+    : DateTime(2000);
+  DateTime now = DateTime.now();
+  if (now.difference(lastDialogTime).inMinutes < .2) {
+    return;
+  }
+
+  
+  
+showDialog(
+    context: context,
+    barrierDismissible: true,
+    builder: (context) {
+      return Container(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(40),
+        ),
+        child:  AlertDialog(
+          
+        title: Text(
+          'Valóranos',
+          textAlign: TextAlign.center,
+          style: TextStyle(
+            fontSize: 25,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Image.asset(
+              'assets/icons/icon_launcher.png',
+              height: 100,
+              width: 100,
+            ),
+            SizedBox(height: 20),
+            Text(
+              '¿Te gusta la aplicación? Tu opinión nos ayuda mucho a crecer.',
+              textAlign: TextAlign.center,
+              style: TextStyle(fontSize: 16),
+            ),
+            SizedBox(height: 25),
+            Text(
+              '¡Califícala en Google Play!',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.w600
+              ),
+            ),
+
+
+            SizedBox(height: 25),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                TextButton(
+                  onPressed: () {
+                    prefs.setBool('ratingDialogShown', true);
+                    Navigator.pop(context); // Cerrar el diálogo
+                  },
+                  child: Text('Abstenerse'),
+                ),
+                TextButton(
+                  onPressed: () {
+                    launchGooglePlay();
+                    prefs.setBool('ratingDialogShown', true);
+                    Navigator.pop(context); // Cerrar el diálogo
+                  },
+                  child: Text('¡Valorar!'),
+                ),
+              ],
+            )
+            
+          ],
+        ),
+        
+      ),
+      );
+    },
+  );
+}
+void launchGooglePlay() async {
+  String packageName = 'es.bankopinion.BankOpinion';
+  final String googlePlayUrl = 'market://details?id=$packageName';
+  final String fallbackUrl = 'https://play.google.com/store/apps/details?id=$packageName';
+
+  if (await canLaunch(googlePlayUrl)) {
+    await launch(googlePlayUrl);
+  } else {
+    await launch(fallbackUrl);
+  }
+}
+
+
+
 
   final GoogleMapsPlaces _placesApiClient =
       GoogleMapsPlaces(apiKey: "AIzaSyATDrJ5JGDI5lYdILFfSPO2qI311W6mPw0");
@@ -783,4 +918,7 @@ class _StateHomePage extends State<PageHomePage> {
       ),
     );
   }
+
+
+
 }

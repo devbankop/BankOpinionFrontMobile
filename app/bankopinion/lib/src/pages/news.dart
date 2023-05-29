@@ -361,9 +361,7 @@ class _NewsViewState extends State<NewsView> {
                                               topRight: Radius.circular(15),
                                             ),
                                             child: CachedNetworkImage(
-                                              imageUrl: news
-                                                  .elementAt(index)['image']
-                                                  .toString(),
+                                              imageUrl: news.elementAt(index)['image'].toString(),
                                               width: double.infinity,
                                               height: 220,
                                               fit: BoxFit.cover,
@@ -371,8 +369,7 @@ class _NewsViewState extends State<NewsView> {
                                                   (BuildContext context,
                                                       String url,
                                                       dynamic error) {
-                                                print(
-                                                    'Error al cargar la imagen: $error');
+                                                print('Error al cargar la imagen: $error');
                                                 return const Center(
                                                   child: Text(
                                                     'Error al cargar la imagen',
@@ -401,8 +398,7 @@ class _NewsViewState extends State<NewsView> {
                                                       CrossAxisAlignment.center,
                                                   children: [
                                                     Text(
-                                                      news.elementAt(
-                                                          index)['title'],
+                                                      news.elementAt(index)['title'],
                                                       style: TextStyle(
                                                         fontSize: 15,
                                                         fontWeight:
@@ -422,8 +418,7 @@ class _NewsViewState extends State<NewsView> {
                                                         .spaceEvenly,
                                                 children: [
                                                   Text(
-                                                    news.elementAt(
-                                                        index)['publishDate'],
+                                                    news.elementAt(index)['publishDate'],
                                                     style: const TextStyle(
                                                       color: Color.fromARGB(
                                                           255, 90, 90, 90),
@@ -434,8 +429,7 @@ class _NewsViewState extends State<NewsView> {
                                                   SizedBox(
                                                     width: 100.0,
                                                     child: Text(
-                                                      news.elementAt(
-                                                          index)['source'],
+                                                      news.elementAt(index)['source'],
                                                       overflow:
                                                           TextOverflow.ellipsis,
                                                       textAlign: TextAlign.center,
@@ -450,8 +444,7 @@ class _NewsViewState extends State<NewsView> {
                                                   ),
                                                   const Text('·'),
                                                   Text(
-                                                    news.elementAt(
-                                                        index)['publishTime'],
+                                                    news.elementAt(index)['publishTime'],
                                                     style: TextStyle(
                                                       color: Color.fromARGB(
                                                           255, 90, 90, 90),
@@ -503,8 +496,7 @@ class _NewsViewState extends State<NewsView> {
                                               MainAxisAlignment.center,
                                           children: [
                                             Text(
-                                              news.elementAt(
-                                                  index)["publishDate"],
+                                              news.elementAt(index)["publishDate"],
                                               style: const TextStyle(
                                                 color: Color.fromARGB(
                                                     255, 90, 90, 90),
@@ -515,8 +507,7 @@ class _NewsViewState extends State<NewsView> {
                                             SizedBox(
                                                     width: 100.0,
                                                     child: Text(
-                                                      news.elementAt(
-                                                          index)['source'],
+                                                      news.elementAt(index)['source'],
                                                       overflow:
                                                           TextOverflow.ellipsis,
                                                       textAlign: TextAlign.center,

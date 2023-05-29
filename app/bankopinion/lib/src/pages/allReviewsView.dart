@@ -72,6 +72,10 @@ class _allReviewsState extends State<allReviews> {
   Future<void> _getRole() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     userRole = prefs.getString('userRole');
+    
+    setState(() {
+      jwt = prefs.getString("jwt");
+    });
   }
 
   Future<void> getUserProfile() async {
@@ -90,8 +94,7 @@ class _allReviewsState extends State<allReviews> {
         setState(() {
           userFavoriteComments =
               responseData["userProfile"]["userReviewsLikes"];
-          prefs.setStringList('favoriteComments',
-              userFavoriteComments.map((e) => json.encode(e)).toList());
+          prefs.setStringList('favoriteComments', userFavoriteComments.map((e) => json.encode(e)).toList());
         });
       }
     }
@@ -293,7 +296,7 @@ class _allReviewsState extends State<allReviews> {
                           onPressed: (() {
 
                             addLog();
-                            
+
                             MaterialApp(
                               title: 'Named Routes',
                               // Start the app with the "/" named route. In this case, the app starts
@@ -354,21 +357,20 @@ class _allReviewsState extends State<allReviews> {
                     (i) => InkWell(
                         onLongPress: () {
                           if (userRole == 'superAdmin') {
-                            _showAlertDialog(widget.bank["reviews"]
-                                .elementAt(i)["id"]
-                                .toString());
+                            _showAlertDialog(widget.bank["reviews"].elementAt(i)["id"].toString());
                           }
                         },
                         child: Column(
                           children: [
-                            const Padding(padding: EdgeInsets.only(bottom: 10)),
+                            const Padding(padding: EdgeInsets.only(bottom: 10),),
                             Container(
                                 decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(5),
                                     border: Border.all(
                                       color: const Color.fromARGB(
                                           255, 213, 213, 213),
-                                    )),
+                                    ),
+                                  ),
                                 child: Column(
                                   children: [
                                     Row(
@@ -386,7 +388,8 @@ class _allReviewsState extends State<allReviews> {
                                                   size: 48,
                                                 )
                                               ],
-                                            )),
+                                            ),
+                                          ),
                                         Padding(
                                           padding:
                                               const EdgeInsets.only(left: 10),
@@ -400,8 +403,7 @@ class _allReviewsState extends State<allReviews> {
                                                 // ignore: prefer_const_literals_to_create_immutables
 
                                                 child: Text(
-                                                    widget.bank["reviews"][i]
-                                                        ["user"]["username"],
+                                                    widget.bank["reviews"][i]["user"]["username"],
                                                     style: const TextStyle(
                                                         fontWeight:
                                                             FontWeight.bold),
@@ -409,59 +411,30 @@ class _allReviewsState extends State<allReviews> {
                                               ),
                                               Container(
                                                 child: Row(
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment
-                                                          .spaceBetween,
+                                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                                   children: [
                                                     Row(
                                                       children: [
                                                         StatmentRatingsUser(
-                                                            rating: widget
-                                                                .bank["reviews"]
-                                                                    [i][
-                                                                    "reviewRating"]
-                                                                .toDouble())
+                                                            rating: widget.bank["reviews"][i]["reviewRating"].toDouble())
                                                       ],
                                                     ),
                                                     Row(
                                                       children: [
-                                                        Text(
-                                                            "         (${Jiffy(widget.bank["reviews"][i]["dateCreated"], "yyyy-MM-dd'T'HH:mm:ss").fromNow()})",
-                                                            style: const TextStyle(
-                                                                fontSize: 10,
-                                                                color: Color
-                                                                    .fromARGB(
-                                                                        255,
-                                                                        127,
-                                                                        127,
-                                                                        127)))
+                                                        // Text(
+                                                        //     "                           (${Jiffy(widget.bank["reviews"][i]["dateCreated"], "yyyy-MM-dd'T'HH:mm:ss").fromNow()})",
+                                                        //     style: const TextStyle(
+                                                        //         fontSize: 10,
+                                                        //         color: Color.fromARGB(255, 127, 127, 127)))
                                                       ],
-                                                    )
+                                                    ),
                                                   ],
                                                 ),
-                                              )
+                                              ),
                                             ],
                                           ),
                                         ),
-                                        Padding(
-                                          padding: const EdgeInsets.only(
-                                              left: 10, top: 2),
-                                          child: Column(
-                                            // ignore: prefer_const_literals_to_create_immutables
-                                            children: [
-                                              // ignore: prefer_const_literals_to_create_immutables
-                                              Row(
-                                                children: const [Text("")],
-                                              ),
-                                              //CAMBIAR!! HAY QUE CREAR COMPONENTE PARA LAS RATINGS PUESTAS POR EL USER
-                                              Row(
-                                                // ignore: prefer_const_literals_to_create_immutables
-
-                                                children: [],
-                                              )
-                                            ],
-                                          ),
-                                        )
+                                        
                                       ],
                                     ),
                                     Padding(
@@ -471,9 +444,7 @@ class _allReviewsState extends State<allReviews> {
                                         SizedBox(
                                           width: 320,
                                           child: Text(
-                                              widget.bank["reviews"][i]
-                                                      ["review"]
-                                                  .toString(),
+                                              widget.bank["reviews"][i]["review"].toString(),
                                               style: const TextStyle(
                                                 fontSize: 15,
                                               ),
@@ -482,11 +453,7 @@ class _allReviewsState extends State<allReviews> {
                                       ]),
                                     ),
                                     Padding(
-                                      padding: const EdgeInsets.only(
-                                          bottom: 14,
-                                          top: 8,
-                                          left: 15,
-                                          right: 15),
+                                      padding: const EdgeInsets.only(bottom: 14, top: 8, left: 15, right: 15),
                                       child: Row(
                                         crossAxisAlignment:
                                             CrossAxisAlignment.center,
@@ -494,36 +461,25 @@ class _allReviewsState extends State<allReviews> {
                                             MainAxisAlignment.end,
                                         children: [
                                           InkWell(
+                                           
                                             onTap: () async {
-                                              if (jwt != null) {
-                                                final prefs =
-                                                    await SharedPreferences
-                                                        .getInstance();
-
-                                                int foundIndex =
-                                                    userFavoriteComments
-                                                        .indexOf(widget
-                                                            .bank["reviews"]
-                                                            .elementAt(
-                                                                i)["id"]);
+                                              
+                                                final prefs = await SharedPreferences.getInstance();
+                                               
+                                              if(jwt != null)
+                                              {
+                                                
+                                              
+                                                int foundIndex = userFavoriteComments.indexOf(widget.bank["reviews"].elementAt(i)["id"]);
 
                                                 setState(() {
                                                   if (foundIndex != -1) {
-                                                    userFavoriteComments
-                                                        .removeAt(foundIndex);
+                                                    userFavoriteComments.removeAt(foundIndex);
                                                   } else {
-                                                    userFavoriteComments.add(
-                                                        widget.bank["reviews"]
-                                                            .elementAt(
-                                                                i)["id"]);
+                                                    userFavoriteComments.add(widget.bank["reviews"].elementAt(i)["id"]);
                                                   }
 
-                                                  foundIndex =
-                                                      userFavoriteComments
-                                                          .indexOf(widget
-                                                              .bank["reviews"]
-                                                              .elementAt(
-                                                                  i)["id"]);
+                                                  foundIndex = userFavoriteComments.indexOf(widget.bank["reviews"].elementAt(i)["id"]);
                                                 });
 
                                                 print("userFavoriteComments");
@@ -532,38 +488,23 @@ class _allReviewsState extends State<allReviews> {
                                                 jwt = prefs.getString("jwt");
                                                 var getFavoritesComments =
                                                     Uri.parse(
-                                                        'https://bankopinion-backend-development-3vucy.ondigitalocean.app/reviews/like/review/' +
-                                                            widget
-                                                                .bank["reviews"]
-                                                                .elementAt(
-                                                                    i)["id"]
-                                                                .toString());
+                                                        'https://bankopinion-backend-development-3vucy.ondigitalocean.app/reviews/like/review/' + widget.bank["reviews"].elementAt(i)["id"].toString());
 
-                                                var response = await http.put(
-                                                    getFavoritesComments,
-                                                    headers: {
-                                                      "Authorization": '$jwt'
-                                                    });
-                                                var finalResponse =
-                                                    json.decode(response.body);
+                                                var response = await http.put(getFavoritesComments, headers: {"Authorization": '$jwt'});
+                                                var finalResponse = json.decode(response.body);
 
                                                 setState(() {
-                                                  widget.bank["reviews"]
-                                                          .elementAt(
-                                                              i)["likes"] =
-                                                      finalResponse[
-                                                          "numberOfLikesInReview"];
+                                                  widget.bank["reviews"].elementAt(i)["likes"] = finalResponse["numberOfLikesInReview"];
                                                 });
 
-                                                if (finalResponse["status"] ==
-                                                    401) {
+                                                if (finalResponse["status"] == 401) {
                                                   setState(() {
                                                     if (foundIndex != -1)
-                                                      userFavoriteComments
-                                                          .removeAt(foundIndex);
+                                                      userFavoriteComments.removeAt(foundIndex);
                                                   });
                                                 }
                                               }
+                                              print(userFavoriteComments.contains(widget.bank["reviews"].elementAt(i)["id"]));
                                             },
                                             child: Column(
                                               children: [
@@ -575,25 +516,13 @@ class _allReviewsState extends State<allReviews> {
                                                     children: [
                                                       !userFavoriteComments.contains(widget.bank["reviews"].elementAt(i)["id"])
                                                           ? Icon(Icons.favorite_border_rounded,
-                                                              color: jwt != null &&
-                                                                      jwt != ''
+                                                              color: jwt != null && jwt != ''
                                                                   ? Color.fromARGB(
                                                                       255, 153, 116, 223)
-                                                                  : Color.fromARGB(
-                                                                      255,
-                                                                      116,
-                                                                      108,
-                                                                      130))
+                                                                  : Color.fromARGB(255, 116, 108, 130))
                                                           : Icon(Icons.favorite,
-                                                              color: jwt != null &&
-                                                                      jwt != ''
-                                                                  ? Color.fromARGB(
-                                                                      255, 153, 116, 223)
-                                                                  : Color.fromARGB(
-                                                                      255,
-                                                                      127,
-                                                                      109,
-                                                                      161)),
+                                                              color: Color.fromARGB(255, 153, 116, 223)
+                                                                 ),
                                                       Text(
                                                           widget.bank["reviews"].elementAt(i)["likes"].toString(),
                                                           style: const TextStyle(

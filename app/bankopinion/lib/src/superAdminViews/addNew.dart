@@ -113,14 +113,16 @@ class _addNewState extends State<addNew> {
   }
 
   Future<void> sendNew() async {
-        print(publishDate);
+
+    DateTime parsedDate = DateFormat('dd/MM/yyyy').parse(publishDate);
+    String formattedDate = DateFormat('yyyy-MM-dd').format(parsedDate);
 
     var body = jsonEncode({
       "title": title,
       "url": url,
       "image": image,
-      "publishDate": publishDate,
-      "publishTime": publishTime,
+      "publishDate": formattedDate,
+      "publishTime": publishTime, 
       "description": description,
       "source": source
     });
