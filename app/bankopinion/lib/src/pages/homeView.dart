@@ -89,7 +89,7 @@ Future<void> showRatingDialog(BuildContext context) async {
     return;
   }
 
-  await Future.delayed(Duration(minutes: 3)); // Esperar 3 minutos
+  await Future.delayed(Duration(seconds: 20)); 
 
   showDialog(
     context: context,
@@ -576,20 +576,20 @@ void launchGooglePlay() async {
                       return InkWell(
                           onTap: () {
                             LatLng newlatlong = LatLng(
-                                banks.elementAt(index)["location"]
-                                    ["lat"],
-                                banks.elementAt(index)["location"]
-                                    ["lng"]);
+                                banks.elementAt(index)["location"]["lat"],
+                                banks.elementAt(index)["location"]["lng"]);
                             mapController?.animateCamera(
                                 CameraUpdate.newCameraPosition(CameraPosition(
-                                    target: newlatlong, zoom: 18)));
+                                    target: newlatlong, zoom: 18),
+                                    ),
+                              );
                           },
                           child: 
                           Padding(padding: EdgeInsets.only(bottom: 5, left: 10, right: 10),
                           child:   
                           
                           Container(
-                              padding: EdgeInsets.only(left: 14, bottom: 12, top: 12),
+                              padding: EdgeInsets.only(left: 12, bottom: 12, top: 12),
                               decoration: BoxDecoration(
                                   //color: isBankSelected(index) ? Color.fromARGB(255, 215, 215, 215) : Colors.transparent,
                                   border: Border.all(
@@ -634,21 +634,23 @@ void launchGooglePlay() async {
                                     children: [
                                       
                                       SizedBox(
-                                    width: 210.0,
-                                    child: Padding(
-                                        padding: const EdgeInsets.only(
-                                            bottom: 4, top: 8),
-                                        child: Text(
-                                            banks[index]["branchName"],
-                                            overflow: TextOverflow.ellipsis,
-                                            maxLines: 1,
-                                            softWrap: false,
-                                            textAlign: TextAlign.left,
-                                            style: const TextStyle(
-                                                fontSize: 15,
-                                                color: Color.fromARGB(
-                                                    255, 0, 0, 0),
-                                                fontWeight: FontWeight.bold))),
+                                        width: 210.0,
+                                        child: Padding(
+                                            padding: const EdgeInsets.only(
+                                                bottom: 4, top: 8),
+                                            child: Text(
+                                                banks[index]["branchName"],
+                                                overflow: TextOverflow.ellipsis,
+                                                maxLines: 1,
+                                                softWrap: false,
+                                                textAlign: TextAlign.left,
+                                                style: const TextStyle(
+                                                    fontSize: 15,
+                                                    color: Color.fromARGB(
+                                                        255, 0, 0, 0),
+                                                    fontWeight: FontWeight.bold),
+                                              ),
+                                          ),
                                   ),
                                       Row(
                                         children: [
@@ -678,10 +680,7 @@ void launchGooglePlay() async {
                                                 maxWidth: 200),
                                             child: Text(
                                                 banks.elementAt(index)
-                                                        ["zipcode"] +
-                                                    ", " +
-                                                    banks.elementAt(
-                                                        index)["city"],
+                                                        ["zipcode"] + ", " + banks.elementAt(index)["city"],
                                                 textAlign: TextAlign.left,
                                                 style: const TextStyle(
                                                   fontSize: 11,
@@ -706,11 +705,7 @@ void launchGooglePlay() async {
                                                       bank: banks.elementAt(
                                                           index)),
                                                   Text(
-                                                      "(" +
-                                                          banks
-                                                              .elementAt(index)["branchRating"]
-                                                              .toString() +
-                                                          ")",
+                                                      "(" + banks.elementAt(index)["branchRating"].toString() + ")",
                                                       style: const TextStyle(
                                                         fontSize: 11,
                                                         color: Color.fromARGB(
@@ -739,26 +734,21 @@ void launchGooglePlay() async {
                                                   height: 50.0,
                                                   child: jwt != null &&
                                                           jwt != '' &&
-                                                          userRole !=
-                                                              'superAdmin'
+                                                          userRole != 'superAdmin'
                                                       ? ElevatedButton(
                                                           onPressed: () async {
                                                             final prefs =
                                                                 await SharedPreferences.getInstance();
                                                             int foundIndex = userBranchesFavorites.indexOf(banks.elementAt(index)["id"]);
                                                             setState(() {
-                                                              if (foundIndex !=
-                                                                  -1)
-                                                                userBranchesFavorites
-                                                                    .removeAt(
-                                                                        foundIndex);
+                                                              if (foundIndex != -1)
+                                                                userBranchesFavorites.removeAt(foundIndex);
                                                               else
                                                                 userBranchesFavorites.add(banks.elementAt(index)["id"]);
 
                                                               foundIndex = userBranchesFavorites.indexOf(banks.elementAt(index)["id"]);
                                                             });
-                                                            jwt =
-                                                                prefs.getString('jwt');
+                                                            jwt = prefs.getString('jwt');
                                                             var favoriteBranch =
                                                                 Uri.parse('https://bankopinion-backend-development-3vucy.ondigitalocean.app/users/addFavoriteBranch/' +
                                                                     banks.elementAt(index)["id"].toString());
@@ -770,48 +760,35 @@ void launchGooglePlay() async {
                                                                       '$jwt'
                                                                 });
                                                             var finalResponse =
-                                                                json.decode(
-                                                                    response
-                                                                        .body);
+                                                                json.decode(response.body);
 
-                                                            if (finalResponse[
-                                                                    "status"] ==
-                                                                401) {
+                                                            if (finalResponse["status"] == 401) {
                                                               setState(() {
                                                                 if (foundIndex != -1)userBranchesFavorites.removeAt(foundIndex);
                                                               });
-                                                              var refresh =
-                                                                  AuthService();
-                                                              await refresh
-                                                                  .refreshToken();
+                                                              var refresh = AuthService();
+                                                              await refresh.refreshToken();
                                                             }
 
                                                             //await getUserProfile();
                                                           },
-                                                          style: ElevatedButton
-                                                              .styleFrom(
+                                                          style: ElevatedButton.styleFrom(
                                                             shape:
                                                                 const CircleBorder(),
                                                             padding:
-                                                                const EdgeInsets
-                                                                    .all(5),
+                                                                const EdgeInsets.all(5),
                                                             backgroundColor: userRole ==
                                                                     'superAdmin'
                                                                 ? Color
-                                                                    .fromARGB( 255, 223, 116, 116)
-                                                                : const Color
-                                                                        .fromARGB( 255, 153, 116, 223),
+                                                                    .fromARGB( 255, 223, 116, 116 )
+                                                                : const Color.fromARGB( 255, 153, 116, 223),
                                                           ),
-                                                          child: !userBranchesFavorites
-                                                                  .contains(banks
-                                                                          .elementAt(
-                                                                              index)
-                                                                      ["id"])
-                                                              ? const Icon(Icons
-                                                                  .favorite_border_rounded)
-                                                              : const Icon(Icons
-                                                                  .favorite))
-                                                      : null))
+                                                          child: !userBranchesFavorites.contains(banks.elementAt(index)["id"])
+                                                              ? const Icon(Icons.favorite_border_rounded)
+                                                              : const Icon(Icons.favorite),
+                                                                  )
+                                                      : null)
+                                                )
                                         ],
                                       ),
 
@@ -840,7 +817,8 @@ void launchGooglePlay() async {
                                                                   (context) =>
                                                                       allReviews(
                                                                         bank: banks.elementAt(index),
-                                                                      )),
+                                                                      ),
+                                                          ),
                                                         );
                                                       },
                                                       style: ElevatedButton
@@ -848,19 +826,12 @@ void launchGooglePlay() async {
                                                         shape:
                                                             const CircleBorder(),
                                                         padding:
-                                                            const EdgeInsets
-                                                                .all(5),
+                                                            const EdgeInsets.all(5),
                                                         backgroundColor:
-                                                            userRole ==
-                                                                    'superAdmin'
+                                                            userRole == 'superAdmin'
                                                                 ? Color
                                                                     .fromARGB(255, 223, 116, 116)
-                                                                : const Color
-                                                                        .fromARGB(
-                                                                    255,
-                                                                    153,
-                                                                    116,
-                                                                    223),
+                                                                : const Color.fromARGB( 255, 153, 116, 223 ),
                                                       ),
                                                       child: const Icon(
                                                         Icons.edit,
@@ -873,10 +844,15 @@ void launchGooglePlay() async {
                                 ),
                               ],
                             ),
+                            jwt != null
+                            ? SizedBox(width: 6.5,)
+                            : SizedBox.shrink()
+
+                              ],
+                            ),
                           ],
                         ),
-                      
-                              ],)),
+                      ),
                     ),
                   ),
                 );
