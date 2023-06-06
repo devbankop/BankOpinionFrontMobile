@@ -1,10 +1,12 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:io';
 import 'package:bankopinion/src/about/terms.dart';
 import 'package:bankopinion/src/pages/profile.dart';
 import 'package:bankopinion/src/pages/startView.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../Reusable Components/bottomBar.dart';
 import 'package:http/http.dart' as http;
 
@@ -90,7 +92,17 @@ Future<void> _deleteJWT() async {
 
     });
   }
+void launchGooglePlay() async {
+  String packageName = 'es.bankopinion.BankOpinion';
+  final String googlePlayUrl = 'market://details?id=$packageName';
+  final String fallbackUrl = 'https://play.google.com/store/apps/details?id=$packageName';
 
+  if (await canLaunch(googlePlayUrl)) {
+    await launch(googlePlayUrl);
+  } else {
+    await launch(fallbackUrl);
+  }
+}
  
 
   var banks = [];
@@ -304,8 +316,102 @@ Future<void> _deleteJWT() async {
                               ),
                         )),
                         
+                        
+
+                    //APARTADO DE VALORACIÓN
 
                         Padding(
+                        padding: const EdgeInsets.only(top: 35),
+                        child: InkWell(
+                          onTap: () {
+                            launchGooglePlay();
+                          },
+                          child: Container(
+                              height: 55,
+                              width: double.infinity,
+                              decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(6),
+
+                                color: Color.fromARGB(25, 55, 11, 137),
+                                border: Border.all(
+                                  color: Color.fromARGB(168, 55, 11, 137),
+                                  width: .6,
+                                ),
+                              ),
+                              child: Padding(
+                              padding: EdgeInsets.all(10),
+                              child: Row(
+                                children: [
+                                  Icon(Icons.star,
+                                  color: Color.fromARGB(168, 55, 11, 137),),
+                                  Padding(padding: EdgeInsets.symmetric(horizontal: 10),
+                                  child: Text(Platform.isIOS ? "Valorar app en App Store" : "Valorar app en Google Play",
+                                  style: TextStyle(
+                                    fontSize: 20,
+                                    color: Color.fromARGB(255, 55, 11, 137)
+                                    )))
+                                ],
+                              )),
+                              ),
+                        )),
+                        
+                            
+                        Align(
+                            alignment: Alignment.bottomCenter,
+                            child: Padding(
+                              padding: const EdgeInsets.only(top: 60),
+                              child: jwt != null && jwt != ''
+                                  ? ElevatedButton(
+
+                                      onPressed: () {
+                                        _deleteJWT();
+                                          userRole = 'user';
+                                       
+                                        Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) =>
+                                                    StartView()));
+                                        
+                                      },
+                                      style: ElevatedButton.styleFrom(
+                                        shape: const StadiumBorder(),
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 110, vertical: 14),
+                                       backgroundColor: userRole == 'superAdmin' ? Color.fromARGB(255, 223, 116, 116) :Color.fromARGB(130, 55, 11, 137),
+                                      ),
+                                      child: const Text("Cerrar sesión",
+                                          style: TextStyle(fontSize: 16)))
+                                  : ElevatedButton(
+                                      onPressed: () {
+                                        setState(() {
+                                            userRole = 'user';
+
+                                        });
+                                              print(userRole);
+
+                                        Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) =>
+                                                    LoginView()));
+                                      },
+                                      style: ElevatedButton.styleFrom(
+                                        shape: const StadiumBorder(),
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 110, vertical: 14),
+                                        backgroundColor: userRole == 'superAdmin' ? Color.fromARGB(255, 223, 116, 116) :const Color.fromARGB(255, 153, 116, 223),
+                                      ),
+                                      child: const Text("Iniciar sesión",
+                                          style: TextStyle(fontSize: 16))),
+                            ),
+                          ),
+
+                         
+
+                        Column(
+                          children: [
+                            Padding(
                             padding: const EdgeInsets.only(top: 55),
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.center,
@@ -378,65 +484,24 @@ Future<void> _deleteJWT() async {
                                               fontSize: 16,
                                               color: Color.fromARGB(
                                                   255, 55, 11, 137),
-                                            )))
-                                  ])),
-                            ])),
-                            
-                        Align(
-                            alignment: Alignment.bottomCenter,
-                            child: Padding(
-                              padding: const EdgeInsets.only(),
-                              child: jwt != null && jwt != ''
-                                  ? ElevatedButton(
-
-                                      onPressed: () {
-                                        _deleteJWT();
-                                                                                  print(userRole);
-
-                                          userRole = 'user';
-                                       
-                                        Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                                builder: (context) =>
-                                                    StartView()));
-                                        
-                                      },
-                                      style: ElevatedButton.styleFrom(
-                                        shape: const StadiumBorder(),
-                                        padding: const EdgeInsets.symmetric(
-                                            horizontal: 110, vertical: 14),
-                                       backgroundColor: userRole == 'superAdmin' ? Color.fromARGB(255, 223, 116, 116) :Color.fromARGB(130, 55, 11, 137),
-                                      ),
-                                      child: const Text("Cerrar sesión",
-                                          style: TextStyle(fontSize: 16)))
-                                  : ElevatedButton(
-                                      onPressed: () {
-                                        setState(() {
-                                            userRole = 'user';
-
-                                        });
-                                              print(userRole);
-
-                                        Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                                builder: (context) =>
-                                                    LoginView()));
-                                      },
-                                      style: ElevatedButton.styleFrom(
-                                        shape: const StadiumBorder(),
-                                        padding: const EdgeInsets.symmetric(
-                                            horizontal: 110, vertical: 14),
-                                        backgroundColor: userRole == 'superAdmin' ? Color.fromARGB(255, 223, 116, 116) :const Color.fromARGB(255, 153, 116, 223),
-                                      ),
-                                      child: const Text("Iniciar sesión",
-                                          style: TextStyle(fontSize: 16))),
-                            ))
+                                            ),
+                                          ),
+                                        ),
+                                  ]),
+                                ),
+                           
+                           
+                            ]),
+                          ),
+                          ],
+                        )
                       ])
-                    )
-                  )
-                )));}
+                    ),
+                  ),
+                ),
+              ),
+            );
+          }
         
 
     void _showAlertDialog() {

@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:bankopinion/src/pages/homeView.dart';
 import 'package:bankopinion/src/pages/startView.dart';
 import 'package:flutter/material.dart';
+import 'package:in_app_update/in_app_update.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 
@@ -20,9 +21,12 @@ class MyAppView extends StatefulWidget {
   State<MyAppView> createState() => _MyAppViewState();
 }
 
+
 class _MyAppViewState extends State<MyAppView> {
   String? jwt;
   String? userRole;
+
+
 
   @override
   void initState() {
@@ -30,6 +34,8 @@ class _MyAppViewState extends State<MyAppView> {
     _getRole();
     addLog();
   }
+
+
 
   Future<void> addLog() async {
 

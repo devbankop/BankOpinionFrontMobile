@@ -6,6 +6,7 @@ import 'package:bankopinion/src/pages/homeView.dart';
 import 'package:bankopinion/src/pages/news.dart';
 import 'package:flutter/foundation.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:in_app_update/in_app_update.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 import 'package:flutter/material.dart';
@@ -31,9 +32,38 @@ class _StartViewState extends State<StartView> {
     SharedPreferences.getInstance().then((value) {
       prefs = value;
     });
+    checkForUpdate();
     // var refresh = AuthService();
     // refresh.refreshToken();
   }
+
+void checkForUpdate() async {
+  final AppUpdateInfo updateInfo = await InAppUpdate.checkForUpdate();
+  
+  if (updateInfo.updateAvailability == UpdateAvailability.updateAvailable) {
+    await InAppUpdate.startFlexibleUpdate().catchError((error) {
+      // Handle flexible update start error
+    }
+    );
+    
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('¡Nueva actualización disponible!'),
+        action: SnackBarAction(
+          label: 'Actualizar',
+          onPressed: () {
+            InAppUpdate.completeFlexibleUpdate().catchError((error) {
+              // Handle flexible update completion error
+            });
+          },
+        ),
+      ),
+    );
+  } else {
+    print("No hay actualizaciones disponibles");
+  }
+}
+
 
   Future<void> _getRole() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -126,6 +156,7 @@ class _StartViewState extends State<StartView> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
+                   
                     Padding(
                       padding: EdgeInsets.only(top: 60, left: 20, right: 20),
                       child: Container(

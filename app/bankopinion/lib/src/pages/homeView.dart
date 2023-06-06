@@ -9,10 +9,7 @@ import 'package:bankopinion/src/authServices/refreshToken.dart';
 import 'package:bankopinion/src/pages/allReviewsView.dart';
 import 'package:bankopinion/src/pages/topBranches.dart';
 import 'package:flutter/material.dart';
-//import 'package:rate_my_app/rate_my_app.dart';
-
-// import 'package:google_maps_flutter_web/google_maps_flutter_web.dart' as web;
-// import 'package:flutter_google_places_web/flutter_google_places_web.dart';
+import 'package:in_app_update/in_app_update.dart';
 
 // ignore: depend_on_referenced_packages
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -52,16 +49,13 @@ class _StateHomePage extends State<PageHomePage> {
   String test = '';
   bool expanded = false;
 
-
-
   @override
   void initState() {
     super.initState();
     getLocation();
     fetchData();
-    showRatingDialog(context);
     //openGooglePlayStore();
-
+    checkDialog();
     
 
     filteredList = bankList;
@@ -77,9 +71,31 @@ class _StateHomePage extends State<PageHomePage> {
     _controller = TextEditingController();
   }
 
+Future<void> checkDialog() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    int? count = prefs.getInt('dialogCounter');
+    print("Dialog Counter: $count");
+
+    if (count == null) {
+        count = 0; // Establecer un valor predeterminado
+    }
+
+    if (count != 1) {
+        count = count + 1; // Incrementar el valor de count localmente
+        prefs.setInt('dialogCounter', count);
+    } else {
+        showRatingDialog(context);
+        return; // Salir de la función después de llamar a showRatingDialog
+    }
+}
+
+
+
 
 
 Future<void> showRatingDialog(BuildContext context) async {
+  
   SharedPreferences prefs = await SharedPreferences.getInstance();
 
   // Verificar si ya se mostró el diálogo
@@ -89,7 +105,7 @@ Future<void> showRatingDialog(BuildContext context) async {
     return;
   }
 
-  await Future.delayed(Duration(seconds: 20)); 
+  await Future.delayed(Duration(seconds: 1)); 
 
   showDialog(
     context: context,
@@ -133,7 +149,7 @@ Future<void> showRatingDialog(BuildContext context) async {
                       prefs.setBool('ratingDialogShown', true);
                       Navigator.pop(context); // Cerrar el diálogo
                     },
-                    child: Text('Abstenerse'),
+                    child: Text('Más tarde'),
                   ),
                   TextButton(
                     onPressed: () {
@@ -338,6 +354,8 @@ void launchGooglePlay() async {
     _startTimer();
   }
 
+
+
   Future<void> fetchData() async {
     // Define el URI de la solicitud http
     var prueba = Uri.parse(
@@ -467,6 +485,7 @@ void launchGooglePlay() async {
                 Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
+                
                 ElevatedButton(
                   onPressed: (() async {
                     var place = await PlacesAutocomplete.show(

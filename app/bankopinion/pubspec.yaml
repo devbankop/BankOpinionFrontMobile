@@ -65,6 +65,7 @@ dependencies:
   flutter_google_places_web: ^1.0.1
   flutter_webview_plugin: ^0.4.0
   flutter_email_sender: ^5.2.0
+  in_app_update: ^4.0.1
   # rating_dialog: ^2.0.4
   # rate_my_app: ^1.1.4
 
