@@ -7,6 +7,7 @@ import 'package:http/http.dart' as http;
 
 import '../pages/homeView.dart';
 import '../pages/news.dart';
+import '../pages/allProfessionalsView.dart';
 
 class BottomBar extends StatefulWidget {
   @override
@@ -73,6 +74,14 @@ Future<void> addLog() async {
         Navigator.push(
           context,
           MaterialPageRoute(
+            builder: (context) => allProfessionalsView(),
+          ),
+        );
+      }
+       else if (index == 3) {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
             builder: (context) => ConfigView(),
           ),
         );
@@ -90,23 +99,29 @@ Future<void> addLog() async {
             : const Color.fromARGB(255, 153, 116, 223),
         selectedItemColor: Colors.white,
         unselectedItemColor: Colors.white,
+        type : BottomNavigationBarType.fixed,
         showSelectedLabels: true,
         showUnselectedLabels: true,
         currentIndex: _currentIndex,
         onTap: _onItemTapped,
         items: <BottomNavigationBarItem>[
           BottomNavigationBarItem(
-            backgroundColor: _currentIndex == 1 ? Colors.white : null,
+            backgroundColor: _currentIndex == 0 ? Colors.white : null,
             icon: const Icon(Icons.rate_review_outlined, size: 25),
             label: 'Opiniones',
           ),
           BottomNavigationBarItem(
-            backgroundColor: _currentIndex == 0 ? Colors.white : null,
+            backgroundColor: _currentIndex == 1 ? Colors.white : null,
             icon: const Icon(Icons.newspaper, size: 25),
             label: 'Noticias',
           ),
           BottomNavigationBarItem(
             backgroundColor: _currentIndex == 2 ? Colors.white : null,
+            icon: const Icon(Icons.work, size: 25),
+            label: 'Profesionales',
+          ),
+          BottomNavigationBarItem(
+            backgroundColor: _currentIndex == 3 ? Colors.white : null,
             icon: const Icon(Icons.account_circle, size: 25),
             label: 'Perfil',
           )

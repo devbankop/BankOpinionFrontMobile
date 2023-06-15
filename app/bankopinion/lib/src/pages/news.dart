@@ -6,7 +6,6 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import '../Reusable Components/bottomBar.dart';
-import 'package:flutter_webview_plugin/flutter_webview_plugin.dart';
 
 
 // Import for iOS features.
