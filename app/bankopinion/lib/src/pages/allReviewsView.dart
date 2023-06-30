@@ -63,6 +63,9 @@ class _allReviewsState extends State<allReviews> {
   Future<void> _getRole() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     userRole = prefs.getString('userRole');
+    setState(() {
+      jwt = prefs.getString("jwt");
+    });
   }
 
   Future<void> getUserProfile() async {
@@ -350,7 +353,9 @@ class _allReviewsState extends State<allReviews> {
                         },
                         child: Column(
                           children: [
-                            const Padding(padding: EdgeInsets.only(bottom: 10)),
+                            const Padding(
+                              padding: EdgeInsets.only(bottom: 10),
+                            ),
                             Container(
                                 decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(5),
@@ -363,19 +368,20 @@ class _allReviewsState extends State<allReviews> {
                                     Row(
                                       children: [
                                         Container(
-                                            padding: const EdgeInsets.only(
-                                                left: 14, top: 10, bottom: 5),
-                                            constraints: const BoxConstraints(
-                                                minWidth: 56, maxWidth: 66),
-                                            child: Column(
-                                              // ignore: prefer_const_literals_to_create_immutables
-                                              children: [
-                                                Icon(
-                                                  Icons.account_circle,
-                                                  size: 48,
-                                                )
-                                              ],
-                                            )),
+                                          padding: const EdgeInsets.only(
+                                              left: 14, top: 10, bottom: 5),
+                                          constraints: const BoxConstraints(
+                                              minWidth: 56, maxWidth: 66),
+                                          child: Column(
+                                            // ignore: prefer_const_literals_to_create_immutables
+                                            children: [
+                                              Icon(
+                                                Icons.account_circle,
+                                                size: 48,
+                                              )
+                                            ],
+                                          ),
+                                        ),
                                         Padding(
                                           padding:
                                               const EdgeInsets.only(left: 10),
@@ -415,15 +421,18 @@ class _allReviewsState extends State<allReviews> {
                                                     Row(
                                                       children: [
                                                         Text(
-                                                            "         (${Jiffy(widget.bank["reviews"][i]["dateCreated"], "yyyy-MM-dd'T'HH:mm:ss").fromNow()})",
-                                                            style: const TextStyle(
-                                                                fontSize: 10,
-                                                                color: Color
-                                                                    .fromARGB(
-                                                                        255,
-                                                                        127,
-                                                                        127,
-                                                                        127)))
+                                                          "         (${Jiffy(widget.bank["reviews"][i]["dateCreated"], "yyyy-MM-dd'T'HH:mm:ss").fromNow()})",
+                                                          style:
+                                                              const TextStyle(
+                                                            fontSize: 10,
+                                                            color:
+                                                                Color.fromARGB(
+                                                                    255,
+                                                                    127,
+                                                                    127,
+                                                                    127),
+                                                          ),
+                                                        )
                                                       ],
                                                     )
                                                   ],
@@ -484,35 +493,23 @@ class _allReviewsState extends State<allReviews> {
                                         children: [
                                           InkWell(
                                             onTap: () async {
-                                              if (jwt != null) {
-                                                final prefs =
-                                                    await SharedPreferences
-                                                        .getInstance();
-
-                                                int foundIndex =
-                                                    userFavoriteComments
-                                                        .indexOf(widget
-                                                            .bank["reviews"]
-                                                            .elementAt(
-                                                                i)["id"]);
+                                              
+                                                final prefs = await SharedPreferences.getInstance();
+                                               
+                                              if(jwt != null)
+                                              {
+                                                
+                                              
+                                                int foundIndex = userFavoriteComments.indexOf(widget.bank["reviews"].elementAt(i)["id"]);
 
                                                 setState(() {
                                                   if (foundIndex != -1) {
-                                                    userFavoriteComments
-                                                        .removeAt(foundIndex);
+                                                    userFavoriteComments.removeAt(foundIndex);
                                                   } else {
-                                                    userFavoriteComments.add(
-                                                        widget.bank["reviews"]
-                                                            .elementAt(
-                                                                i)["id"]);
+                                                    userFavoriteComments.add(widget.bank["reviews"].elementAt(i)["id"]);
                                                   }
 
-                                                  foundIndex =
-                                                      userFavoriteComments
-                                                          .indexOf(widget
-                                                              .bank["reviews"]
-                                                              .elementAt(
-                                                                  i)["id"]);
+                                                  foundIndex = userFavoriteComments.indexOf(widget.bank["reviews"].elementAt(i)["id"]);
                                                 });
 
                                                 print("userFavoriteComments");
@@ -521,38 +518,23 @@ class _allReviewsState extends State<allReviews> {
                                                 jwt = prefs.getString("jwt");
                                                 var getFavoritesComments =
                                                     Uri.parse(
-                                                        'https://bankopinion-backend-development-3vucy.ondigitalocean.app/reviews/like/review/' +
-                                                            widget
-                                                                .bank["reviews"]
-                                                                .elementAt(
-                                                                    i)["id"]
-                                                                .toString());
+                                                        'https://bankopinion-backend-development-3vucy.ondigitalocean.app/reviews/like/review/' + widget.bank["reviews"].elementAt(i)["id"].toString());
 
-                                                var response = await http.put(
-                                                    getFavoritesComments,
-                                                    headers: {
-                                                      "Authorization": '$jwt'
-                                                    });
-                                                var finalResponse =
-                                                    json.decode(response.body);
+                                                var response = await http.put(getFavoritesComments, headers: {"Authorization": '$jwt'});
+                                                var finalResponse = json.decode(response.body);
 
                                                 setState(() {
-                                                  widget.bank["reviews"]
-                                                          .elementAt(
-                                                              i)["likes"] =
-                                                      finalResponse[
-                                                          "numberOfLikesInReview"];
+                                                  widget.bank["reviews"].elementAt(i)["likes"] = finalResponse["numberOfLikesInReview"];
                                                 });
 
-                                                if (finalResponse["status"] ==
-                                                    401) {
+                                                if (finalResponse["status"] == 401) {
                                                   setState(() {
                                                     if (foundIndex != -1)
-                                                      userFavoriteComments
-                                                          .removeAt(foundIndex);
+                                                      userFavoriteComments.removeAt(foundIndex);
                                                   });
                                                 }
                                               }
+                                              print(userFavoriteComments.contains(widget.bank["reviews"].elementAt(i)["id"]));
                                             },
                                             child: Column(
                                               children: [

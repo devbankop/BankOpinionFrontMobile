@@ -3,8 +3,10 @@ import 'dart:convert';
 import 'package:bankopinion/src/pages/homeView.dart';
 import 'package:bankopinion/src/pages/startView.dart';
 import 'package:flutter/material.dart';
+import 'package:in_app_update/in_app_update.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
+
 
 //ACTUALIZADO
 
@@ -19,9 +21,12 @@ class MyAppView extends StatefulWidget {
   State<MyAppView> createState() => _MyAppViewState();
 }
 
+
 class _MyAppViewState extends State<MyAppView> {
   String? jwt;
   String? userRole;
+
+
 
   @override
   void initState() {
@@ -30,18 +35,27 @@ class _MyAppViewState extends State<MyAppView> {
     addLog();
   }
 
+
+
   Future<void> addLog() async {
-    var body = jsonEncode({"type": "New Session"});
+
+    var body = jsonEncode({
+      "type": "New Session"
+    });
 
     var newView = Uri.parse(
         'https://bankopinion-backend-development-3vucy.ondigitalocean.app/logs/addlog');
     final response = await http.post(newView,
-        body: body, headers: {"Content-Type": "application/json"});
+        body: body, 
+        headers: {
+          "Content-Type": "application/json"
+          });
 
     // var addNews = jsonDecode(response.body);
-    print(response.statusCode);
-    print(response.body);
+        print(response.statusCode);
+        print(response.body);
   }
+
 
   Future<void> _getRole() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -60,7 +74,7 @@ class _MyAppViewState extends State<MyAppView> {
         final mediaQueryData = MediaQuery.of(context);
 
         return MediaQuery(
-          data: mediaQueryData.copyWith(textScaleFactor: 1.2),
+          data: mediaQueryData.copyWith(textScaleFactor: 1.0),
           child: child!,
         );
       },

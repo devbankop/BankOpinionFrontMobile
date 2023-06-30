@@ -6,6 +6,7 @@ import 'package:bankopinion/src/pages/homeView.dart';
 import 'package:bankopinion/src/pages/news.dart';
 import 'package:flutter/foundation.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:in_app_update/in_app_update.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 import 'package:flutter/material.dart';
@@ -31,8 +32,35 @@ class _StartViewState extends State<StartView> {
     SharedPreferences.getInstance().then((value) {
       prefs = value;
     });
+    checkForUpdate();
     // var refresh = AuthService();
     // refresh.refreshToken();
+  }
+
+  void checkForUpdate() async {
+    final AppUpdateInfo updateInfo = await InAppUpdate.checkForUpdate();
+
+    if (updateInfo.updateAvailability == UpdateAvailability.updateAvailable) {
+      await InAppUpdate.startFlexibleUpdate().catchError((error) {
+        // Handle flexible update start error
+      });
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('¡Nueva actualización disponible!'),
+          action: SnackBarAction(
+            label: 'Actualizar',
+            onPressed: () {
+              InAppUpdate.completeFlexibleUpdate().catchError((error) {
+                // Handle flexible update completion error
+              });
+            },
+          ),
+        ),
+      );
+    } else {
+      print("No hay actualizaciones disponibles");
+    }
   }
 
   Future<void> _getRole() async {
@@ -101,7 +129,7 @@ class _StartViewState extends State<StartView> {
                 Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.center,
-          
+
                   // ignore: prefer_const_literals_to_create_immutables
                   children: [
                     Padding(
@@ -143,7 +171,8 @@ class _StartViewState extends State<StartView> {
                             backgroundColor:
                                 const Color.fromARGB(255, 153, 116, 223),
                           ),
-                          child: Text("Acceder", style: TextStyle(fontSize: 16)),
+                          child:
+                              Text("Acceder", style: TextStyle(fontSize: 16)),
                         ),
                       ),
                     )
@@ -186,7 +215,7 @@ class _StartViewState extends State<StartView> {
                             color: Color.fromARGB(255, 153, 116, 223)),
                       ),
                     ),
-          
+
                     Padding(
                       padding: const EdgeInsets.only(top: kIsWeb ? 20 : 60),
                       child:

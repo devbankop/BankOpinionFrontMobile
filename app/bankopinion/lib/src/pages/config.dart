@@ -1,13 +1,14 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:io';
 import 'package:bankopinion/src/about/terms.dart';
 import 'package:bankopinion/src/pages/profile.dart';
 import 'package:bankopinion/src/pages/startView.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../Reusable Components/bottomBar.dart';
 import 'package:http/http.dart' as http;
-
 
 import '../about/aboutus.dart';
 import '../about/privacyPolicy.dart';
@@ -34,64 +35,61 @@ class _ConfigViewState extends State<ConfigView> {
   void initState() {
     super.initState();
 
-  if(jwt != null && jwt != '')
-  {
-        var refresh = AuthService();
-    refresh.refreshToken();
-  }
+    if (jwt != null && jwt != '') {
+      var refresh = AuthService();
+      refresh.refreshToken();
+    }
     _getRole();
     _getJWT();
   }
 
-
-   Future<void> _getRole() async {
+  Future<void> _getRole() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
-      userRole = prefs.getString('userRole');
+    userRole = prefs.getString('userRole');
   }
+
   Future<void> _getJWT() async {
     final prefs = await SharedPreferences.getInstance();
     setState(() {
       jwt = prefs.getString('jwt');
       refresh_token = prefs.getString('refresh_token');
-
     });
   }
 
-
-    Future<void> addLog() async {
-
-    var body = jsonEncode({
-      "type": "SignOut"
-      
-    });
+  Future<void> addLog() async {
+    var body = jsonEncode({"type": "SignOut"});
 
     var newView = Uri.parse(
         'https://bankopinion-backend-development-3vucy.ondigitalocean.app/logs/addlog');
     final response = await http.post(newView,
-        body: body, 
-        headers: {
-          "Content-Type": "application/json"
-          });
+        body: body, headers: {"Content-Type": "application/json"});
 
     // var addNews = jsonDecode(response.body);
-        print(response.statusCode);
-        print(response.body);
-
+    print(response.statusCode);
+    print(response.body);
   }
-  
-Future<void> _deleteJWT() async {
+
+  Future<void> _deleteJWT() async {
     final prefs = await SharedPreferences.getInstance();
     setState(() {
-
-      
       prefs.remove('jwt');
       prefs.remove('refresh_token');
       jwt = null;
-
     });
   }
 
- 
+  void launchGooglePlay() async {
+    const String googlePlayUrl =
+        'https://apps.apple.com/us/app/bankopinion/id6446296546';
+    const String fallbackUrl =
+        'https://apps.apple.com/us/app/bankopinion/id6446296546';
+
+    if (await canLaunch(googlePlayUrl)) {
+      await launch(googlePlayUrl);
+    } else {
+      await launch(fallbackUrl);
+    }
+  }
 
   var banks = [];
   var prefs;
@@ -109,65 +107,99 @@ Future<void> _deleteJWT() async {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        key: _scaffoldKey,
-        resizeToAvoidBottomInset: true,
-        backgroundColor: const Color.fromARGB(255, 255, 255, 255),
-        bottomNavigationBar: BottomBar(),
-        body: 
-        SingleChildScrollView(
-            child: Padding(
-                padding: const EdgeInsets.all(20),
-                child: 
-                  Center(
-                    child: Container(
-                      width: 800,
-                      child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Padding(
-                            padding: const EdgeInsets.only(top: 30),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              // ignore: prefer_const_literals_to_create_immutables
-                              children: [
-                                const Text("AJUSTES",
-                                    style: TextStyle(
-                                        fontSize: 24,
-                                        color: Color.fromARGB(255, 55, 11, 137),
-                                        fontWeight: FontWeight.bold))
-                              ],
-                            )),
-                            jwt != null && jwt != ''
-                             ?
-                        Padding(
-                            padding: const EdgeInsets.only(top: 30),
-                            child: InkWell(
-                              onTap: () {
-                                Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) => Profile()));
-                              },
-                              child: 
-                               Container(
-                                height: 80,
-                                width: double.infinity,
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(6),
-                                  color: Color.fromARGB(25, 55, 11, 137),
-                                  border: Border.all(
-                                    color: Color.fromARGB(168, 55, 11, 137),
-                                    width: .6,
+      key: _scaffoldKey,
+      resizeToAvoidBottomInset: true,
+      backgroundColor: const Color.fromARGB(255, 255, 255, 255),
+      bottomNavigationBar: BottomBar(),
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(20),
+          child: Center(
+            child: Container(
+                width: 800,
+                child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Padding(
+                          padding: const EdgeInsets.only(top: 30),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            // ignore: prefer_const_literals_to_create_immutables
+                            children: [
+                              const Text("AJUSTES",
+                                  style: TextStyle(
+                                      fontSize: 24,
+                                      color: Color.fromARGB(255, 55, 11, 137),
+                                      fontWeight: FontWeight.bold))
+                            ],
+                          )),
+                      jwt != null && jwt != ''
+                          ? Padding(
+                              padding: const EdgeInsets.only(top: 30),
+                              child: InkWell(
+                                  onTap: () {
+                                    Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) => Profile()));
+                                  },
+                                  child: Container(
+                                    height: 80,
+                                    width: double.infinity,
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(6),
+                                      color: Color.fromARGB(25, 55, 11, 137),
+                                      border: Border.all(
+                                        color: Color.fromARGB(168, 55, 11, 137),
+                                        width: .6,
+                                      ),
+                                    ),
+                                    child: Padding(
+                                        padding: EdgeInsets.all(10),
+                                        child: Row(
+                                          children: [
+                                            Icon(
+                                              Icons.person,
+                                              color: Color.fromARGB(
+                                                  168, 55, 11, 137),
+                                            ),
+                                            Padding(
+                                                padding: EdgeInsets.symmetric(
+                                                    horizontal: 10),
+                                                child: Text(
+                                                    "Información personal",
+                                                    style: TextStyle(
+                                                        fontSize: 20,
+                                                        color: Color.fromARGB(
+                                                            255, 55, 11, 137))))
+                                          ],
+                                        )),
+                                  )))
+                          : Padding(
+                              padding: const EdgeInsets.only(top: 30),
+                              child: InkWell(
+                                onTap: () {
+                                  _showAlertDialog();
+                                },
+                                child: Container(
+                                  height: 80,
+                                  width: double.infinity,
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(6),
+                                    color: Color.fromARGB(29, 122, 122, 122),
+                                    border: Border.all(
+                                      color: Color.fromARGB(168, 122, 122, 122),
+                                      width: .6,
+                                    ),
                                   ),
-                                ),
-                                child: Padding(
+                                  child: Padding(
                                     padding: EdgeInsets.all(10),
                                     child: Row(
                                       children: [
                                         Icon(
                                           Icons.person,
-                                          color:
-                                              Color.fromARGB(168, 55, 11, 137),
+                                          color: Color.fromARGB(
+                                              168, 132, 132, 132),
                                         ),
                                         Padding(
                                             padding: EdgeInsets.symmetric(
@@ -176,70 +208,30 @@ Future<void> _deleteJWT() async {
                                                 style: TextStyle(
                                                     fontSize: 20,
                                                     color: Color.fromARGB(
-                                                        255, 55, 11, 137))))
+                                                        255, 132, 132, 132))))
                                       ],
-                                    )),
-                              )
-                              
-                            ))
-                            : Padding(
-                                padding: const EdgeInsets.only(top: 30),
-                                child: InkWell(
-                                  onTap: () {
-                                    _showAlertDialog();         
-                                  },
-                                    child: 
-                                    Container(
-                                      height: 80,
-                                      width: double.infinity,
-                                      decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(6),
-                                        color: Color.fromARGB(29, 122, 122, 122),
-                                        border: Border.all(
-                                          color: Color.fromARGB(168, 122, 122, 122),
-                                          width: .6,
-                                        ),
-                                      ),
-                                      child: Padding(
-                                          padding: EdgeInsets.all(10),
-                                          child: Row(
-                                            children: [
-                                              Icon(
-                                                Icons.person,
-                                                color:
-                                                    Color.fromARGB(168, 132, 132, 132),
-                                              ),
-                                              Padding(
-                                                  padding: EdgeInsets.symmetric(
-                                                      horizontal: 10),
-                                                  child: Text("Información personal",
-                                                      style: TextStyle(
-                                                          fontSize: 20,
-                                                          color: Color.fromARGB(255, 132, 132, 132))))
-                                            ],
-                                          ),),
                                     ),
-                                    
                                   ),
-                          ),
+                                ),
+                              ),
+                            ),
 
-                        //APARTADO DE PREFERENCIAS
+                      //APARTADO DE PREFERENCIAS
 
-                        Padding(
-                        padding: const EdgeInsets.only(top: 10),
-                        child: InkWell(
-                          onTap: () {
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => PrefsView()));
-                          },
-                          child: Container(
+                      Padding(
+                          padding: const EdgeInsets.only(top: 10),
+                          child: InkWell(
+                            onTap: () {
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => PrefsView()));
+                            },
+                            child: Container(
                               height: 80,
                               width: double.infinity,
                               decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(6),
-
+                                borderRadius: BorderRadius.circular(6),
                                 color: Color.fromARGB(25, 55, 11, 137),
                                 border: Border.all(
                                   color: Color.fromARGB(168, 55, 11, 137),
@@ -247,40 +239,42 @@ Future<void> _deleteJWT() async {
                                 ),
                               ),
                               child: Padding(
-                              padding: EdgeInsets.all(10),
-                              child: Row(
-                                children: [
-                                  Icon(Icons.settings_accessibility,
-                                  color: Color.fromARGB(168, 55, 11, 137),),
-                                  Padding(padding: EdgeInsets.symmetric(horizontal: 10),
-                                  child: Text("Preferencias",
-                                  style: TextStyle(
-                                    fontSize: 20,
-                                    color: Color.fromARGB(255, 55, 11, 137)
-                                    )))
-                                ],
-                              )),
-                              ),
-                        )),
+                                  padding: EdgeInsets.all(10),
+                                  child: Row(
+                                    children: [
+                                      Icon(
+                                        Icons.settings_accessibility,
+                                        color: Color.fromARGB(168, 55, 11, 137),
+                                      ),
+                                      Padding(
+                                          padding: EdgeInsets.symmetric(
+                                              horizontal: 10),
+                                          child: Text("Preferencias",
+                                              style: TextStyle(
+                                                  fontSize: 20,
+                                                  color: Color.fromARGB(
+                                                      255, 55, 11, 137))))
+                                    ],
+                                  )),
+                            ),
+                          )),
 
+                      //APARTADO DE CONTACTO
 
-                        //APARTADO DE CONTACTO
-
-                        Padding(
-                        padding: const EdgeInsets.only(top: 10),
-                        child: InkWell(
-                          onTap: () {
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => contactFormView()));
-                          },
-                          child: Container(
+                      Padding(
+                          padding: const EdgeInsets.only(top: 10),
+                          child: InkWell(
+                            onTap: () {
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => contactFormView()));
+                            },
+                            child: Container(
                               height: 80,
                               width: double.infinity,
                               decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(6),
-
+                                borderRadius: BorderRadius.circular(6),
                                 color: Color.fromARGB(25, 55, 11, 137),
                                 border: Border.all(
                                   color: Color.fromARGB(168, 55, 11, 137),
@@ -288,49 +282,150 @@ Future<void> _deleteJWT() async {
                                 ),
                               ),
                               child: Padding(
-                              padding: EdgeInsets.all(10),
+                                  padding: EdgeInsets.all(10),
+                                  child: Row(
+                                    children: [
+                                      Icon(
+                                        Icons.email,
+                                        color: Color.fromARGB(168, 55, 11, 137),
+                                      ),
+                                      Padding(
+                                          padding: EdgeInsets.symmetric(
+                                              horizontal: 10),
+                                          child: Text("Contacto",
+                                              style: TextStyle(
+                                                  fontSize: 20,
+                                                  color: Color.fromARGB(
+                                                      255, 55, 11, 137))))
+                                    ],
+                                  )),
+                            ),
+                          )),
+
+                      //APARTADO DE VALORACIÓN
+
+                      Padding(
+                          padding: const EdgeInsets.only(top: 35),
+                          child: InkWell(
+                            onTap: () {
+                              launchGooglePlay();
+                            },
+                            child: Container(
+                              height: 55,
+                              width: double.infinity,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(6),
+                                color: Color.fromARGB(25, 55, 11, 137),
+                                border: Border.all(
+                                  color: Color.fromARGB(168, 55, 11, 137),
+                                  width: .6,
+                                ),
+                              ),
+                              child: Padding(
+                                  padding: EdgeInsets.all(10),
+                                  child: Row(
+                                    children: [
+                                      Icon(
+                                        Icons.star,
+                                        color: Color.fromARGB(168, 55, 11, 137),
+                                      ),
+                                      Padding(
+                                          padding: EdgeInsets.symmetric(
+                                              horizontal: 10),
+                                          child: Text(
+                                              Platform.isIOS
+                                                  ? "Valorar app en App Store"
+                                                  : "Valorar app en Google Play",
+                                              style: TextStyle(
+                                                  fontSize: 20,
+                                                  color: Color.fromARGB(
+                                                      255, 55, 11, 137))))
+                                    ],
+                                  )),
+                            ),
+                          )),
+
+                      Align(
+                        alignment: Alignment.bottomCenter,
+                        child: Padding(
+                          padding: const EdgeInsets.only(top: 60),
+                          child: jwt != null && jwt != ''
+                              ? ElevatedButton(
+                                  onPressed: () {
+                                    _deleteJWT();
+                                    userRole = 'user';
+
+                                    Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) => StartView()));
+                                  },
+                                  style: ElevatedButton.styleFrom(
+                                    shape: const StadiumBorder(),
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 110, vertical: 14),
+                                    backgroundColor: userRole == 'superAdmin'
+                                        ? Color.fromARGB(255, 223, 116, 116)
+                                        : Color.fromARGB(130, 55, 11, 137),
+                                  ),
+                                  child: const Text("Cerrar sesión",
+                                      style: TextStyle(fontSize: 16)))
+                              : ElevatedButton(
+                                  onPressed: () {
+                                    setState(() {
+                                      userRole = 'user';
+                                    });
+                                    print(userRole);
+
+                                    Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) => LoginView()));
+                                  },
+                                  style: ElevatedButton.styleFrom(
+                                    shape: const StadiumBorder(),
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 110, vertical: 14),
+                                    backgroundColor: userRole == 'superAdmin'
+                                        ? Color.fromARGB(255, 223, 116, 116)
+                                        : const Color.fromARGB(
+                                            255, 153, 116, 223),
+                                  ),
+                                  child: const Text("Iniciar sesión",
+                                      style: TextStyle(fontSize: 16))),
+                        ),
+                      ),
+
+                      Column(
+                        children: [
+                          Padding(
+                              padding: const EdgeInsets.only(top: 55),
                               child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                // ignore: prefer_const_literals_to_create_immutables
                                 children: [
-                                  Icon(Icons.email,
-                                  color: Color.fromARGB(168, 55, 11, 137),),
-                                  Padding(padding: EdgeInsets.symmetric(horizontal: 10),
-                                  child: Text("Contacto",
-                                  style: TextStyle(
-                                    fontSize: 20,
-                                    color: Color.fromARGB(255, 55, 11, 137)
-                                    )))
+                                  const Text("INFORMACIÓN LEGAL",
+                                      style: TextStyle(
+                                          fontSize: 24,
+                                          color:
+                                              Color.fromARGB(255, 55, 11, 137),
+                                          fontWeight: FontWeight.bold))
                                 ],
                               )),
-                              ),
-                        )),
-                        
-
-                        Padding(
-                            padding: const EdgeInsets.only(top: 55),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              // ignore: prefer_const_literals_to_create_immutables
-                              children: [
-                                const Text("INFORMACIÓN LEGAL",
-                                    style: TextStyle(
-                                        fontSize: 24,
-                                        color: Color.fromARGB(255, 55, 11, 137),
-                                        fontWeight: FontWeight.bold))
-                              ],
-                            )),
-                        Padding(
+                          Padding(
                             padding: const EdgeInsets.only(top: 10, left: 10),
                             child: Column(children: [
                               Padding(
                                   padding: const EdgeInsets.only(top: 20),
                                   child: Row(children: [
                                     InkWell(
-                                      onTap: () {
+                                        onTap: () {
                                           Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                                builder: (context) => aboutUsView()));
-                                      },
+                                              context,
+                                              MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      aboutUsView()));
+                                        },
                                         child: Text("Sobre nosotros",
                                             style: TextStyle(
                                               decoration:
@@ -344,12 +439,13 @@ Future<void> _deleteJWT() async {
                                   padding: const EdgeInsets.only(top: 20),
                                   child: Row(children: [
                                     InkWell(
-                                      onTap: () {
-                                         Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) => termsView()));
-                                      },
+                                        onTap: () {
+                                          Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      termsView()));
+                                        },
                                         child: Text(
                                             "Términos y condiciones de uso",
                                             style: TextStyle(
@@ -361,85 +457,40 @@ Future<void> _deleteJWT() async {
                                             )))
                                   ])),
                               Padding(
-                                  padding: const EdgeInsets.only(
-                                      top: 20, bottom: 50),
-                                  child: Row(children: [
-                                    InkWell(
-                                      onTap: () {
-                                          Navigator.push(
+                                padding:
+                                    const EdgeInsets.only(top: 20, bottom: 50),
+                                child: Row(children: [
+                                  InkWell(
+                                    onTap: () {
+                                      Navigator.push(
                                           context,
                                           MaterialPageRoute(
-                                            builder: (context) => privacyPolicyView()));
-                                      },
-                                        child: Text("Política de privacidad",
-                                            style: TextStyle(
-                                              decoration:
-                                                  TextDecoration.underline,
-                                              fontSize: 16,
-                                              color: Color.fromARGB(
-                                                  255, 55, 11, 137),
-                                            )))
-                                  ])),
-                            ])),
-                            
-                        Align(
-                            alignment: Alignment.bottomCenter,
-                            child: Padding(
-                              padding: const EdgeInsets.only(),
-                              child: jwt != null && jwt != ''
-                                  ? ElevatedButton(
-
-                                      onPressed: () {
-                                        _deleteJWT();
-                                                                                  print(userRole);
-
-                                          userRole = 'user';
-                                       
-                                        Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                                builder: (context) =>
-                                                    StartView()));
-                                        
-                                      },
-                                      style: ElevatedButton.styleFrom(
-                                        shape: const StadiumBorder(),
-                                        padding: const EdgeInsets.symmetric(
-                                            horizontal: 110, vertical: 14),
-                                       backgroundColor: userRole == 'superAdmin' ? Color.fromARGB(255, 223, 116, 116) :Color.fromARGB(130, 55, 11, 137),
+                                              builder: (context) =>
+                                                  privacyPolicyView()));
+                                    },
+                                    child: Text(
+                                      "Política de privacidad",
+                                      style: TextStyle(
+                                        decoration: TextDecoration.underline,
+                                        fontSize: 16,
+                                        color: Color.fromARGB(255, 55, 11, 137),
                                       ),
-                                      child: const Text("Cerrar sesión",
-                                          style: TextStyle(fontSize: 16)))
-                                  : ElevatedButton(
-                                      onPressed: () {
-                                        setState(() {
-                                            userRole = 'user';
+                                    ),
+                                  ),
+                                ]),
+                              ),
+                            ]),
+                          ),
+                        ],
+                      )
+                    ])),
+          ),
+        ),
+      ),
+    );
+  }
 
-                                        });
-                                              print(userRole);
-
-                                        Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                                builder: (context) =>
-                                                    LoginView()));
-                                      },
-                                      style: ElevatedButton.styleFrom(
-                                        shape: const StadiumBorder(),
-                                        padding: const EdgeInsets.symmetric(
-                                            horizontal: 110, vertical: 14),
-                                        backgroundColor: userRole == 'superAdmin' ? Color.fromARGB(255, 223, 116, 116) :const Color.fromARGB(255, 153, 116, 223),
-                                      ),
-                                      child: const Text("Iniciar sesión",
-                                          style: TextStyle(fontSize: 16))),
-                            ))
-                      ])
-                    )
-                  )
-                )));}
-        
-
-    void _showAlertDialog() {
+  void _showAlertDialog() {
     showDialog(
       context: context,
       builder: (BuildContext context) {

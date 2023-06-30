@@ -6,7 +6,6 @@ import 'package:flutter/material.dart';
 import 'package:email_validator/email_validator.dart';
 import 'package:http/http.dart' as http;
 
-
 class SignUpView1 extends StatefulWidget {
   SignUpView1({super.key});
 
@@ -36,8 +35,6 @@ class _SignUpView1State extends State<SignUpView1> {
     fetchData();
   }
 
-
- 
   @override
   void dispose() {
     _controller.dispose();
@@ -53,10 +50,9 @@ class _SignUpView1State extends State<SignUpView1> {
         resizeToAvoidBottomInset: true,
         backgroundColor: const Color.fromARGB(255, 255, 255, 255),
         body: Center(
-          child: SingleChildScrollView(
-            child: Column(children: [
-
-              Padding(
+            child: SingleChildScrollView(
+                child: Column(children: [
+          Padding(
               padding: EdgeInsets.only(top: 15, left: 15),
               child: Row(
                 children: [
@@ -82,7 +78,6 @@ class _SignUpView1State extends State<SignUpView1> {
                       )),
                 ],
               )),
-              
           Padding(
               padding: const EdgeInsets.only(),
               child: Container(
@@ -115,48 +110,47 @@ class _SignUpView1State extends State<SignUpView1> {
               children: [
                 Container(
                   width: kIsWeb ? 400 : null,
-                    child: Column(
-                      children: [
-                        Row(
-                  // ignore: prefer_const_literals_to_create_immutables
-                  children: [
-                    const Padding(
-                        padding: EdgeInsets.only(bottom: 4),
-                        // ignore: unnecessary_const
-                        child: const Text("Email",
-                            style: TextStyle(
-                                fontSize: 18,
-                                color: Color.fromARGB(255, 0, 0, 0),
-                                fontWeight: FontWeight.bold)))
-                  ],
-                ),
-                Column(
-                  children: [
-                    TextField(
-                      controller: emailTextController,
-                      onChanged: (String value) {
-                        setState(() {                 
-                            email = value;  
-
-                            isValid = EmailValidator.validate(email);
-                    
-                        });
-                        
-                        
-                      },
-                     
-                      decoration: InputDecoration(
-                        hintText: 'ejemplo@correo.com',
+                  child: Column(
+                    children: [
+                      Row(
+                        // ignore: prefer_const_literals_to_create_immutables
+                        children: [
+                          const Padding(
+                            padding: EdgeInsets.only(bottom: 4),
+                            // ignore: unnecessary_const
+                            child: const Text(
+                              "Email",
+                              style: TextStyle(
+                                  fontSize: 18,
+                                  color: Color.fromARGB(255, 0, 0, 0),
+                                  fontWeight: FontWeight.bold),
+                            ),
+                          )
+                        ],
                       ),
-                      maxLines: 1,
-                      minLines: 1,
-                    ),
-                  ],
+                      Column(
+                        children: [
+                          TextField(
+                            controller: emailTextController,
+                            onChanged: (String value) {
+                              setState(() {
+                                email = value;
+
+                                isValid = EmailValidator.validate(email);
+                              });
+                            },
+                            decoration: InputDecoration(
+                              hintText: 'ejemplo@correo.com',
+                            ),
+                            maxLines: 1,
+                            minLines: 1,
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
                 ),
-                      ],
-                    )
-                ),
-                emailValid == true
+                emailValid != true
                     ? Row(
                         children: [
                           Text(
@@ -169,18 +163,19 @@ class _SignUpView1State extends State<SignUpView1> {
                         ],
                       )
                     : Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.center,
                         // ignore: prefer_const_literals_to_create_immutables
                         children: [
                           Padding(
                             padding: const EdgeInsets.only(top: 5),
-                                child: const Text(
-                                  "Email ya existente",
-                                  style: TextStyle(
-                                    fontSize: 14,
-                                    color: Colors.red,
-                                  ),
-                          ),)
+                            child: const Text(
+                              "Email ya existente",
+                              style: TextStyle(
+                                fontSize: 14,
+                                color: Colors.red,
+                              ),
+                            ),
+                          )
                         ],
                       ),
                 Column(
@@ -190,40 +185,39 @@ class _SignUpView1State extends State<SignUpView1> {
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                        isValid
+                          isValid
                               ? ElevatedButton(
                                   onPressed: (() async {
+                                    var responseCheckEmail = Uri.parse(
+                                        'https://bankopinion-backend-development-3vucy.ondigitalocean.app/users/verifyUserExist/' +
+                                            email);
+                                    try {
+                                      final response =
+                                          await http.get(responseCheckEmail);
+                                      setState(() {
+                                        emailExists = jsonDecode(response.body);
+                                      });
+                                      print('User Exists:' +
+                                          emailExists['userExists']);
+                                    } catch (error) {
+                                      // print(error.toString());
+                                    }
 
+                                    if (emailExists['userExists'] == false) {
+                                      setState(() {
+                                        emailValid = true;
+                                      });
 
-                                      var responseCheckEmail = Uri.parse(
-                                            'https://bankopinion-backend-development-3vucy.ondigitalocean.app/users/verifyUserExist/' + email );
-                                        try {
-                                          final response = await http.get(responseCheckEmail);
-                                          setState(() {
-                                            emailExists = jsonDecode(response.body);
-                                          });
-                                          print('User Exists:' + emailExists['userExists']);
-                                        } catch (error) {
-                                          print(error.toString());
-                                        }
-
-
-                                      if(emailExists['userExists'] == false)
-                                      {
-                                        setState(() {
-                                          emailValid = true;
-                                        });
-
-                                        Navigator.push(
+                                      Navigator.push(
                                           context,
                                           MaterialPageRoute(
                                               builder: (context) =>
                                                   SignUpView2(email: email)));
-                                      } else {
-                                        setState(() {
-                                          emailValid = false;
-                                        });
-                                      }
+                                    } else {
+                                      setState(() {
+                                        emailValid = true;
+                                      });
+                                    }
                                   }),
                                   style: ElevatedButton.styleFrom(
                                     shape: const StadiumBorder(),
@@ -240,7 +234,8 @@ class _SignUpView1State extends State<SignUpView1> {
                                     shape: const StadiumBorder(),
                                     padding: const EdgeInsets.symmetric(
                                         horizontal: 130, vertical: 14),
-                                    backgroundColor: const Color.fromARGB(127, 154, 116, 223),
+                                    backgroundColor: const Color.fromARGB(
+                                        127, 154, 116, 223),
                                   ),
                                   child: const Text("Siguiente",
                                       style: TextStyle(fontSize: 16)))
@@ -269,7 +264,7 @@ class _SignUpView1State extends State<SignUpView1> {
                 //       ],
                 //     )),
 
-        //INICIO CON GOOGLE
+                //INICIO CON GOOGLE
                 // Padding(
                 //   padding: const EdgeInsets.only(top: 40),
                 //   child: Row(
@@ -309,8 +304,6 @@ class _SignUpView1State extends State<SignUpView1> {
               ],
             ),
           ),
-        ]))
-        )
-        );
+        ]))));
   }
 }
