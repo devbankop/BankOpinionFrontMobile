@@ -30,9 +30,9 @@ class allProfessionalsViewState extends State<allProfessionalsView> {
   String selectedType = "";
   var search = false;
 
-
   @override
   void initState() {
+    addLog();
     super.initState();
     getProfessionals();
     if (jwt != null && jwt != '') {
@@ -69,34 +69,61 @@ class allProfessionalsViewState extends State<allProfessionalsView> {
     //print(response.body);
   }
 
-Future<void> getProfessionals() async {
-  var getProfessionals = Uri.parse('https://bankopinion-backend-development-3vucy.ondigitalocean.app/professionals/');
-  final response = await http.get(getProfessionals);
+  Future<void> getProfessionals() async {
+    var getProfessionals = Uri.parse(
+        'https://bankopinion-backend-development-3vucy.ondigitalocean.app/professionals/');
+    final response = await http.get(getProfessionals);
 
-  print(response.statusCode);
+    print(response.statusCode);
 
-  Map<String, dynamic> responseData = jsonDecode(response.body);
-  print(responseData);
-  setState(() {
-    pros = [];
-    if (responseData['professionals'] != null &&
-        responseData['professionals'] is List) { // Verificar si es una lista
-      List<dynamic> professionals = responseData['professionals'];
-      for (var professional in professionals) {
-        if (professional['approved'] == true) {
-          if (selectedType.isEmpty || professional['type'] == selectedType) {
-            pros.add(professional);
+    Map<String, dynamic> responseData = jsonDecode(response.body);
+    //print(responseData);
+    setState(() {
+      pros = [];
+      if (responseData['professionals'] != null &&
+          responseData['professionals'] is List) {
+        // Verificar si es una lista
+        List<dynamic> professionals = responseData['professionals'];
+
+        // Filtrar profesionales aprobados y del tipo seleccionado
+        List<dynamic> approvedProfessionals = professionals
+            .where((professional) =>
+                professional['approved'] == true &&
+                (selectedType.isEmpty || professional['type'] == selectedType))
+            .toList();
+
+        // Separar profesionales promocionados de los no promocionados
+        List<dynamic> promoProfessionals = [];
+        List<dynamic> nonPromoProfessionals = [];
+        for (var professional in approvedProfessionals) {
+          if (professional['promo'] == true) {
+            promoProfessionals.add(professional);
+          } else {
+            nonPromoProfessionals.add(professional);
           }
         }
+
+        // Filtrar profesionales del tipo seleccionado en los promocionados
+        promoProfessionals = promoProfessionals
+            .where((professional) => professional['type'] == selectedType)
+            .toList();
+
+        // Ordenar profesionales promocionados en su orden original
+        promoProfessionals.sort(
+            (a, b) => professionals.indexOf(a) - professionals.indexOf(b));
+
+        // Ordenar profesionales no promocionados en su orden original
+        nonPromoProfessionals.sort(
+            (a, b) => professionals.indexOf(a) - professionals.indexOf(b));
+
+        // Agregar profesionales promocionados al principio seguidos de los no promocionados
+        pros.addAll(promoProfessionals);
+        pros.addAll(nonPromoProfessionals);
       }
-    }
-  });
+    });
 
-  print(pros);
-}
-
-
-
+    //print(pros);
+  }
 
   var prefs;
 
@@ -200,107 +227,120 @@ Future<void> getProfessionals() async {
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              SingleChildScrollView(
-                                scrollDirection: Axis.horizontal,
-                                child: Row(
-                                  children: [
-                                    for (var field in [
-                                      'Abogados',
-                                      'Juristas',
-                                      'Gestores',
-                                      'Notarios',
-                                    ])
-                                      Padding(
-                                        padding:
-                                            EdgeInsets.symmetric(horizontal: 6),
-                                        child: InkWell(
-                                          onTap: () {
-                                             setState(() {
-                                            if (selectedType == field) {
-                                              getProfessionals();
-                                              selectedType = ""; // Deseleccionar el elemento actual
-                                            } else {
-                                              getProfessionals();
-                                              selectedType = field; // Seleccionar el nuevo elemento
-                                              print(selectedType);
-                                            }
-                                          });
-                                          },
-                                          child: Container(
-                                            decoration: BoxDecoration(
-                                              borderRadius:
-                                                  BorderRadius.circular(10),
-                                              color: selectedType == field
-                                                  ? Colors.white
-                                                  : Color.fromARGB(
-                                                      168, 55, 11, 137),
-                                              border: Border.all(
+                              Expanded(
+                                child: SingleChildScrollView(
+                                  scrollDirection: Axis.horizontal,
+                                  child: Row(
+                                    children: [
+                                      for (var field in [
+                                        'Abogados',
+                                        'Procuradores',
+                                        'Gestores',
+                                        'Notarios',
+                                        'Préstamos'
+                                      ])
+                                        Padding(
+                                          padding: EdgeInsets.symmetric(
+                                              horizontal: 7),
+                                          child: InkWell(
+                                            onTap: () {
+                                              setState(() {
+                                                if (selectedType == field) {
+                                                  getProfessionals();
+                                                  selectedType =
+                                                      ""; // Deseleccionar el elemento actual
+                                                } else {
+                                                  getProfessionals();
+                                                  selectedType =
+                                                      field; // Seleccionar el nuevo elemento
+                                                  print(selectedType);
+                                                }
+                                              });
+                                            },
+                                            child: Container(
+                                              decoration: BoxDecoration(
+                                                borderRadius:
+                                                    BorderRadius.circular(10),
                                                 color: selectedType == field
-                                                    ? Color.fromARGB(
-                                                        168, 55, 11, 137)
+                                                    ? Colors.white
                                                     : Color.fromARGB(
                                                         168, 55, 11, 137),
-                                                width: .6,
+                                                border: Border.all(
+                                                  color: selectedType == field
+                                                      ? Color.fromARGB(
+                                                          168, 55, 11, 137)
+                                                      : Color.fromARGB(
+                                                          168, 55, 11, 137),
+                                                  width: .6,
+                                                ),
                                               ),
-                                            ),
-                                            child: Padding(
-                                              padding: EdgeInsets.all(8),
-                                              child: Wrap(
-                                                crossAxisAlignment:
-                                                    WrapCrossAlignment.center,
-                                                children: [
-                                                  Text(
-                                                    field,
-                                                    style: TextStyle(
-                                                      fontSize: 12,
-                                                      fontWeight:
-                                                          FontWeight.w700,
-                                                      color: selectedType == field
-                                                          ? Color.fromARGB(
-                                                              168, 55, 11, 137)
-                                                          : Color.fromARGB(255,
-                                                              255, 255, 255),
+                                              child: Padding(
+                                                padding: EdgeInsets.all(8),
+                                                child: Wrap(
+                                                  crossAxisAlignment:
+                                                      WrapCrossAlignment.center,
+                                                  children: [
+                                                    Text(
+                                                      field,
+                                                      style: TextStyle(
+                                                        fontSize: 12,
+                                                        fontWeight:
+                                                            FontWeight.w700,
+                                                        color: selectedType ==
+                                                                field
+                                                            ? Color.fromARGB(
+                                                                168,
+                                                                55,
+                                                                11,
+                                                                137)
+                                                            : Color.fromARGB(
+                                                                255,
+                                                                255,
+                                                                255,
+                                                                255),
+                                                      ),
                                                     ),
-                                                  ),
-                                                ],
+                                                  ],
+                                                ),
                                               ),
                                             ),
                                           ),
                                         ),
-                                      ),
-                                  ],
+                                    ],
+                                  ),
                                 ),
                               ),
                               Row(
                                 children: [
                                   InkWell(
                                     onTap: () {
-                                      
                                       getProfessionals();
                                       setState(() {
                                         search = !search;
-
                                       });
-
                                     },
-                                    child: Container(
-                                      width: 42,
-                                      height: 42,
-                                      decoration: BoxDecoration(
-                                        color: Colors.white,
-                                        borderRadius: BorderRadius.circular(20),
-                                        border: Border.all(
-                                          color:
-                                              Color.fromARGB(168, 55, 11, 137),
-                                          width: 1.2,
+                                    child: Padding(
+                                      padding: const EdgeInsets.only(left: 8),
+                                      child: Container(
+                                        width: 42,
+                                        height: 42,
+                                        decoration: BoxDecoration(
+                                          color: Colors.white,
+                                          borderRadius:
+                                              BorderRadius.circular(20),
+                                          border: Border.all(
+                                            color: Color.fromARGB(
+                                                168, 55, 11, 137),
+                                            width: 1.2,
+                                          ),
                                         ),
-                                      ),
-                                      child: Center(
-                                        child: Icon(
-                                          Icons.search,
-                                          size: 25,
-                                          color:
-                                              Color.fromARGB(168, 55, 11, 137),
+                                        child: Center(
+                                          child: Icon(
+                                            Icons.search,
+                                            size: 25,
+                                            color: Color.fromARGB(
+                                                168, 55, 11, 137),
+                                          ),
                                         ),
                                       ),
                                     ),
@@ -309,20 +349,18 @@ Future<void> getProfessionals() async {
                               )
                             ],
                           )),
-                          search == true
-                          ? 
-                              SizedBox(
-                                width: 250,
-                                child:
-                                  TextField(
-                                      //controller: ,
-                                      // onEditingComplete: () {
-                                        
-                                      // },
-                                      onChanged: (value) {
-                                        setState(() async {
+                      search == true
+                          ? SizedBox(
+                              width: 250,
+                              child: TextField(
+                                //controller: ,
+                                // onEditingComplete: () {
 
-                                            final url = 'https://bankopinion-backend-development-3vucy.ondigitalocean.app/professionals/search?name=$value';
+                                // },
+                                onChanged: (value) {
+                                  setState(() async {
+                                    final url =
+                                        'https://bankopinion-backend-development-3vucy.ondigitalocean.app/professionals/search?name=$value';
 
                                     try {
                                       final response =
@@ -333,8 +371,7 @@ Future<void> getProfessionals() async {
                                             jsonDecode(response.body);
 
                                         List<dynamic> professionals =
-                                            responseData['professionals']
-                                                ['data'];
+                                            responseData['professionals'];
                                         pros.clear();
 
                                         for (var professional
@@ -356,37 +393,39 @@ Future<void> getProfessionals() async {
                                         // La solicitud no se realizó con éxito
                                         print(
                                             'Error en la solicitud GET: ${response.statusCode}');
-                                              }
-                                            } catch (error) {
-                                              // Ocurrió un error al realizar la solicitud
-                                              print('Error en la solicitud GET: $error');
-                                            }
+                                      }
+                                    } catch (error) {
+                                      // Ocurrió un error al realizar la solicitud
+                                      print(
+                                          'Error en la solicitud GET: $error');
+                                    }
 
-
-                                          // Acciones al enviar el valor del TextField
-                                        });
-                                      },
-                                      decoration: InputDecoration(
-                                        border: UnderlineInputBorder(
-                                          borderSide: BorderSide(
-                                            color: Colors.black, // Color del borde inferior
-                                            width: 1.0,
-                                          ),
-                                        ),
-                                        focusedBorder: UnderlineInputBorder(
-                                          borderSide: BorderSide(
-                                            color: Color.fromARGB(168, 55, 11, 137), // Color del borde inferior cuando el TextField está seleccionado
-                                            width: 2.0,
-                                          ),
-                                        ),
-                                        hintText: 'Busca lo que necesitas',
-                                      ),
-                                      maxLines: 1,
-                                      minLines: 1,
-                                      cursorColor: Color.fromARGB(168, 55, 11, 137), // Color del cursor
-
+                                    // Acciones al enviar el valor del TextField
+                                  });
+                                },
+                                decoration: InputDecoration(
+                                  border: UnderlineInputBorder(
+                                    borderSide: BorderSide(
+                                      color: Colors
+                                          .black, // Color del borde inferior
+                                      width: 1.0,
                                     ),
-                              )
+                                  ),
+                                  focusedBorder: UnderlineInputBorder(
+                                    borderSide: BorderSide(
+                                      color: Color.fromARGB(168, 55, 11,
+                                          137), // Color del borde inferior cuando el TextField está seleccionado
+                                      width: 2.0,
+                                    ),
+                                  ),
+                                  hintText: 'Busca lo que necesitas',
+                                ),
+                                maxLines: 1,
+                                minLines: 1,
+                                cursorColor: Color.fromARGB(
+                                    168, 55, 11, 137), // Color del cursor
+                              ),
+                            )
                           : SizedBox.shrink(),
                       Padding(
                         padding:
@@ -427,18 +466,32 @@ Future<void> getProfessionals() async {
               itemBuilder: (context, index) {
                 var professional = pros[index];
                 return Padding(
-                    padding: EdgeInsets.only(bottom: 8),
-                    child: InkWell(
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) =>
-                                professionalView(
+                    padding: EdgeInsets.only(
+                        bottom:
+                            pros.elementAt(index)["promoted"] == true ? 20 : 8),
+                    child: Column(
+                      children: [
+                        pros.elementAt(index)["promoted"] == true
+                            ? Text(
+                                "Promocionado",
+                                style: TextStyle(
+                                    color: Colors.amber,
+                                    fontWeight: FontWeight.w900
+                                    //fontFamily:
+                                    ),
+                              )
+                            : SizedBox.shrink(),
+                        InkWell(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => professionalView(
                                   id: pros.elementAt(index)["id"],
                                   type: pros.elementAt(index)["type"],
                                   title: pros.elementAt(index)["title"],
-                                  description: pros.elementAt(index)["description"],
+                                  description:
+                                      pros.elementAt(index)["description"],
                                   address: pros.elementAt(index)["address"],
                                   city: pros.elementAt(index)["city"],
                                   schedule: pros.elementAt(index)["schedule"],
@@ -450,291 +503,401 @@ Future<void> getProfessionals() async {
                                   mail: pros.elementAt(index)["mail"],
                                   web: pros.elementAt(index)["web"],
                                   chat: pros.elementAt(index)["chat"],
-                                  
-                                  
-                                  ),
-                          ),
-                        );
-                      },
-                      child: Container(
-                        height: 205,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(6),
-                          color: Color.fromARGB(24, 255, 255, 255),
-                          border: Border.all(
-                            color: Color.fromARGB(99, 55, 11, 137),
-                            width: .4,
-                          ),
-                        ),
-                        child: Padding(
-                          padding: EdgeInsets.only(top: 10, bottom: 5),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            children: [
-                              Align(
-                                alignment: Alignment.center,
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Padding(
-                                      padding: EdgeInsets.only(left: 8),
-                                      child: Container(
-                                        width: 140,
-                                        height: 140,
-                                        child: Image.network(
-                                          pros.elementAt(index)["image"],
-                                          width: 140,
-                                          height: 140.0,
-                                        ),
-                                      ),
-                                    ),
-                                    Padding(
-                                      padding: EdgeInsets.symmetric(),
-                                      child: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceEvenly,
-                                        children: [
-                                          Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.center,
-                                            children:  [
-                                              Padding(
-                                                padding:
-                                                    EdgeInsets.only(left: 5),
-                                                child: Text(
-                                                  "Horario:",
-                                                  style: TextStyle(
-                                                    fontSize: 14,
-                                                    color: Color.fromARGB(
-                                                        255, 55, 11, 137),
-                                                    fontWeight: FontWeight.w700,
-                                                  ),
-                                                ),
-                                              ),
-                                              Padding(
-                                                padding:
-                                                    EdgeInsets.only(left: 10),
-                                                child: Text(
-                                                  pros.elementAt(index)["schedule"][0],
-                                                  style: TextStyle(
-                                                    fontSize: 12,
-                                                    color: Color.fromARGB(
-                                                        255, 0, 0, 0),
-                                                  ),
-                                                ),
-                                              ),
-                                              Padding(
-                                                padding:
-                                                    EdgeInsets.only(left: 10),
-                                                child: Text(
-                                                  pros.elementAt(index)["schedule"][1] != ""
-                                                  ? pros.elementAt(index)["schedule"][1]
-                                                  : "",
-                                                  style: TextStyle(
-                                                    fontSize: 12,
-                                                    color: Color.fromARGB(
-                                                        255, 0, 0, 0),
-                                                  ),
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                          Column(
-                                            children: [
-                                              Padding(
-                                                padding: EdgeInsets.only(
-                                                    left: 5, right: 5),
-                                                child: Container(
-                                                  height: 40,
-                                                  width: .8,
-                                                  decoration: BoxDecoration(
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            6),
-                                                    color: Color.fromARGB(
-                                                        24, 255, 255, 255),
-                                                    border: Border.all(
-                                                      color: Color.fromARGB(
-                                                          99, 55, 11, 137),
-                                                      width: .4,
-                                                    ),
-                                                  ),
-                                                ),
-                                              )
-                                            ],
-                                          ),
-                                          Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.center,
-                                            children: [
-                                              Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment.center,
-                                                children: [
-                                                  Padding(
-                                                    padding: EdgeInsets.only(),
-                                                    child: Text(
-                                                      "Contacto:",
-                                                      style: TextStyle(
-                                                        fontSize: 14,
-                                                        color: Color.fromARGB(
-                                                            255, 55, 11, 137),
-                                                        fontWeight:
-                                                            FontWeight.w700,
-                                                      ),
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                              Padding(
-                                                padding: EdgeInsets.only(
-                                                    left: 0, top: 5, bottom: 5),
-                                                child: Row(
-                                                  children: [
-                                                    pros.elementAt(index)["phone"] != ""
-                                                    ? Icon(
-                                                      Icons.phone,
-                                                       size: 18,
-                                                   ) 
-                                                    : SizedBox.shrink(),
-                                                    pros.elementAt(index)["mail"] != ""
-                                                    ? Icon(
-                                                      Icons.mail,
-                                                      size: 18,
-                                                    ) 
-                                                    : SizedBox.shrink(),
-                                                    // Icon(
-                                                    //   Icons.support_agent_sharp,
-                                                    //   size: 18,
-                                                    //)
-                                                  ],
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  ],
                                 ),
                               ),
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.center,
+                            );
+                          },
+                          child: Container(
+                            height: pros.elementAt(index)["promoted"] == true
+                                ? 100
+                                : 207,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(6),
+                              color: Color.fromARGB(24, 255, 255, 255),
+                              border: Border.all(
+                                color: pros.elementAt(index)["promoted"] == true
+                                    ? Colors.amber
+                                    : Color.fromARGB(99, 55, 11, 137),
+                                width: pros.elementAt(index)["promoted"] == true
+                                    ? 2
+                                    : .4,
+                              ),
+                            ),
+                            child: Padding(
+                              padding: EdgeInsets.only(top: 10, bottom: 5),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.start,
                                 children: [
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Padding(
-                                        padding:
-                                            EdgeInsets.only(top: 5, bottom: 10, left: 5),
-                                        child: 
-                                        SizedBox(
-                                          width: screenWidth * 0.57,
-                                          child: Text(
-                                          pros.elementAt(index)["title"],
-                                          overflow: TextOverflow.ellipsis,
-                                          softWrap: true,
-                                          textAlign: TextAlign.center,
-                                          maxLines: 2,
-                                          style: TextStyle(
-                                            fontSize: 17,
-                                            fontWeight: FontWeight.w900,
-                                          ),
-                                        ),
-                                      ),
-                                     ),
-                                    ],
-                                  ),
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.start, 
-                                    children: [
-                                      Padding(
-                                        padding:
-                                            EdgeInsets.only(top: 5, bottom: 10, left: 5),
-                                        child: SizedBox(
-                                          width: screenWidth * 0.58,
-                                          child: Text(
-                                            
-                                            pros.elementAt(index)["description"],
-                                            overflow: TextOverflow.ellipsis,
-                                            softWrap: true,
-                                            maxLines: 4,
-                                            style: TextStyle(
-                                              fontSize: 14,
+                                  Align(
+                                    alignment: Alignment.center,
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Padding(
+                                          padding: EdgeInsets.only(
+                                              left: pros.elementAt(
+                                                          index)["promoted"] ==
+                                                      true
+                                                  ? 15
+                                                  : 8),
+                                          child: Container(
+                                            width: pros.elementAt(
+                                                        index)["promoted"] ==
+                                                    true
+                                                ? 78
+                                                : 140,
+                                            height: pros.elementAt(
+                                                        index)["promoted"] ==
+                                                    true
+                                                ? 78
+                                                : 140,
+                                            child: Image.network(
+                                              pros.elementAt(index)["image"],
+                                              width: pros.elementAt(
+                                                          index)["promoted"] ==
+                                                      true
+                                                  ? 78
+                                                  : 140,
+                                              height: pros.elementAt(
+                                                          index)["promoted"] ==
+                                                      true
+                                                  ? 78
+                                                  : 140,
                                             ),
                                           ),
                                         ),
-                                      ),
-                                    ],
+                                        pros.elementAt(index)["promoted"] !=
+                                                true
+                                            ? Padding(
+                                                padding:
+                                                    EdgeInsets.only(top: 4),
+                                                child: Row(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment
+                                                          .spaceEvenly,
+                                                  children: [
+                                                    Column(
+                                                      crossAxisAlignment:
+                                                          CrossAxisAlignment
+                                                              .center,
+                                                      children: [
+                                                        Padding(
+                                                          padding:
+                                                              EdgeInsets.only(
+                                                                  left: 5),
+                                                          child: Text(
+                                                            "Horario:",
+                                                            style: TextStyle(
+                                                              fontSize: 14,
+                                                              color: Color
+                                                                  .fromARGB(
+                                                                      255,
+                                                                      55,
+                                                                      11,
+                                                                      137),
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w700,
+                                                            ),
+                                                          ),
+                                                        ),
+                                                        Padding(
+                                                          padding:
+                                                              EdgeInsets.only(
+                                                                  left: 10),
+                                                          child: Text(
+                                                            pros.elementAt(
+                                                                    index)[
+                                                                "schedule"][0],
+                                                            style: TextStyle(
+                                                              fontSize: 12,
+                                                              color: Color
+                                                                  .fromARGB(255,
+                                                                      0, 0, 0),
+                                                            ),
+                                                          ),
+                                                        ),
+                                                        Padding(
+                                                          padding:
+                                                              EdgeInsets.only(
+                                                                  left: 10),
+                                                          child: Text(
+                                                            pros.elementAt(index)[
+                                                                            "schedule"]
+                                                                        [1] !=
+                                                                    ""
+                                                                ? pros.elementAt(
+                                                                        index)[
+                                                                    "schedule"][1]
+                                                                : "",
+                                                            style: TextStyle(
+                                                              fontSize: 12,
+                                                              color: Color
+                                                                  .fromARGB(255,
+                                                                      0, 0, 0),
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                    Column(
+                                                      children: [
+                                                        Padding(
+                                                          padding:
+                                                              EdgeInsets.only(
+                                                                  left: 5,
+                                                                  right: 5),
+                                                          child: Container(
+                                                            height: 40,
+                                                            width: .8,
+                                                            decoration:
+                                                                BoxDecoration(
+                                                              borderRadius:
+                                                                  BorderRadius
+                                                                      .circular(
+                                                                          6),
+                                                              color: Color
+                                                                  .fromARGB(
+                                                                      24,
+                                                                      255,
+                                                                      255,
+                                                                      255),
+                                                              border:
+                                                                  Border.all(
+                                                                color: Color
+                                                                    .fromARGB(
+                                                                        99,
+                                                                        55,
+                                                                        11,
+                                                                        137),
+                                                                width: .4,
+                                                              ),
+                                                            ),
+                                                          ),
+                                                        )
+                                                      ],
+                                                    ),
+                                                    Column(
+                                                      crossAxisAlignment:
+                                                          CrossAxisAlignment
+                                                              .center,
+                                                      children: [
+                                                        Row(
+                                                          mainAxisAlignment:
+                                                              MainAxisAlignment
+                                                                  .center,
+                                                          children: [
+                                                            Padding(
+                                                              padding:
+                                                                  EdgeInsets
+                                                                      .only(),
+                                                              child: Text(
+                                                                "Contacto:",
+                                                                style:
+                                                                    TextStyle(
+                                                                  fontSize: 14,
+                                                                  color: Color
+                                                                      .fromARGB(
+                                                                          255,
+                                                                          55,
+                                                                          11,
+                                                                          137),
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .w700,
+                                                                ),
+                                                              ),
+                                                            ),
+                                                          ],
+                                                        ),
+                                                        Padding(
+                                                          padding:
+                                                              EdgeInsets.only(
+                                                                  left: 0,
+                                                                  top: 5,
+                                                                  bottom: 5),
+                                                          child: Row(
+                                                            children: [
+                                                              pros.elementAt(index)[
+                                                                          "phone"] !=
+                                                                      ""
+                                                                  ? Icon(
+                                                                      Icons
+                                                                          .phone,
+                                                                      size: 18,
+                                                                    )
+                                                                  : SizedBox
+                                                                      .shrink(),
+                                                              pros.elementAt(index)[
+                                                                          "mail"] !=
+                                                                      ""
+                                                                  ? Icon(
+                                                                      Icons
+                                                                          .mail,
+                                                                      size: 18,
+                                                                    )
+                                                                  : SizedBox
+                                                                      .shrink(),
+                                                              // Icon(
+                                                              //   Icons.support_agent_sharp,
+                                                              //   size: 18,
+                                                              //)
+                                                            ],
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  ],
+                                                ),
+                                              )
+                                            : SizedBox.shrink(),
+                                      ],
+                                    ),
                                   ),
                                   Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
                                     children: [
                                       Row(
                                         mainAxisAlignment:
                                             MainAxisAlignment.center,
                                         children: [
                                           Padding(
-                                            padding: EdgeInsets.only(top: 20),
-                                            child: Text(
-                                              "Valoración: ",
-                                              style: TextStyle(
-                                                fontSize: 12,
-                                                fontWeight: FontWeight.w600,
+                                            padding: EdgeInsets.only(
+                                                top: pros.elementAt(index)[
+                                                            "promoted"] ==
+                                                        true
+                                                    ? 0
+                                                    : 5,
+                                                bottom: pros.elementAt(index)[
+                                                            "promoted"] ==
+                                                        true
+                                                    ? 3
+                                                    : 10,
+                                                left: 5),
+                                            child: SizedBox(
+                                              width: screenWidth * 0.57,
+                                              child: Text(
+                                                pros.elementAt(index)["title"],
+                                                overflow: TextOverflow.ellipsis,
+                                                softWrap: true,
+                                                textAlign: TextAlign.center,
+                                                maxLines: 2,
+                                                style: TextStyle(
+                                                  fontSize: 17,
+                                                  fontWeight: FontWeight.w900,
+                                                ),
                                               ),
                                             ),
                                           ),
                                         ],
                                       ),
-                                      SizedBox(
-                                        height: 20,
-                                        child: 
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.start,
+                                        children: [
+                                          Padding(
+                                            padding: EdgeInsets.only(
+                                                top: pros.elementAt(index)[
+                                                            "promoted"] ==
+                                                        true
+                                                    ? 0
+                                                    : 5,
+                                                bottom: pros.elementAt(index)[
+                                                            "promoted"] ==
+                                                        true
+                                                    ? 4
+                                                    : 10,
+                                                left: 8,
+                                                right: 2),
+                                            child: SizedBox(
+                                              width: screenWidth * 0.58,
+                                              child: Text(
+                                                pros.elementAt(
+                                                    index)["description"],
+                                                overflow: TextOverflow.ellipsis,
+                                                softWrap: true,
+                                                maxLines: pros.elementAt(index)[
+                                                            "promoted"] ==
+                                                        true
+                                                    ? 2
+                                                    : 4,
+                                                style: TextStyle(
+                                                  fontSize: 14,
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      Column(
+                                        children: [
+                                          Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
+                                            children: [
+                                              pros.elementAt(
+                                                          index)["promoted"] !=
+                                                      true
+                                                  ? Padding(
+                                                      padding: EdgeInsets.only(
+                                                          top: 5),
+                                                      child: Text(
+                                                        pros.elementAt(index)[
+                                                                    "promoted"] !=
+                                                                true
+                                                            ? "Valoración: "
+                                                            : "",
+                                                        style: TextStyle(
+                                                          fontSize: 12,
+                                                          fontWeight:
+                                                              FontWeight.w600,
+                                                        ),
+                                                      ),
+                                                    )
+                                                  : SizedBox.shrink(),
+                                            ],
+                                          ),
                                           Row(
                                             children: [
-                                              StatmentRatingsUser(rating: pros.elementAt(index)["ratingAv"].toDouble()),
-                                              Text("(${pros.elementAt(index)["rating"].length.toString()})",
-                                           style: TextStyle(fontSize: 12)),
+                                              SizedBox(
+                                                  height: pros.elementAt(index)[
+                                                              "promoted"] !=
+                                                          true
+                                                      ? 20
+                                                      : 15,
+                                                  child: Row(
+                                                    children: [
+                                                      StatmentRatingsUser(
+                                                          rating: pros
+                                                                      .elementAt(index)[
+                                                                          "ratingAv"]
+                                                                      .toDouble() ==
+                                                                  null
+                                                              ? 0.0
+                                                              : pros
+                                                                  .elementAt(index)[
+                                                                      "ratingAv"]
+                                                                  .toDouble()),
+                                                      Text(
+                                                          "(${pros.elementAt(index)["rating"].length.toString()})",
+                                                          style: TextStyle(
+                                                              fontSize: 12)),
+                                                    ],
+                                                  )),
                                             ],
                                           )
+                                        ],
                                       ),
-                                    ],
-                                  ),
-                                  Column(
-                                    children: [
-                                      // Row(
-                                      //   mainAxisAlignment:
-                                      //       MainAxisAlignment.center,
-                                      //   children: [
-                                      //     Padding(
-                                      //       padding: EdgeInsets.only(top: 10),
-                                      //       child: Text(
-                                      //         "Honorarios:   ",
-                                      //         style: TextStyle(
-                                      //           fontSize: 12,
-                                      //           fontWeight: FontWeight.w600,
-                                      //         ),
-                                      //       ),
-                                      //     ),
-                                      //     Padding(
-                                      //       padding: EdgeInsets.only(top: 10),
-                                      //       child: Text(
-                                      //         pros.elementAt(index)["amount"],
-                                      //         style: TextStyle(
-                                      //           color: Colors.green,
-                                      //           fontSize: 17,
-                                      //           fontWeight: FontWeight.w800,
-                                      //         ),
-                                      //       ),
-                                      //     ),
-                                      //   ],
-                                      // ),
                                     ],
                                   ),
                                 ],
                               ),
-                            ],
+                            ),
                           ),
                         ),
-                      ),
+                      ],
                     ));
               },
             ),
@@ -780,6 +943,7 @@ Future<void> getProfessionals() async {
                               backgroundColor:
                                   Color.fromARGB(255, 153, 116, 223)),
                           onPressed: () {
+                            Navigator.pop(context);
                             Navigator.push(
                               context,
                               MaterialPageRoute(

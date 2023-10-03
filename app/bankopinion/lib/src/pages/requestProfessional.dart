@@ -7,8 +7,6 @@ import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:http/http.dart' as http;
-import 'package:http_parser/http_parser.dart';
-import 'package:mime/mime.dart';
 
 class requestProfessionalView extends StatefulWidget {
   @override
@@ -20,6 +18,7 @@ class requestProfessionalViewState extends State<requestProfessionalView> {
   bool _isLocationEnabled = false;
   bool err = false;
   bool err1 = false;
+  bool errCif = false;
 
   List<String> _options = ['€ (Económico)', '€€ (Moderado)', '€€€ (Alto)'];
   String? selectedAmount;
@@ -28,7 +27,7 @@ class requestProfessionalViewState extends State<requestProfessionalView> {
 
   String? selectedCiudad;
 
-  List<String> options = ['Abogados', 'Juristas', 'Gestores', 'Notarios'];
+  List<String> options = ['Abogados', 'Procuradores', 'Gestores', 'Notarios', 'Préstamos'];
   List<String> ciudades = [
     'A Coruña',
     'Álava',
@@ -108,44 +107,78 @@ class requestProfessionalViewState extends State<requestProfessionalView> {
   
   PickedFile? imageFile;
 
+  Future<void> newProfessionalRequest() async {
+  String base64Image = ""; // Inicializar como un string vacío
+  
+  if (imageFile?.path != null && imageFile!.path.isNotEmpty) {
+    final file = File(imageFile!.path);
+    final bytes = await file.readAsBytes();
+    final base64 = base64Encode(bytes);
+    base64Image = base64; // Asignar el valor base64 a la variable si hay una imagen
+    print(base64);
+  }
+  print("llega");
+  
 
-
-
-
-
-
-Future<void> newProfessionalRequest() async {
+  
   try {
-    var request = http.MultipartRequest(
-      'POST',
-      Uri.parse('https://bankopinion-backend-development-3vucy.ondigitalocean.app/professionals/'),
+    var body = jsonEncode({
+      "type": selectedOption,
+      "title": titleController.text,
+      "description": descController.text,
+      "cif": cifController.text,
+      "address": addressController.text,
+      "city": selectedCiudad,
+      "amount": _selectedAmount,
+      "schedule": [scheduleController.text, "", "", ""],
+      "image": base64Image,
+      "phone": phoneController.text,
+      "mail": emailController.text,
+      "web": webController.text,
+      "rating": [0.0],
+      "approved": false,
+      "passwd": "prueba"
+      
+
+          });
+
+    //print(body);
+    var newRequest = Uri.parse(
+        'https://bankopinion-backend-development-3vucy.ondigitalocean.app/professionals/');
+
+    var response = await http.post(
+      newRequest,
+      body: body,
+      headers: {'Content-Type': 'application/json'},
+
     );
-
-    request.fields['type'] = selectedOption!;
-    request.fields['title'] = titleController.text;
-    // Agregar otros campos de texto
-
-    if (imageFile != null) {
-      final mimeTypeData = lookupMimeType(imageFile!.path);
-      final file = await http.MultipartFile.fromPath(
-        'image',
-        imageFile!.path,
-        contentType: MediaType.parse(mimeTypeData!),
-      );
-      request.files.add(file);
-    }
-
-    var response = await request.send();
+    
+    print('NewRequest: ${response.statusCode}');
+    print(response.body);
 
     if (response.statusCode == 201) {
-      _showAlertDialog();
+            _showAlertDialog();
       err1 = false;
-      // Limpiar los controladores
+     
     } else {
+      var responseBody = json.decode(response.body);
+      int statusCode = responseBody['statusCode'];
+      if (statusCode == 405) {
       setState(() {
-        err1 = true;
+        errCif = true;
       });
+        print(response.statusCode);
+
+    } else {
+        setState(() {
+          err1 = true;
+        });
     }
+      
+    }
+    
+
+    
   } catch (error) {
     print('Error: $error');
     // Aquí puedes agregar más manejo de errores o mostrar información adicional sobre el error al usuario
@@ -428,7 +461,27 @@ Future<void> newProfessionalRequest() async {
                                         fontSize: 16,
                                         fontWeight: FontWeight.w600,
                                         color: Color.fromARGB(220, 42, 7, 107)),
-                                  )
+                                  ),
+                                  Padding(
+                    padding: const EdgeInsets.only(top: 0),
+                    child: PopupMenuButton<String>(
+                      icon: const Icon(Icons.info,
+                          color: Color.fromARGB(255, 153, 116, 223), size: 20,),
+                      onSelected: (String result) {
+                        // ignore: avoid_print
+                        print(result);
+                      },
+                      itemBuilder: (BuildContext context) =>
+                          <PopupMenuEntry<String>>[
+                        const PopupMenuItem<String>(
+                          
+                          value: 'Info',
+                          child: Text(
+                              'En caso de no subir la imagen se asignará una genérica, no obstante, recomendamos subir una imagen representativa como profesional que será visible por los usuarios.'),
+                        ),
+                      ],
+                    ),
+                  )
                                 ],
                               ),
                             ),
@@ -446,7 +499,6 @@ Future<void> newProfessionalRequest() async {
                                           if (pickedImage != null) {
                                             imageFile = pickedImage;
                                           } else {
-                                            
                                           }
                                           print(imageFile);
                                           });
@@ -469,6 +521,26 @@ Future<void> newProfessionalRequest() async {
                                 ]
                               )
                             ),
+                            imageFile != null
+                            ? Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  InkWell(
+                                    onTap: () {
+                                      setState(() {
+                                        imageFile = null;
+                                      });
+                                    },
+                                    child: Icon(Icons.clear, size: 24),
+                                  ),
+                                  Text("Imagen subida correctamente",
+                                  
+                                  style: TextStyle(
+                                          fontSize: 13,
+                                          color: Color.fromARGB(220, 9, 176, 17)),
+                                          )
+                                ],
+                            ) : SizedBox.shrink(),
                           ],
                         ),
                         Column(
@@ -713,7 +785,7 @@ Future<void> newProfessionalRequest() async {
                               )
                             : SizedBox.shrink(),
 
-                                err1 == true
+                            err1 == true
                             ? Padding(
                                 padding: EdgeInsets.only(top: 10),
                                 child: RichText(
@@ -726,6 +798,18 @@ Future<void> newProfessionalRequest() async {
                                 ),
                               )
                             : SizedBox.shrink(),
+                            errCif == true
+                              ?  RichText(
+                                       text:
+                                     const TextSpan(
+                                             text: "CIF ya existente",
+                                             style: TextStyle(
+                                                 color: Colors.red,
+                                                 fontWeight: FontWeight.normal),
+                                           ),
+                                           )
+
+                              : SizedBox.shrink(),
                         Padding(
                           padding: EdgeInsets.only(top: 10),
                           child: Row(
@@ -733,7 +817,8 @@ Future<void> newProfessionalRequest() async {
                             children: [
                               ElevatedButton(
                                   onPressed: (() async {
-                                    if (titleController.text != "" &&
+                                    if (
+                                      titleController.text != "" &&
                                         emailController.text != "" &&
                                         descController.text != "" &&
                                         phoneController.text != "" &&
@@ -743,7 +828,6 @@ Future<void> newProfessionalRequest() async {
                                         cifController.text != ""
                                         ) {
 
-                                          print("hola");
                                       newProfessionalRequest();
                                       setState(() {
                                         err = false;
@@ -798,7 +882,7 @@ Future<void> newProfessionalRequest() async {
                 Padding(
                   padding: EdgeInsets.all(16),
                   child: Text(
-                    "La solicitud se ha enviado correctamente.\nSu petición se revisará y se notificará mediante correo en un plazo de 1 a 3 días laborables.",
+                    "La solicitud se ha enviado correctamente.\n\nSu petición se revisará y se notificará mediante correo.\nUna vez se revise, se proporcionarán instrucciones de acceso al panel de gestión donde podrá contratar su suscripción.",
                     style: TextStyle(color: Color.fromARGB(255, 0, 0, 0)),
                   ),
                 ),

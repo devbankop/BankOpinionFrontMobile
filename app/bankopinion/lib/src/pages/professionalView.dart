@@ -61,8 +61,9 @@ class professionalViewState extends State<professionalView> {
     ratingFunc();
   }
 
-  Future<void> addLog() async {
-    var body = jsonEncode({"type": "Consulta a ${widget.title}"});
+  
+  Future<void> addPhoneLog() async {
+    var body = jsonEncode({"type": "Consulta vía teléfono a ${widget.id}"});
 
     var newView = Uri.parse(
         'https://bankopinion-backend-development-3vucy.ondigitalocean.app/logs/addlog');
@@ -73,6 +74,20 @@ class professionalViewState extends State<professionalView> {
     print(response.statusCode);
     //print(response.body);
   }
+
+  Future<void> addMailLog() async {
+    var body = jsonEncode({"type": "Consulta vía mail a ${widget.id}"});
+
+    var newView = Uri.parse(
+        'https://bankopinion-backend-development-3vucy.ondigitalocean.app/logs/addlog');
+    final response = await http.post(newView,
+        body: body, headers: {"Content-Type": "application/json"});
+
+    // var addNews = jsonDecode(response.body);
+    print(response.statusCode);
+    //print(response.body);
+  }
+  
 
   Future<void> ratingFunc() async {
     var ratingAve = [];
@@ -160,7 +175,7 @@ class professionalViewState extends State<professionalView> {
                   ],
                 ),
                 Padding(
-                  padding: EdgeInsets.only(top: 0),
+                  padding: EdgeInsets.only(top: 8),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [
@@ -234,7 +249,9 @@ class professionalViewState extends State<professionalView> {
                                           style: TextStyle(
                                               fontSize: 12,
                                               color: Color.fromARGB(
-                                                  255, 28, 83, 128))),
+                                                  255, 28, 83, 128),
+                                        ),
+                                      ),
                                     ),
                                   ],
                                 )
@@ -315,7 +332,7 @@ class professionalViewState extends State<professionalView> {
                                 mainAxisAlignment: MainAxisAlignment.end,
                                 children: [
                                   Text(
-                                    "Lunes a Viernes",
+                                    "Lunes a Jueves",
                                     textAlign: TextAlign.justify,
                                     style: TextStyle(
                                       fontSize: 14,
@@ -353,7 +370,7 @@ class professionalViewState extends State<professionalView> {
                                       mainAxisAlignment: MainAxisAlignment.end,
                                       children: [
                                         Text(
-                                          "Sábados",
+                                          "Viernes",
                                           textAlign: TextAlign.justify,
                                           style: TextStyle(
                                             fontSize: 14,
@@ -429,6 +446,7 @@ class professionalViewState extends State<professionalView> {
                                 child: widget.phone != ""
                                     ? ElevatedButton(
                                         onPressed: (() async {
+                                          addPhoneLog();
                                           var prefijo = 34;
                                           launch(
                                               'tel:+{$prefijo}${widget.phone}');
@@ -457,6 +475,7 @@ class professionalViewState extends State<professionalView> {
                                 child: widget.mail != ""
                                     ? ElevatedButton(
                                         onPressed: (() async {
+                                          addMailLog();
                                           String recipientEmail = widget.mail;
                                           String subject =
                                               'Consulta a ${widget.title} desde BankOpinion';
